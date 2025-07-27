@@ -140,10 +140,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out backdrop-blur-lg bg-background/5 border-r border-white/5 shadow-xl`}
+      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out backdrop-blur-sm bg-transparent border-r border-transparent`}
       collapsible="icon"
     >
-      <SidebarHeader className="border-b border-white/5 p-4">
+      <SidebarHeader className="border-b border-transparent p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-8 h-8 text-primary flex-shrink-0" />
@@ -234,7 +234,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-white/5 p-4">
+      <SidebarFooter className="border-t border-transparent p-4">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>

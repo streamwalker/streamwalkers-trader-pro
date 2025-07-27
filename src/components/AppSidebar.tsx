@@ -225,7 +225,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out backdrop-blur-md bg-gradient-to-b from-background/20 to-background/5 border-r border-border/20 shadow-2xl`}
+      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out backdrop-blur-md bg-background border-r border-border/20 shadow-2xl`}
       collapsible="icon"
     >
         <SidebarHeader className="border-b border-border/10 p-4">

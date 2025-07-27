@@ -136,10 +136,12 @@ export function AppSidebar() {
                       end 
                       className={getNavCls}
                     >
-                      <item.icon className="h-5 w-5 text-sidebar-foreground" />
-                      {!isCollapsed && (
-                        <span className="text-sidebar-foreground">{item.title}</span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <item.icon className="h-5 w-5 text-sidebar-foreground" />
+                        {!isCollapsed && (
+                          <span className="text-sidebar-foreground">{item.title}</span>
+                        )}
+                      </div>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -164,10 +166,12 @@ export function AppSidebar() {
                       to={item.url} 
                       className={getNavCls}
                     >
-                      <item.icon className="h-5 w-5 text-sidebar-foreground" />
-                      {!isCollapsed && (
-                        <span className="text-sidebar-foreground">{item.title}</span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <item.icon className="h-5 w-5 text-sidebar-foreground" />
+                        {!isCollapsed && (
+                          <span className="text-sidebar-foreground">{item.title}</span>
+                        )}
+                      </div>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -192,10 +196,12 @@ export function AppSidebar() {
                       to={item.url} 
                       className={getNavCls}
                     >
-                      <item.icon className="h-5 w-5 text-sidebar-foreground" />
-                      {!isCollapsed && (
-                        <span className="text-sidebar-foreground">{item.title}</span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <item.icon className="h-5 w-5 text-sidebar-foreground" />
+                        {!isCollapsed && (
+                          <span className="text-sidebar-foreground">{item.title}</span>
+                        )}
+                      </div>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -220,10 +226,12 @@ export function AppSidebar() {
                       to={item.url} 
                       className={getNavCls}
                     >
-                      <item.icon className="h-5 w-5 text-sidebar-foreground" />
-                      {!isCollapsed && (
-                        <span className="text-sidebar-foreground">{item.title}</span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        <item.icon className="h-5 w-5 text-sidebar-foreground" />
+                        {!isCollapsed && (
+                          <span className="text-sidebar-foreground">{item.title}</span>
+                        )}
+                      </div>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

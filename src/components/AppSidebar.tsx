@@ -104,7 +104,7 @@ export function AppSidebar() {
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
       ? "bg-primary/20 text-primary font-medium border-r-2 border-primary" 
-      : "hover:bg-white/10 hover:backdrop-blur-sm"
+      : "hover:bg-white/5 hover:backdrop-blur-sm"
 
   const isCollapsed = state === "collapsed"
 
@@ -140,10 +140,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out backdrop-blur-md bg-background/10 border-r border-white/10 shadow-lg`}
+      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out backdrop-blur-lg bg-background/5 border-r border-white/5 shadow-xl`}
       collapsible="icon"
     >
-      <SidebarHeader className="border-b border-white/10 p-4">
+      <SidebarHeader className="border-b border-white/5 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-8 h-8 text-primary flex-shrink-0" />
@@ -157,7 +157,7 @@ export function AppSidebar() {
             variant="ghost"
             size="icon"
             onClick={toggleSidebar}
-            className="h-8 w-8 hover:bg-white/10 hidden md:flex"
+            className="h-8 w-8 hover:bg-white/5 hidden md:flex"
           >
             {isCollapsed ? (
               <ChevronRight className="h-4 w-4" />
@@ -234,11 +234,11 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-white/10 p-4">
+      <SidebarFooter className="border-t border-white/5 p-4">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center gap-3 hover:bg-white/10 rounded-lg p-2 transition-colors cursor-pointer">
+              <div className="flex items-center gap-3 hover:bg-white/5 rounded-lg p-2 transition-colors cursor-pointer">
                 <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/70 rounded-full flex items-center justify-center flex-shrink-0">
                   <User className="w-4 h-4 text-white" />
                 </div>

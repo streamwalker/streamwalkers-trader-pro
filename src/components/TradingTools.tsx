@@ -15,66 +15,172 @@ const TradingTools = () => {
   const tools = [
     {
       icon: BarChart3,
-      title: "Order Flow Indicators",
-      description: "Advanced DOM visualization and order flow analysis tools for better entry and exit timing.",
-      features: ["Real-time DOM heatmaps", "Volume profile analysis", "Bid/Ask pressure indicators"],
-      category: "Indicators"
+      title: "Footprint Charts",
+      description: "Real-time bid/ask volume visualization within each price bar for institutional-level order flow analysis.",
+      features: ["Real-time volume imprints", "Bid/Ask absorption levels", "Institutional activity detection"],
+      category: "Order Flow"
     },
     {
       icon: TrendingUp,
-      title: "Chart Templates",
-      description: "Pre-configured NinjaTrader and Tradovate templates with professional setups.",
-      features: ["Futures-optimized layouts", "Multi-timeframe analysis", "Custom indicator presets"],
-      category: "Templates"
-    },
-    {
-      icon: Settings,
-      title: "Trade Automation",
-      description: "Smart automation tools for risk management and trade execution.",
-      features: ["Auto stop-loss management", "Position sizing calculator", "Trade copier functionality"],
-      category: "Automation"
-    },
-    {
-      icon: Shield,
-      title: "Risk Management",
-      description: "Built-in safety features to protect your trading account from unexpected losses.",
-      features: ["Daily loss limit alerts", "Max position size controls", "Drawdown protection"],
-      category: "Safety"
-    },
-    {
-      icon: Zap,
-      title: "Market Scanners",
-      description: "Real-time market opportunity identification and alert systems.",
-      features: ["Momentum scanners", "Volume spike alerts", "Break-out notifications"],
-      category: "Analysis"
+      title: "Cumulative Delta",
+      description: "Track buying vs selling pressure accumulation to identify market sentiment shifts.",
+      features: ["Real-time delta tracking", "Divergence alerts", "Pressure accumulation analysis"],
+      category: "Order Flow"
     },
     {
       icon: Target,
-      title: "Performance Analytics",
-      description: "Comprehensive trading performance tracking and improvement insights.",
-      features: ["P&L tracking", "Win rate analysis", "Risk-reward metrics"],
+      title: "DOM Heatmap",
+      description: "Visual representation of order book depth and live changes for market maker insights.",
+      features: ["Live order book visualization", "Depth changes tracking", "Liquidity pool identification"],
+      category: "Order Flow"
+    },
+    {
+      icon: BarChart3,
+      title: "Volume Profile",
+      description: "Horizontal volume distribution analysis with POC, VAH, and VAL levels for key support/resistance.",
+      features: ["Point of Control identification", "Value area calculations", "Volume nodes analysis"],
+      category: "Market Structure"
+    },
+    {
+      icon: Settings,
+      title: "Market Profile (TPO)",
+      description: "Time-Price-Opportunity charts showing market structure and auction theory implementation.",
+      features: ["TPO chart generation", "Market balance analysis", "Auction theory application"],
+      category: "Market Structure"
+    },
+    {
+      icon: Zap,
+      title: "Smart Money Concepts",
+      description: "Order blocks, fair value gaps, and liquidity sweeps detection for institutional trading insights.",
+      features: ["Order block identification", "Fair value gap detection", "Liquidity sweep alerts"],
+      category: "Market Structure"
+    },
+    {
+      icon: Shield,
+      title: "Smart Stop Loss Manager",
+      description: "Advanced stop loss automation with trailing stops, time-based exits, and profit target management.",
+      features: ["Trailing stop automation", "Time-based exit rules", "Profit target scaling"],
+      category: "Risk Management"
+    },
+    {
+      icon: Target,
+      title: "Position Sizing Calculator",
+      description: "Kelly Criterion, fixed fractional, and risk-based position sizing for optimal capital allocation.",
+      features: ["Kelly Criterion calculations", "Risk-based sizing", "Capital allocation optimization"],
+      category: "Risk Management"
+    },
+    {
+      icon: Shield,
+      title: "Daily Loss Limit Enforcer",
+      description: "Automatic account lockout and risk controls when daily loss limits are reached.",
+      features: ["Automatic trading halt", "Real-time loss tracking", "Account protection alerts"],
+      category: "Risk Management"
+    },
+    {
+      icon: Settings,
+      title: "ES/NQ Day Trading Workspace",
+      description: "Pre-configured layouts optimized for index futures with multi-timeframe analysis.",
+      features: ["Tick/1min/5min setup", "Index-specific indicators", "Market internals integration"],
+      category: "Chart Templates"
+    },
+    {
+      icon: TrendingUp,
+      title: "Futures Scalping Template",
+      description: "Ultra-fast execution template with sub-second entry/exit capabilities for scalping strategies.",
+      features: ["Sub-second execution", "Tick chart optimization", "Scalping-specific tools"],
+      category: "Chart Templates"
+    },
+    {
+      icon: Zap,
+      title: "Market Internals Dashboard",
+      description: "A/D line, TICK, VIX, and breadth indicators for comprehensive market sentiment analysis.",
+      features: ["Real-time market internals", "Sentiment indicators", "Breadth analysis tools"],
+      category: "Market Analysis"
+    },
+    {
+      icon: BarChart3,
+      title: "Volume Spread Analysis",
+      description: "Professional volume/price relationship analysis for identifying supply and demand imbalances.",
+      features: ["Volume/price correlation", "Supply/demand analysis", "Wyckoff methodology"],
+      category: "Market Analysis"
+    },
+    {
+      icon: Target,
+      title: "Advanced P&L Analytics",
+      description: "Win rate, profit factor, expectancy, and Sharpe ratio calculations for performance optimization.",
+      features: ["Comprehensive metrics", "Performance benchmarking", "Risk-adjusted returns"],
       category: "Analytics"
+    },
+    {
+      icon: Settings,
+      title: "Trade Journal Integration",
+      description: "Automatic trade logging with screenshot capabilities and detailed performance analysis.",
+      features: ["Automatic trade logging", "Screenshot integration", "Performance insights"],
+      category: "Analytics"
+    },
+    {
+      icon: Zap,
+      title: "NinjaTrader 8 Add-ons",
+      description: "Custom indicators, strategies, and market analyzer columns for NinjaTrader platform integration.",
+      features: ["Custom indicators", "Strategy automation", "Market analyzer tools"],
+      category: "Platform Integration"
     }
   ];
 
   const resources = [
     {
-      title: "NinjaTrader Setup Guide",
-      description: "Complete installation and configuration walkthrough",
-      type: "Video Tutorial",
-      duration: "15 min"
-    },
-    {
       title: "Order Flow Masterclass",
-      description: "Advanced strategies using our proprietary indicators",
+      description: "Complete 8-hour course on reading institutional order flow and market microstructure",
       type: "Course",
-      duration: "2 hours"
+      duration: "8 hours"
     },
     {
-      title: "Risk Management Blueprint",
-      description: "Proven risk management strategies for consistent profits",
+      title: "Market Profile Deep Dive",
+      description: "Advanced auction market theory and TPO chart analysis techniques",
+      type: "Course", 
+      duration: "6 hours"
+    },
+    {
+      title: "Smart Money Concepts Guide",
+      description: "Comprehensive guide to institutional trading concepts and liquidity analysis",
       type: "PDF Guide",
-      duration: "25 pages"
+      duration: "45 pages"
+    },
+    {
+      title: "NinjaTrader Platform Setup",
+      description: "Complete platform configuration and optimization for professional trading",
+      type: "Video Tutorial",
+      duration: "45 min"
+    },
+    {
+      title: "Risk Management Certification",
+      description: "Professional-grade risk management strategies and position sizing methodologies",
+      type: "Course",
+      duration: "4 hours"
+    },
+    {
+      title: "Live Trading Sessions",
+      description: "Daily market analysis and real-time trade execution with our professional traders",
+      type: "Video Tutorial",
+      duration: "Daily"
+    },
+    {
+      title: "Volume Spread Analysis Manual",
+      description: "Complete guide to VSA methodology and Wyckoff market analysis techniques",
+      type: "PDF Guide",
+      duration: "38 pages"
+    },
+    {
+      title: "Platform Integration Guides",
+      description: "Setup instructions for NinjaTrader, Tradovate, TradingView, and Sierra Chart",
+      type: "PDF Guide",
+      duration: "28 pages"
+    },
+    {
+      title: "Performance Analytics Workshop",
+      description: "Advanced trade journaling and performance optimization techniques",
+      type: "Video Tutorial",
+      duration: "90 min"
     }
   ];
 

@@ -10,7 +10,7 @@ const Footer = () => {
             <div className="flex items-center gap-2">
               <TrendingUp className="w-8 h-8 text-primary" />
               <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                ApexTrader Pro
+                Streamwalkers Trader Pro
               </span>
             </div>
             <p className="text-muted-foreground">
@@ -19,7 +19,7 @@ const Footer = () => {
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Mail className="w-4 h-4" />
-                support@apextraderpro.com
+                support@streamwalkerstraderpro.com
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Phone className="w-4 h-4" />
@@ -73,7 +73,7 @@ const Footer = () => {
         <div className="border-t border-border mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-muted-foreground mb-4 md:mb-0">
-              © 2024 ApexTrader Pro. All rights reserved.
+              © 2024 Streamwalkers Trader Pro. All rights reserved.
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>

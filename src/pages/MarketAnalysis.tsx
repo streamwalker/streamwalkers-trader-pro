@@ -5,6 +5,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp, TrendingDown, BarChart3, Target, AlertTriangle, RefreshCw } from "lucide-react";
 import { useFuturesData, useVIXData, useMarketConditions, useTradingSignals, useKeyLevels } from "@/hooks/useMarketData";
 import MarketDataService from "@/services/MarketDataService";
+import { CustomAnalysisDialog } from "@/components/CustomAnalysisDialog";
+import { QuickAlertsSheet } from "@/components/QuickAlertsSheet";
 
 const MarketAnalysis = () => {
   const { data: futuresData, isLoading: futuresLoading, refetch: refetchFutures } = useFuturesData();
@@ -40,14 +42,18 @@ const MarketAnalysis = () => {
             <RefreshCw className="mr-2 h-4 w-4" />
             Refresh Data
           </Button>
-          <Button variant="outline" size="sm">
-            <BarChart3 className="mr-2 h-4 w-4" />
-            Custom Analysis
-          </Button>
-          <Button size="sm">
-            <AlertTriangle className="mr-2 h-4 w-4" />
-            Set Alerts
-          </Button>
+          <CustomAnalysisDialog>
+            <Button variant="outline" size="sm">
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Custom Analysis
+            </Button>
+          </CustomAnalysisDialog>
+          <QuickAlertsSheet>
+            <Button size="sm">
+              <AlertTriangle className="mr-2 h-4 w-4" />
+              Set Alerts
+            </Button>
+          </QuickAlertsSheet>
         </div>
       </div>
 

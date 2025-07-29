@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import MarketDataService, { FuturesData, MarketCondition, VIXData, TradingSignal } from '@/services/MarketDataService';
+import MarketDataService, { FuturesData, MarketCondition, VIXData, TradingSignal, CandlestickData } from '@/services/MarketDataService';
 
 const marketDataService = MarketDataService.getInstance();
 
@@ -45,5 +45,14 @@ export const useKeyLevels = (symbol: string) => {
     queryFn: () => marketDataService.getKeyLevels(symbol),
     refetchInterval: 60000, // Refetch every minute for levels
     staleTime: 55000,
+  });
+};
+
+export const useCandlestickData = (symbol: string, timeframe: string = '1h') => {
+  return useQuery<CandlestickData[]>({
+    queryKey: ['candlestickData', symbol, timeframe],
+    queryFn: () => marketDataService.getCandlestickData(symbol, timeframe),
+    refetchInterval: timeframe === '1min' ? 10000 : timeframe === '5min' ? 30000 : 60000,
+    staleTime: timeframe === '1min' ? 8000 : timeframe === '5min' ? 25000 : 55000,
   });
 };

@@ -7,6 +7,7 @@ import { useFuturesData, useVIXData, useMarketConditions, useTradingSignals, use
 import MarketDataService from "@/services/MarketDataService";
 import { CustomAnalysisDialog } from "@/components/CustomAnalysisDialog";
 import { QuickAlertsSheet } from "@/components/QuickAlertsSheet";
+import { CandlestickChart } from "@/components/CandlestickChart";
 
 const MarketAnalysis = () => {
   const { data: futuresData, isLoading: futuresLoading, refetch: refetchFutures } = useFuturesData();
@@ -55,6 +56,16 @@ const MarketAnalysis = () => {
             </Button>
           </QuickAlertsSheet>
         </div>
+      </div>
+
+      {/* Candlestick Chart Section */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-semibold">Live Charts</h2>
+        <CandlestickChart 
+          symbol="ES" 
+          supportLevels={esLevels?.support || []} 
+          resistanceLevels={esLevels?.resistance || []} 
+        />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

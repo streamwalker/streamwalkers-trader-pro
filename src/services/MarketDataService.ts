@@ -28,6 +28,15 @@ interface TradingSignal {
   confidence: number;
 }
 
+interface CandlestickData {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
 class MarketDataService {
   private static instance: MarketDataService;
   private cache = new Map<string, { data: any; timestamp: number }>();
@@ -201,6 +210,55 @@ class MarketDataService {
     });
   }
 
+  async getCandlestickData(symbol: string, timeframe: string = '1h'): Promise<CandlestickData[]> {
+    return this.fetchWithCache(`candlestick-${symbol}-${timeframe}`, async () => {
+      const futuresData = await this.getFuturesData();
+      const current = futuresData.find(f => f.symbol === symbol);
+      
+      if (!current) {
+        return [];
+      }
+
+      // Generate historical OHLC data
+      const periods = timeframe === '1min' ? 1440 : timeframe === '5min' ? 288 : timeframe === '15min' ? 96 : timeframe === '1h' ? 24 : 30;
+      const basePrice = current.price;
+      const data: CandlestickData[] = [];
+      
+      for (let i = periods; i >= 0; i--) {
+        const time = new Date(Date.now() - i * this.getTimeframeMs(timeframe));
+        const volatility = (Math.random() - 0.5) * (basePrice * 0.02);
+        
+        const open = basePrice + volatility + (Math.random() - 0.5) * 10;
+        const close = open + (Math.random() - 0.5) * 15;
+        const high = Math.max(open, close) + Math.random() * 8;
+        const low = Math.min(open, close) - Math.random() * 8;
+        const volume = Math.floor(Math.random() * 50000) + 10000;
+        
+        data.push({
+          time: time.toISOString(),
+          open: Math.round(open * 100) / 100,
+          high: Math.round(high * 100) / 100,
+          low: Math.round(low * 100) / 100,
+          close: Math.round(close * 100) / 100,
+          volume
+        });
+      }
+      
+      return data.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+    });
+  }
+
+  private getTimeframeMs(timeframe: string): number {
+    switch (timeframe) {
+      case '1min': return 60 * 1000;
+      case '5min': return 5 * 60 * 1000;
+      case '15min': return 15 * 60 * 1000;
+      case '1h': return 60 * 60 * 1000;
+      case '1d': return 24 * 60 * 60 * 1000;
+      default: return 60 * 60 * 1000;
+    }
+  }
+
   getMarketSentiment(vixLevel: number, avgChange: number): string {
     if (vixLevel > 25) return 'Fearful';
     if (vixLevel < 15 && avgChange > 0) return 'Bullish';
@@ -210,4 +268,4 @@ class MarketDataService {
 }
 
 export default MarketDataService;
-export type { FuturesData, MarketCondition, VIXData, TradingSignal };
+export type { FuturesData, MarketCondition, VIXData, TradingSignal, CandlestickData };

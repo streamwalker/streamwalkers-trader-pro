@@ -17,6 +17,10 @@ import Settings from "./pages/Settings";
 import Education from "./pages/Education";
 import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
+import CourseCatalog from "./pages/CourseCatalog";
+import CourseDetail from "./pages/CourseDetail";
+import CourseModule from "./pages/CourseModule";
+import CourseCategories from "./pages/CourseCategories";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +43,10 @@ const App = () => (
             <Route path="/account/performance" element={<Performance />} />
             <Route path="/account/settings" element={<Settings />} />
             <Route path="/education" element={<Education />} />
+            <Route path="/education/courses" element={<CourseCatalog />} />
+            <Route path="/education/course/:courseId" element={<CourseDetail />} />
+            <Route path="/education/course/:courseId/module/:moduleId" element={<CourseModule />} />
+            <Route path="/education/categories" element={<CourseCategories />} />
             <Route path="/support" element={<Support />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

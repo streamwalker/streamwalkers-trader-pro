@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -91,9 +92,11 @@ const Education = () => {
             Enhance your trading skills with our comprehensive learning resources.
           </p>
         </div>
-        <Button>
-          <Video className="mr-2 h-4 w-4" />
-          Browse All Courses
+        <Button asChild>
+          <Link to="/education/courses">
+            <Video className="mr-2 h-4 w-4" />
+            Browse All Courses
+          </Link>
         </Button>
       </div>
 

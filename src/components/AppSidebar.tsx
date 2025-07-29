@@ -225,10 +225,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out bg-gradient-to-b from-background via-background/95 to-card/50 backdrop-blur-xl border-r border-border/30 shadow-2xl`}
+      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out bg-background border-r border-border/30 shadow-2xl`}
       collapsible="icon"
     >
-        <SidebarHeader className="border-b border-border/20 p-4 bg-card/20 backdrop-blur-sm">
+        <SidebarHeader className="border-b border-border/20 p-4 bg-background/50 backdrop-blur-sm">
           <motion.div 
             className="flex items-center justify-between"
             layout
@@ -404,7 +404,7 @@ export function AppSidebar() {
           </motion.div>
         </SidebarContent>
 
-        <SidebarFooter className="border-t border-border/20 p-4 bg-card/10 backdrop-blur-sm">
+        <SidebarFooter className="border-t border-border/20 p-4 bg-background/50 backdrop-blur-sm">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

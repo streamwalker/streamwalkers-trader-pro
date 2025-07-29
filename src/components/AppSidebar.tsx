@@ -115,8 +115,8 @@ export function AppSidebar() {
   const isActive = (path: string) => currentPath === path
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
-      ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary font-medium border-r-2 border-primary shadow-sm" 
-      : "hover:bg-white/10 hover:backdrop-blur-sm hover:shadow-sm transition-all duration-200"
+      ? "bg-gradient-to-r from-primary/20 via-primary/15 to-primary/10 text-primary font-medium border-r-2 border-primary shadow-lg backdrop-blur-sm" 
+      : "hover:bg-gradient-to-r hover:from-card/30 hover:to-card/10 hover:backdrop-blur-sm hover:shadow-sm transition-all duration-300"
 
   const isCollapsed = state === "collapsed"
 
@@ -225,10 +225,10 @@ export function AppSidebar() {
 
   return (
     <Sidebar
-      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out backdrop-blur-md bg-background border-r border-border/20 shadow-2xl`}
+      className={`${isCollapsed ? "w-16" : "w-64"} transition-all duration-300 ease-in-out bg-gradient-to-b from-background via-background/95 to-card/50 backdrop-blur-xl border-r border-border/30 shadow-2xl`}
       collapsible="icon"
     >
-        <SidebarHeader className="border-b border-border/10 p-4">
+        <SidebarHeader className="border-b border-border/20 p-4 bg-card/20 backdrop-blur-sm">
           <motion.div 
             className="flex items-center justify-between"
             layout
@@ -265,7 +265,7 @@ export function AppSidebar() {
                 variant="ghost"
                 size="icon"
                 onClick={toggleSidebar}
-                className="h-8 w-8 hover:bg-white/10 hidden md:flex transition-colors duration-200"
+                className="h-8 w-8 hover:bg-card/20 hover:backdrop-blur-sm hidden md:flex transition-all duration-300 rounded-lg"
               >
                 <motion.div
                   animate={{ rotate: isCollapsed ? 0 : 180 }}
@@ -294,7 +294,7 @@ export function AppSidebar() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <SidebarGroupLabel className="text-foreground/80 font-semibold px-2 mb-3 text-sm tracking-wide">
+                    <SidebarGroupLabel className="text-foreground/90 font-bold px-2 mb-3 text-xs tracking-widest uppercase bg-gradient-to-r from-primary/10 to-accent/10 bg-clip-text text-transparent">
                       MAIN
                     </SidebarGroupLabel>
                   </motion.div>
@@ -325,7 +325,7 @@ export function AppSidebar() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, delay: 0.1 }}
                   >
-                    <SidebarGroupLabel className="text-foreground/80 font-semibold px-2 mb-3 text-sm tracking-wide">
+                    <SidebarGroupLabel className="text-foreground/90 font-bold px-2 mb-3 text-xs tracking-widest uppercase bg-gradient-to-r from-primary/10 to-accent/10 bg-clip-text text-transparent">
                       TRADING TOOLS
                     </SidebarGroupLabel>
                   </motion.div>
@@ -356,7 +356,7 @@ export function AppSidebar() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, delay: 0.2 }}
                   >
-                    <SidebarGroupLabel className="text-foreground/80 font-semibold px-2 mb-3 text-sm tracking-wide">
+                    <SidebarGroupLabel className="text-foreground/90 font-bold px-2 mb-3 text-xs tracking-widest uppercase bg-gradient-to-r from-primary/10 to-accent/10 bg-clip-text text-transparent">
                       ACCOUNT
                     </SidebarGroupLabel>
                   </motion.div>
@@ -387,7 +387,7 @@ export function AppSidebar() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, delay: 0.3 }}
                   >
-                    <SidebarGroupLabel className="text-foreground/80 font-semibold px-2 mb-3 text-sm tracking-wide">
+                    <SidebarGroupLabel className="text-foreground/90 font-bold px-2 mb-3 text-xs tracking-widest uppercase bg-gradient-to-r from-primary/10 to-accent/10 bg-clip-text text-transparent">
                       SUPPORT
                     </SidebarGroupLabel>
                   </motion.div>
@@ -404,18 +404,18 @@ export function AppSidebar() {
           </motion.div>
         </SidebarContent>
 
-        <SidebarFooter className="border-t border-border/10 p-4">
+        <SidebarFooter className="border-t border-border/20 p-4 bg-card/10 backdrop-blur-sm">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <motion.div
                   whileHover={{ scale: 1.02, x: 4 }}
                   whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-3 hover:bg-white/10 rounded-xl p-3 transition-all duration-200 cursor-pointer bg-gradient-to-r from-background/10 to-background/5 backdrop-blur-sm border border-border/20"
+                  className="flex items-center gap-3 hover:bg-gradient-to-r hover:from-card/20 hover:to-card/5 rounded-xl p-3 transition-all duration-300 cursor-pointer bg-gradient-to-r from-background/20 to-background/10 backdrop-blur-sm border border-border/30 shadow-sm"
                 >
                   <motion.div 
-                    className="w-10 h-10 bg-gradient-to-br from-primary via-primary/80 to-primary/60 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg"
-                    whileHover={{ rotate: 5 }}
+                    className="w-10 h-10 bg-gradient-to-br from-primary via-primary/90 to-primary/70 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-primary/20"
+                    whileHover={{ rotate: 5, scale: 1.05 }}
                     transition={{ duration: 0.2 }}
                   >
                     <User className="w-5 h-5 text-white" />

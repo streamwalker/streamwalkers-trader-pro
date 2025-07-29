@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, ArrowDown, Volume2, Clock, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const OrderFlow = () => {
   const orderFlowData = [
@@ -26,9 +27,11 @@ const OrderFlow = () => {
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             Live Data
           </Badge>
-          <Button variant="outline" size="sm">
-            <Clock className="mr-2 h-4 w-4" />
-            Configure Alerts
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/tools/order-flow/alerts">
+              <Clock className="mr-2 h-4 w-4" />
+              Configure Alerts
+            </Link>
           </Button>
         </div>
       </div>

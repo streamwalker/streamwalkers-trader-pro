@@ -22,6 +22,7 @@ import CourseDetail from "./pages/CourseDetail";
 import CourseModule from "./pages/CourseModule";
 import CourseCategories from "./pages/CourseCategories";
 import Resources from "./pages/Resources";
+import AlertConfiguration from "./pages/AlertConfiguration";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/education/course/:courseId/module/:moduleId" element={<CourseModule />} />
             <Route path="/education/categories" element={<CourseCategories />} />
             <Route path="/resources" element={<Resources />} />
+            <Route path="/tools/order-flow/alerts" element={<AlertConfiguration />} />
             <Route path="/support" element={<Support />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

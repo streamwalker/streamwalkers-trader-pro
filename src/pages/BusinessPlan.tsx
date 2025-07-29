@@ -510,6 +510,399 @@ const BusinessPlan = () => {
           </CardContent>
         </Card>
 
+        {/* StreamWalkers Token Section */}
+        <Card className="border-profit/20 bg-gradient-to-br from-profit/5 to-primary/5">
+          <CardHeader>
+            <CardTitle className="text-3xl flex items-center gap-3">
+              🔧 StreamWalkers Token (SWT) - Tokenomics & Blockchain Incentives
+            </CardTitle>
+            <CardDescription>
+              Build a decentralized reward system that incentivizes trader engagement, data contributions, and platform loyalty
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="p-4 bg-background/50 border border-accent/20 rounded-lg">
+              <p className="text-muted-foreground">
+                <strong>Goal:</strong> Create a tokenized ecosystem that rewards traders for platform engagement, performance data sharing, 
+                and community contributions while enabling governance participation and premium feature access.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="text-xl font-semibold text-profit">✅ Key Use Cases for SWT Tokens</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="text-profit">•</span>
+                    <span><strong>Incentivize Performance:</strong> Traders earn tokens for completing evaluations, achieving profit targets, and maintaining consistency</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-profit">•</span>
+                    <span><strong>Reward Data Sharing:</strong> Contributors receive tokens for submitting trading feedback, strategy insights, and performance data</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-profit">•</span>
+                    <span><strong>Community Validation:</strong> Tokens serve as governance mechanism for platform decisions and trader verification</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-profit">•</span>
+                    <span><strong>Discount Mechanism:</strong> Exchange tokens for evaluation fee discounts, premium features, and exclusive tools</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="space-y-4">
+                <h4 className="text-xl font-semibold text-primary">🧱 Technical Requirements</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>Token Type:</strong> ERC-20 on Polygon (low gas fees, fast transactions)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>Distribution Logic:</strong> Automated smart contracts for performance-based rewards</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>DAO Governance:</strong> Token holder voting on platform updates and policy changes</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>NFT Integration:</strong> Dynamic NFTs for top performers with trading achievements</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Token Integration Strategy */}
+        <Card className="border-accent/20">
+          <CardHeader>
+            <CardTitle className="text-3xl flex items-center gap-3">
+              💡 Token Integration Strategy & Roadmap
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Phase</TableHead>
+                  <TableHead>Timeline</TableHead>
+                  <TableHead>Objectives</TableHead>
+                  <TableHead>Key Features</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-semibold">🏗️ Phase 1: Foundation</TableCell>
+                  <TableCell>Months 1-3</TableCell>
+                  <TableCell>Concept development & regulatory compliance</TableCell>
+                  <TableCell>Token contract deployment, legal framework</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold">🚀 Phase 2: Launch</TableCell>
+                  <TableCell>Months 4-6</TableCell>
+                  <TableCell>Limited token distribution to early adopters</TableCell>
+                  <TableCell>Reward system integration, community airdrop</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold">🌟 Phase 3: Expansion</TableCell>
+                  <TableCell>Months 7-12</TableCell>
+                  <TableCell>Full community engagement & token utility</TableCell>
+                  <TableCell>DAO governance, staking, premium features</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold">🏆 Phase 4: Maturity</TableCell>
+                  <TableCell>Months 13-18</TableCell>
+                  <TableCell>Advanced features & ecosystem expansion</TableCell>
+                  <TableCell>Cross-platform integration, DeFi features</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        {/* Token Economic Projections */}
+        <Card className="border-accent/20">
+          <CardHeader>
+            <CardTitle className="text-3xl flex items-center gap-3">
+              📊 5-Year Token Economic Projections
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Year</TableHead>
+                  <TableHead>Active Token Holders</TableHead>
+                  <TableHead>Monthly Token Distribution</TableHead>
+                  <TableHead>Token Utility Value</TableHead>
+                  <TableHead>Community Participation</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-semibold">Year 1</TableCell>
+                  <TableCell>5,000 holders</TableCell>
+                  <TableCell>50K SWT/month</TableCell>
+                  <TableCell>$25K equivalent value</TableCell>
+                  <TableCell>Community building phase</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold">Year 2</TableCell>
+                  <TableCell>15,000 holders</TableCell>
+                  <TableCell>150K SWT/month</TableCell>
+                  <TableCell>$150K equivalent value</TableCell>
+                  <TableCell>Active governance participation</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold">Year 3</TableCell>
+                  <TableCell>35,000 holders</TableCell>
+                  <TableCell>300K SWT/month</TableCell>
+                  <TableCell>$500K equivalent value</TableCell>
+                  <TableCell>Mature ecosystem with staking</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-semibold">Year 4</TableCell>
+                  <TableCell>65,000 holders</TableCell>
+                  <TableCell>500K SWT/month</TableCell>
+                  <TableCell>$1.2M equivalent value</TableCell>
+                  <TableCell>Cross-platform integrations</TableCell>
+                </TableRow>
+                <TableRow className="bg-profit/5">
+                  <TableCell className="font-bold">Year 5</TableCell>
+                  <TableCell className="font-bold">100,000+ holders</TableCell>
+                  <TableCell className="font-bold">750K SWT/month</TableCell>
+                  <TableCell className="font-bold text-profit">$2.5M equivalent value</TableCell>
+                  <TableCell className="font-bold">Significant revenue driver</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        {/* Token Earning Mechanisms */}
+        <Card className="border-accent/20">
+          <CardHeader>
+            <CardTitle className="text-3xl flex items-center gap-3">
+              🎯 Token Earning Mechanisms
+            </CardTitle>
+            <CardDescription>How traders and users earn StreamWalkers Tokens (SWT)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold">🏆 Performance-Based Rewards</h4>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Achievement</TableHead>
+                      <TableHead>SWT Reward</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Complete Evaluation Challenge</TableCell>
+                      <TableCell>100 SWT</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Pass Funded Account Review</TableCell>
+                      <TableCell>250 SWT</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Monthly Profit Target Hit</TableCell>
+                      <TableCell>500 SWT</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Consistent 6-Month Performance</TableCell>
+                      <TableCell>2,000 SWT</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold">🤝 Community Contributions</h4>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Activity</TableHead>
+                      <TableHead>SWT Reward</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Submit Trading Feedback</TableCell>
+                      <TableCell>25 SWT</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Successful Trader Referral</TableCell>
+                      <TableCell>150 SWT</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Educational Content Creation</TableCell>
+                      <TableCell>300 SWT</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>DAO Governance Participation</TableCell>
+                      <TableCell>50 SWT/vote</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* SWOT Analysis */}
+        <Card className="border-accent/20">
+          <CardHeader>
+            <CardTitle className="text-3xl flex items-center gap-3">
+              🔍 SWOT Analysis for Token Integration
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                <div className="p-4 bg-profit/5 border border-profit/20 rounded-lg">
+                  <h4 className="font-semibold text-profit mb-3">💪 Strengths</h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• Innovative trading tools already differentiate the platform</li>
+                    <li>• Token incentives increase user engagement and loyalty</li>
+                    <li>• Community-driven approach builds strong user base</li>
+                    <li>• First-mover advantage in tokenized trading platforms</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-warning/5 border border-warning/20 rounded-lg">
+                  <h4 className="font-semibold text-warning mb-3">⚠️ Weaknesses</h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• Regulatory complexity in digital asset space</li>
+                    <li>• User education required for token adoption</li>
+                    <li>• Technical complexity of blockchain integration</li>
+                    <li>• Initial development and deployment costs</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                  <h4 className="font-semibold text-primary mb-3">🚀 Opportunities</h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• Growing interest in tokenized trading platforms</li>
+                    <li>• Partnership opportunities with DeFi protocols</li>
+                    <li>• Expansion into additional financial services</li>
+                    <li>• Cross-platform token utility development</li>
+                  </ul>
+                </div>
+
+                <div className="p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
+                  <h4 className="font-semibold text-destructive mb-3">⚡ Threats</h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li>• Competition from established platforms adding tokens</li>
+                    <li>• Regulatory changes affecting token operations</li>
+                    <li>• Market volatility impacting token value</li>
+                    <li>• Technical security risks in smart contracts</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI-Powered Data Collection */}
+        <Card className="border-accent/20">
+          <CardHeader>
+            <CardTitle className="text-3xl flex items-center gap-3">
+              🤖 AI-Powered Data Collection & Verification
+            </CardTitle>
+            <CardDescription>Blockchain integration for transparent performance tracking and community validation</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold">🔗 Blockchain Integration Benefits</h4>
+                <ul className="space-y-2 text-muted-foreground">
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>Immutable Records:</strong> All trading performance data stored on-chain for transparency</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>Automated Verification:</strong> Smart contracts validate trader achievements automatically</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>Community Validation:</strong> Token holders can verify and dispute performance claims</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary">•</span>
+                    <span><strong>Decentralized Governance:</strong> Community votes on platform policies and updates</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="space-y-4">
+                <h4 className="text-lg font-semibold">📊 Data Collection Strategy</h4>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Data Type</TableHead>
+                      <TableHead>Collection Method</TableHead>
+                      <TableHead>Token Reward</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Trading Performance</TableCell>
+                      <TableCell>Automated API scraping</TableCell>
+                      <TableCell>Auto-distributed</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Strategy Insights</TableCell>
+                      <TableCell>User submissions</TableCell>
+                      <TableCell>50-200 SWT</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Market Analysis</TableCell>
+                      <TableCell>Community contributions</TableCell>
+                      <TableCell>100-500 SWT</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Educational Content</TableCell>
+                      <TableCell>Creator submissions</TableCell>
+                      <TableCell>200-1000 SWT</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
+
+            <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
+              <h4 className="font-semibold mb-3">🛠️ Implementation Roadmap</h4>
+              <div className="grid md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <p className="font-semibold text-primary">Phase 1: Infrastructure</p>
+                  <p className="text-muted-foreground">Smart contract development and testing</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-primary">Phase 2: Integration</p>
+                  <p className="text-muted-foreground">Platform integration and reward automation</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-primary">Phase 3: Validation</p>
+                  <p className="text-muted-foreground">Community governance and verification systems</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-primary">Phase 4: Expansion</p>
+                  <p className="text-muted-foreground">Advanced features and ecosystem growth</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Final Recommendations */}
         <Card className="border-primary/20 bg-primary/5">
           <CardHeader>
@@ -521,19 +914,23 @@ const BusinessPlan = () => {
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <span className="text-profit">✅</span>
-                <p>Start with 4 roles (CTO, CEO, Support, Design)</p>
+                <p>Start with 4 roles (CTO, CEO, Support, Design) + Blockchain Developer</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-profit">⚙️</span>
-                <p>Scale up to 12 with marketing, trader ops, AI agent builders, and devs</p>
+                <p>Scale up to 12 with marketing, trader ops, AI agent builders, and tokenomics specialists</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-profit">🧠</span>
-                <p>Hire a fractional legal team early — ensure Terms of Use, Evaluation Agreement, and Payout structure are legally bulletproof</p>
+                <p>Hire fractional legal team early — ensure Terms of Use, Token Distribution, and DAO governance are legally compliant</p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="text-profit">🎯</span>
-                <p>Use AI agents and automation aggressively to delay needing full headcount</p>
+                <p>Use AI agents and blockchain automation aggressively to delay needing full headcount</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="text-profit">🔗</span>
+                <p>Implement token economy gradually — start with simple rewards, evolve to full DAO governance</p>
               </div>
             </div>
           </CardContent>

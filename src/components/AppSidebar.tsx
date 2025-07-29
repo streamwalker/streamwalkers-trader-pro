@@ -116,7 +116,7 @@ export function AppSidebar() {
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive 
       ? "bg-gradient-to-r from-primary/20 via-primary/15 to-primary/10 text-primary font-medium border-r-2 border-primary shadow-lg backdrop-blur-sm" 
-      : "hover:bg-gradient-to-r hover:from-card/30 hover:to-card/10 hover:backdrop-blur-sm hover:shadow-sm transition-all duration-300"
+      : "text-sidebar-foreground hover:bg-gradient-to-r hover:from-card/30 hover:to-card/10 hover:backdrop-blur-sm hover:shadow-sm transition-all duration-300"
 
   const isCollapsed = state === "collapsed"
 
@@ -294,7 +294,7 @@ export function AppSidebar() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <SidebarGroupLabel className="text-foreground/90 font-bold px-2 mb-3 text-xs tracking-widest uppercase bg-gradient-to-r from-primary/10 to-accent/10 bg-clip-text text-transparent">
+                    <SidebarGroupLabel className="text-sidebar-foreground/90 font-semibold px-2 mb-3 text-xs tracking-widest uppercase">
                       MAIN
                     </SidebarGroupLabel>
                   </motion.div>
@@ -325,7 +325,7 @@ export function AppSidebar() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, delay: 0.1 }}
                   >
-                    <SidebarGroupLabel className="text-foreground/90 font-bold px-2 mb-3 text-xs tracking-widest uppercase bg-gradient-to-r from-primary/10 to-accent/10 bg-clip-text text-transparent">
+                    <SidebarGroupLabel className="text-sidebar-foreground/90 font-semibold px-2 mb-3 text-xs tracking-widest uppercase">
                       TRADING TOOLS
                     </SidebarGroupLabel>
                   </motion.div>
@@ -356,7 +356,7 @@ export function AppSidebar() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, delay: 0.2 }}
                   >
-                    <SidebarGroupLabel className="text-foreground/90 font-bold px-2 mb-3 text-xs tracking-widest uppercase bg-gradient-to-r from-primary/10 to-accent/10 bg-clip-text text-transparent">
+                    <SidebarGroupLabel className="text-sidebar-foreground/90 font-semibold px-2 mb-3 text-xs tracking-widest uppercase">
                       ACCOUNT
                     </SidebarGroupLabel>
                   </motion.div>
@@ -387,7 +387,7 @@ export function AppSidebar() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2, delay: 0.3 }}
                   >
-                    <SidebarGroupLabel className="text-foreground/90 font-bold px-2 mb-3 text-xs tracking-widest uppercase bg-gradient-to-r from-primary/10 to-accent/10 bg-clip-text text-transparent">
+                    <SidebarGroupLabel className="text-sidebar-foreground/90 font-semibold px-2 mb-3 text-xs tracking-widest uppercase">
                       SUPPORT
                     </SidebarGroupLabel>
                   </motion.div>
@@ -429,13 +429,13 @@ export function AppSidebar() {
                         transition={{ duration: 0.2 }}
                         className="flex-1 min-w-0"
                       >
-                        <div className="flex items-center gap-2">
-                          <p className="text-sm font-semibold text-foreground truncate">Trader Pro</p>
-                          <Badge variant="secondary" className="text-xs px-2 py-0.5 h-5">
-                            Premium
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-foreground/70 truncate">Active Account</p>
+                         <div className="flex items-center gap-2">
+                           <p className="text-sm font-semibold text-sidebar-foreground truncate">Trader Pro</p>
+                           <Badge variant="secondary" className="text-xs px-2 py-0.5 h-5">
+                             Premium
+                           </Badge>
+                         </div>
+                         <p className="text-xs text-sidebar-foreground/80 truncate">Active Account</p>
                       </motion.div>
                     )}
                   </AnimatePresence>

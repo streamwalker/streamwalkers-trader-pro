@@ -76,6 +76,9 @@ export interface StockData {
   marketValue: number;
   position: number;
   exchange?: string;
+  sharesOutstanding?: number;
+  floatShares?: number;
+  floatPercent?: number;
 }
 
 export interface PortfolioData {
@@ -282,22 +285,32 @@ class MarketDataService {
         'QQQ': 'Invesco QQQ Trust'
       };
       
-      return quotes.map(quote => ({
-        symbol: quote.symbol,
-        name: stockNames[quote.symbol] || quote.symbol,
-        price: quote.price,
-        change: quote.change,
-        changePercent: quote.changePercent,
-        volume: quote.volume,
-        marketCap: quote.marketCap,
-        pe: quote.pe,
-        dividendYield: quote.dividendYield,
-        sector: this.getSectorForSymbol(quote.symbol),
-        lastUpdated: quote.timestamp,
-        marketValue: quote.price * 10, // Assume 10 shares
-        position: 10,
-        exchange: 'NASDAQ'
-      }));
+      return quotes.map(quote => {
+        // Generate mock float data for demonstration
+        const sharesOutstanding = this.getMockSharesOutstanding(quote.symbol);
+        const floatShares = this.getMockFloatShares(quote.symbol, sharesOutstanding);
+        const floatPercent = sharesOutstanding ? (floatShares / sharesOutstanding) * 100 : undefined;
+        
+        return {
+          symbol: quote.symbol,
+          name: stockNames[quote.symbol] || quote.symbol,
+          price: quote.price,
+          change: quote.change,
+          changePercent: quote.changePercent,
+          volume: quote.volume,
+          marketCap: quote.marketCap,
+          pe: quote.pe,
+          dividendYield: quote.dividendYield,
+          sector: this.getSectorForSymbol(quote.symbol),
+          lastUpdated: quote.timestamp,
+          marketValue: quote.price * 10, // Assume 10 shares
+          position: 10,
+          exchange: 'NASDAQ',
+          sharesOutstanding,
+          floatShares,
+          floatPercent
+        };
+      });
     });
   }
 
@@ -324,6 +337,9 @@ class MarketDataService {
 
   async getStockDataBySymbol(symbol: string, exchange: string = 'NASDAQ'): Promise<StockData> {
     const quote = await this.liveDataService.getQuote(symbol);
+    const sharesOutstanding = this.getMockSharesOutstanding(symbol);
+    const floatShares = this.getMockFloatShares(symbol, sharesOutstanding);
+    const floatPercent = sharesOutstanding ? (floatShares / sharesOutstanding) * 100 : undefined;
     
     return {
       symbol: quote.symbol,
@@ -339,7 +355,10 @@ class MarketDataService {
       lastUpdated: quote.timestamp,
       marketValue: quote.price * 10,
       position: 10,
-      exchange
+      exchange,
+      sharesOutstanding,
+      floatShares,
+      floatPercent
     };
   }
 
@@ -363,6 +382,41 @@ class MarketDataService {
     };
     
     return sectors[symbol] || 'Technology';
+  }
+
+  private getMockSharesOutstanding(symbol: string): number {
+    // Mock shares outstanding data (in millions)
+    const sharesData: { [key: string]: number } = {
+      'AAPL': 15400, // 15.4B shares
+      'GOOGL': 12900, // 12.9B shares
+      'MSFT': 7430, // 7.43B shares
+      'TSLA': 3160, // 3.16B shares
+      'AMZN': 10700, // 10.7B shares
+      'META': 2540, // 2.54B shares
+      'NVDA': 2470, // 2.47B shares
+      'SPY': 890, // 890M shares
+      'QQQ': 740 // 740M shares
+    };
+    
+    return sharesData[symbol] || (Math.random() * 1000 + 100); // Random 100M-1.1B if not found
+  }
+
+  private getMockFloatShares(symbol: string, sharesOutstanding: number): number {
+    // Mock float shares data - typically 70-95% of outstanding for large caps
+    const floatPercentages: { [key: string]: number } = {
+      'AAPL': 0.99,
+      'GOOGL': 0.87,
+      'MSFT': 0.99,
+      'TSLA': 0.91,
+      'AMZN': 0.88,
+      'META': 0.72,
+      'NVDA': 0.79,
+      'SPY': 1.0,
+      'QQQ': 1.0
+    };
+    
+    const floatPercent = floatPercentages[symbol] || (0.3 + Math.random() * 0.6); // 30-90% if not found
+    return Math.floor(sharesOutstanding * floatPercent);
   }
 
   // Real-time subscription methods

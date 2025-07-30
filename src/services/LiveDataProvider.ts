@@ -31,6 +31,8 @@ export interface QuoteData {
   marketCap?: number;
   pe?: number;
   dividendYield?: number;
+  sharesOutstanding?: number;
+  floatShares?: number;
 }
 
 export interface HistoricalData {

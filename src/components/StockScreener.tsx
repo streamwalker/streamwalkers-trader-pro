@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { TrendingUp, TrendingDown, Volume2, DollarSign, BarChart3, Plus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Volume2, DollarSign, BarChart3, Plus, Zap } from 'lucide-react';
 import { useStockData } from '@/hooks/useMarketData';
 import { useWatchlistActions } from '@/hooks/useWatchlist';
 import { StockData } from '@/services/MarketDataService';
@@ -17,6 +17,8 @@ interface ScreenerCriteria {
   minMarketCap: number | null;
   minChangePercent: number | null;
   maxChangePercent: number | null;
+  maxFloat: number | null;
+  maxFloatPercent: number | null;
   sector: string;
 }
 
@@ -26,6 +28,7 @@ const prebuiltScreens = [
   { id: 'most-active', name: 'Most Active', icon: Volume2 },
   { id: 'high-value', name: 'High Value Stocks', icon: DollarSign },
   { id: 'breakouts', name: 'Technical Breakouts', icon: BarChart3 },
+  { id: 'low-float', name: 'Low Float', icon: Zap },
 ];
 
 export const StockScreener = () => {
@@ -37,6 +40,8 @@ export const StockScreener = () => {
     minMarketCap: null,
     minChangePercent: null,
     maxChangePercent: null,
+    maxFloat: null,
+    maxFloatPercent: null,
     sector: 'all'
   });
   const [filteredStocks, setFilteredStocks] = useState<StockData[]>([]);
@@ -65,6 +70,12 @@ export const StockScreener = () => {
       case 'breakouts':
         filtered = filtered.filter(stock => stock.changePercent > 3 && stock.volume > 1000000);
         break;
+      case 'low-float':
+        filtered = filtered.filter(stock => 
+          (stock.floatShares && stock.floatShares < 50) || 
+          (stock.floatPercent && stock.floatPercent < 50)
+        ).sort((a, b) => (a.floatShares || 999999) - (b.floatShares || 999999));
+        break;
       default:
         return applyCustomCriteria();
     }
@@ -81,6 +92,8 @@ export const StockScreener = () => {
       if (criteria.minVolume && stock.volume < criteria.minVolume) return false;
       if (criteria.minChangePercent && stock.changePercent < criteria.minChangePercent) return false;
       if (criteria.maxChangePercent && stock.changePercent > criteria.maxChangePercent) return false;
+      if (criteria.maxFloat && stock.floatShares && stock.floatShares > criteria.maxFloat) return false;
+      if (criteria.maxFloatPercent && stock.floatPercent && stock.floatPercent > criteria.maxFloatPercent) return false;
       return true;
     }).slice(0, 50);
   };
@@ -98,6 +111,12 @@ export const StockScreener = () => {
     if (marketCap >= 1e9) return `$${(marketCap / 1e9).toFixed(1)}B`;
     if (marketCap >= 1e6) return `$${(marketCap / 1e6).toFixed(1)}M`;
     return `$${(marketCap / 1e3).toFixed(1)}K`;
+  };
+
+  const formatFloat = (floatShares: number | undefined) => {
+    if (!floatShares) return 'N/A';
+    if (floatShares >= 1000) return `${(floatShares / 1000).toFixed(1)}B`;
+    return `${floatShares.toFixed(1)}M`;
   };
 
   return (
@@ -145,7 +164,7 @@ export const StockScreener = () => {
           {activeScreen === 'custom' && (
             <div>
               <h3 className="text-sm font-medium mb-3">Custom Criteria</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="text-xs text-muted-foreground">Min Price</label>
                   <Input
@@ -207,6 +226,30 @@ export const StockScreener = () => {
                   />
                 </div>
                 <div>
+                  <label className="text-xs text-muted-foreground">Max Float (M)</label>
+                  <Input
+                    type="number"
+                    placeholder="50"
+                    value={criteria.maxFloat || ''}
+                    onChange={(e) => setCriteria(prev => ({
+                      ...prev,
+                      maxFloat: e.target.value ? Number(e.target.value) : null
+                    }))}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground">Max Float %</label>
+                  <Input
+                    type="number"
+                    placeholder="50"
+                    value={criteria.maxFloatPercent || ''}
+                    onChange={(e) => setCriteria(prev => ({
+                      ...prev,
+                      maxFloatPercent: e.target.value ? Number(e.target.value) : null
+                    }))}
+                  />
+                </div>
+                <div>
                   <label className="text-xs text-muted-foreground">Sector</label>
                   <Select value={criteria.sector} onValueChange={(value) => setCriteria(prev => ({ ...prev, sector: value }))}>
                     <SelectTrigger>
@@ -245,14 +288,25 @@ export const StockScreener = () => {
                   <TableHead>Change</TableHead>
                   <TableHead>Change %</TableHead>
                   <TableHead>Volume</TableHead>
-                  <TableHead>Market Cap</TableHead>
+                  <TableHead>Float</TableHead>
+                  <TableHead>Float %</TableHead>
                   <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredStocks.map((stock) => (
                   <TableRow key={stock.symbol}>
-                    <TableCell className="font-medium">{stock.symbol}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        {stock.symbol}
+                        {stock.floatShares && stock.floatShares < 20 && (
+                          <Badge variant="secondary" className="text-xs bg-primary/10 text-primary">
+                            <Zap className="h-3 w-3 mr-1" />
+                            Low Float
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>${stock.price.toFixed(2)}</TableCell>
                     <TableCell className={stock.change >= 0 ? 'text-green-600' : 'text-red-600'}>
                       {stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}
@@ -261,7 +315,10 @@ export const StockScreener = () => {
                       {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
                     </TableCell>
                     <TableCell>{stock.volume.toLocaleString()}</TableCell>
-                    <TableCell>{formatMarketCap(stock.volume)}</TableCell>
+                    <TableCell>{formatFloat(stock.floatShares)}</TableCell>
+                    <TableCell>
+                      {stock.floatPercent ? `${stock.floatPercent.toFixed(1)}%` : 'N/A'}
+                    </TableCell>
                     <TableCell>
                       <Button
                         size="sm"

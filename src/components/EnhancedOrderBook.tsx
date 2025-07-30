@@ -106,9 +106,9 @@ export const EnhancedOrderBook = ({ symbol = 'SPY' }: OrderBookProps) => {
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-green-600" />
               <div>
-                <p className="text-xs text-muted-foreground">Best Bid</p>
+                <p className="text-xs text-foreground/70">Best Bid</p>
                 <p className="text-lg font-semibold">${bestBid?.price.toFixed(2)}</p>
-                <p className="text-xs text-muted-foreground">Size: {bestBid?.bidSize.toLocaleString()}</p>
+                <p className="text-xs text-foreground/70">Size: {bestBid?.bidSize.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -119,9 +119,9 @@ export const EnhancedOrderBook = ({ symbol = 'SPY' }: OrderBookProps) => {
             <div className="flex items-center gap-2">
               <ArrowUp className="h-4 w-4 text-red-600" />
               <div>
-                <p className="text-xs text-muted-foreground">Best Ask</p>
+                <p className="text-xs text-foreground/70">Best Ask</p>
                 <p className="text-lg font-semibold">${bestAsk?.price.toFixed(2)}</p>
-                <p className="text-xs text-muted-foreground">Size: {bestAsk?.askSize.toLocaleString()}</p>
+                <p className="text-xs text-foreground/70">Size: {bestAsk?.askSize.toLocaleString()}</p>
               </div>
             </div>
           </CardContent>
@@ -132,9 +132,9 @@ export const EnhancedOrderBook = ({ symbol = 'SPY' }: OrderBookProps) => {
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-blue-600" />
               <div>
-                <p className="text-xs text-muted-foreground">Spread</p>
+                <p className="text-xs text-foreground/70">Spread</p>
                 <p className="text-lg font-semibold">${spread.toFixed(2)}</p>
-                <p className="text-xs text-muted-foreground">{((spread / lastPrice) * 100).toFixed(3)}%</p>
+                <p className="text-xs text-foreground/70">{((spread / lastPrice) * 100).toFixed(3)}%</p>
               </div>
             </div>
           </CardContent>
@@ -145,9 +145,9 @@ export const EnhancedOrderBook = ({ symbol = 'SPY' }: OrderBookProps) => {
             <div className="flex items-center gap-2">
               <Volume2 className="h-4 w-4 text-purple-600" />
               <div>
-                <p className="text-xs text-muted-foreground">Total Volume</p>
+                <p className="text-xs text-foreground/70">Total Volume</p>
                 <p className="text-lg font-semibold">2.4M</p>
-                <p className="text-xs text-muted-foreground">+12.5% vs avg</p>
+                <p className="text-xs text-foreground/70">+12.5% vs avg</p>
               </div>
             </div>
           </CardContent>
@@ -195,7 +195,7 @@ export const EnhancedOrderBook = ({ symbol = 'SPY' }: OrderBookProps) => {
                           level.bidSize > 0 && level.askSize > 0 ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                         )}
                       >
-                        <TableCell className="text-xs text-muted-foreground">
+                        <TableCell className="text-xs text-foreground/80">
                           {level.marketMaker}
                         </TableCell>
                         <TableCell className={cn(
@@ -213,7 +213,7 @@ export const EnhancedOrderBook = ({ symbol = 'SPY' }: OrderBookProps) => {
                         )}>
                           {level.askSize > 0 ? level.askSize.toLocaleString() : '-'}
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
+                        <TableCell className="text-xs text-foreground/80">
                           {level.timestamp ? formatTime(level.timestamp) : '-'}
                         </TableCell>
                       </TableRow>
@@ -276,7 +276,7 @@ export const EnhancedOrderBook = ({ symbol = 'SPY' }: OrderBookProps) => {
                             {sale.side.toUpperCase()}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
+                        <TableCell className="text-xs text-foreground/80">
                           {sale.exchange}
                         </TableCell>
                       </TableRow>

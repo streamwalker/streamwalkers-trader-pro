@@ -47,6 +47,7 @@ interface StockData {
   position: number;
   volume: number;
   timestamp: Date;
+  exchange?: string;
 }
 
 interface PortfolioData {
@@ -330,6 +331,83 @@ class MarketDataService {
         timestamp: new Date()
       };
     });
+  }
+
+  // Get data for a specific symbol
+  async getStockDataBySymbol(symbol: string, exchange: string = 'NASDAQ'): Promise<StockData> {
+    const cacheKey = `stock_${symbol}_${exchange}`;
+    
+    return this.fetchWithCache(cacheKey, async () => {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 200 + 100));
+      
+      const basePrice = this.getBasePrice(symbol);
+      const change = (Math.random() - 0.5) * basePrice * 0.1;
+      const changePercent = (change / basePrice) * 100;
+      const volume = Math.floor(Math.random() * 1000000) + 100000;
+      const position = Math.floor(Math.random() * 100) + 10;
+      
+      return {
+        symbol,
+        companyName: this.getCompanyName(symbol),
+        price: basePrice + change,
+        change,
+        changePercent,
+        volume,
+        position,
+        marketValue: (basePrice + change) * position,
+        timestamp: new Date(),
+        exchange,
+      };
+    });
+  }
+
+  private getBasePrice(symbol: string): number {
+    // Base prices for different symbols
+    const basePrices: Record<string, number> = {
+      'AAPL': 185.00,
+      'GOOGL': 140.50,
+      'MSFT': 415.30,
+      'AMZN': 175.80,
+      'TSLA': 248.42,
+      'NVDA': 875.25,
+      'META': 514.75,
+      'NFLX': 486.20,
+      'CRCL': 32.15,
+      'CRWD': 285.75,
+      'MNTN': 8.25,
+      'PLTR': 62.80,
+      'QBTS': 4.15,
+      'QTUM': 3.25,
+      'QUBT': 18.50,
+      'RGTI': 12.75,
+    };
+    
+    // Return base price or generate a random price for unknown symbols
+    return basePrices[symbol] || Math.random() * 200 + 20;
+  }
+
+  private getCompanyName(symbol: string): string {
+    const companies: Record<string, string> = {
+      'AAPL': 'Apple Inc.',
+      'GOOGL': 'Alphabet Inc.',
+      'MSFT': 'Microsoft Corporation',
+      'AMZN': 'Amazon.com Inc.',
+      'TSLA': 'Tesla Inc.',
+      'NVDA': 'NVIDIA Corporation',
+      'META': 'Meta Platforms Inc.',
+      'NFLX': 'Netflix Inc.',
+      'CRCL': 'Circle Internet Financial',
+      'CRWD': 'CrowdStrike Holdings Inc.',
+      'MNTN': 'Everest Group Ltd.',
+      'PLTR': 'Palantir Technologies Inc.',
+      'QBTS': 'D-Wave Quantum Inc.',
+      'QTUM': 'Qtum',
+      'QUBT': 'Quantum Computing Inc.',
+      'RGTI': 'Rigetti Computing Inc.',
+    };
+    
+    return companies[symbol] || `${symbol} Corp.`;
   }
 
   getMarketSentiment(vixLevel: number, avgChange: number): string {

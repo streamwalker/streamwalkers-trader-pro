@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCandlestickData } from '@/hooks/useMarketData';
@@ -71,7 +72,11 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
   const [selectedSymbol, setSelectedSymbol] = useState(initialSymbol);
   const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
   
-  const { data: candlestickData, isLoading } = useCandlestickData(selectedSymbol, selectedTimeframe);
+  // Handle both futures and stock symbols
+  const isStockSymbol = selectedSymbol.startsWith('STOCK:');
+  const actualSymbol = isStockSymbol ? selectedSymbol.replace('STOCK:', '') : selectedSymbol;
+  
+  const { data: candlestickData, isLoading } = useCandlestickData(actualSymbol, selectedTimeframe);
 
   const chartData = candlestickData?.map(item => ({
     ...item,
@@ -129,15 +134,29 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
-          <Tabs value={selectedSymbol} onValueChange={setSelectedSymbol}>
-            <TabsList>
-              {symbols.map(symbol => (
-                <TabsTrigger key={symbol.value} value={symbol.value}>
-                  {symbol.value}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+        <Tabs value={selectedSymbol} onValueChange={setSelectedSymbol} className="w-auto">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="ES">ES</TabsTrigger>
+            <TabsTrigger value="NQ">NQ</TabsTrigger>
+            <TabsTrigger value="YM">YM</TabsTrigger>
+            <TabsTrigger value="RTY">RTY</TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
+        {/* Stock Symbol Input */}
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Enter stock symbol (e.g., AAPL)"
+            value={selectedSymbol.startsWith('STOCK:') ? selectedSymbol.replace('STOCK:', '') : ''}
+            onChange={(e) => {
+              const value = e.target.value.toUpperCase();
+              if (value) {
+                setSelectedSymbol(`STOCK:${value}`);
+              }
+            }}
+            className="w-48"
+          />
+        </div>
           
           <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
             <SelectTrigger className="w-20">

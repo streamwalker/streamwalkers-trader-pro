@@ -3,8 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { TrendingUp, TrendingDown, BarChart3, Target, AlertTriangle, RefreshCw, DollarSign, Activity } from "lucide-react";
-import { useFuturesData, useVIXData, useMarketConditions, useTradingSignals, useKeyLevels, usePortfolioData } from "@/hooks/useMarketData";
+import { TrendingUp, TrendingDown, BarChart3, Target, AlertTriangle, RefreshCw, DollarSign, Activity, X } from "lucide-react";
+import { AddSymbolDialog } from "@/components/AddSymbolDialog";
+import { useFuturesData, useVIXData, useMarketConditions, useTradingSignals, useKeyLevels } from "@/hooks/useMarketData";
+import { useWatchlistData, useWatchlistActions } from "@/hooks/useWatchlist";
 import MarketDataService from "@/services/MarketDataService";
 import { CustomAnalysisDialog } from "@/components/CustomAnalysisDialog";
 import { QuickAlertsSheet } from "@/components/QuickAlertsSheet";
@@ -17,13 +19,14 @@ const MarketAnalysis = () => {
   const { data: signals, isLoading: signalsLoading } = useTradingSignals();
   const { data: esLevels, isLoading: esLevelsLoading } = useKeyLevels('ES');
   const { data: nqLevels, isLoading: nqLevelsLoading } = useKeyLevels('NQ');
-  const { data: portfolioData, isLoading: portfolioLoading, refetch: refetchPortfolio } = usePortfolioData();
+  const { data: watchlistData, isLoading: watchlistLoading, refetch: refetchWatchlist } = useWatchlistData();
+  const { removeSymbol } = useWatchlistActions();
 
   const marketDataService = MarketDataService.getInstance();
 
   const handleRefresh = () => {
     refetchFutures();
-    refetchPortfolio();
+    refetchWatchlist();
   };
 
   const getMarketSentiment = () => {
@@ -110,97 +113,98 @@ const MarketAnalysis = () => {
         )}
       </div>
 
-      {/* Portfolio Analysis Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
-            Portfolio Analysis
-          </h2>
-          {portfolioData && (
-            <div className="flex items-center gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">Total Value:</span>
-                <span className="font-semibold">${portfolioData.totalValue.toLocaleString()}</span>
+      {/* Dynamic Watchlist */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <div>
+            <CardTitle className="text-lg font-semibold">Portfolio Watchlist</CardTitle>
+            <CardDescription>Track any stock symbol with live updates</CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            {watchlistLoading && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                Updating...
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-muted-foreground">Daily P&L:</span>
-                <span className={`font-semibold ${portfolioData.totalChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {portfolioData.totalChange >= 0 ? '+' : ''}${portfolioData.totalChange.toLocaleString()} 
-                  ({portfolioData.totalChangePercent >= 0 ? '+' : ''}{portfolioData.totalChangePercent.toFixed(2)}%)
-                </span>
-              </div>
+            )}
+            <AddSymbolDialog onSymbolAdded={refetchWatchlist} />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {watchlistLoading ? (
+            <div className="space-y-3">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
             </div>
-          )}
-        </div>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="h-4 w-4" />
-              Live Stock Positions
-            </CardTitle>
-            <CardDescription>Real-time portfolio tracking with live updates</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {portfolioLoading ? (
-              <div className="space-y-3">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 border rounded">
-                    <div className="space-y-1">
-                      <Skeleton className="h-4 w-16" />
-                      <Skeleton className="h-3 w-32" />
+          ) : watchlistData?.length ? (
+            <div className="space-y-4">
+              {/* Portfolio Summary */}
+              <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Value</p>
+                  <p className="text-2xl font-bold">
+                    ${watchlistData.reduce((sum, stock) => sum + stock.marketValue, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Daily P&L</p>
+                  <p className={`text-2xl font-bold ${watchlistData.reduce((sum, stock) => sum + (stock.change * stock.position), 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {watchlistData.reduce((sum, stock) => sum + (stock.change * stock.position), 0) >= 0 ? '+' : ''}
+                    ${watchlistData.reduce((sum, stock) => sum + (stock.change * stock.position), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Live Stock Positions */}
+              <div className="space-y-2">
+                <div className="grid grid-cols-7 gap-4 text-xs font-medium text-muted-foreground pb-2 border-b">
+                  <div>Symbol</div>
+                  <div>Exchange</div>
+                  <div>Price</div>
+                  <div>Change</div>
+                  <div>% Change</div>
+                  <div>Position</div>
+                  <div>Actions</div>
+                </div>
+                {watchlistData.map((stock) => (
+                  <div key={`${stock.symbol}-${stock.exchange || 'NASDAQ'}`} className="grid grid-cols-7 gap-4 text-sm py-2 border-b items-center">
+                    <div className="font-medium">{stock.symbol}</div>
+                    <div>
+                      <Badge variant="outline" className="text-xs">
+                        {stock.exchange || 'NASDAQ'}
+                      </Badge>
                     </div>
-                    <div className="space-y-1 text-right">
-                      <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-3 w-16" />
+                    <div>${stock.price.toFixed(2)}</div>
+                    <div className={stock.change >= 0 ? 'text-green-600' : 'text-red-600'}>
+                      {stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}
+                    </div>
+                    <div className={stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}>
+                      {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                    </div>
+                    <div>{stock.position} shares</div>
+                    <div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeSymbol(stock.symbol, stock.exchange || 'NASDAQ')}
+                        className="h-6 w-6 p-0 text-red-600 hover:text-red-700"
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
                     </div>
                   </div>
                 ))}
               </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Symbol</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead>Change</TableHead>
-                    <TableHead>% Change</TableHead>
-                    <TableHead>Position</TableHead>
-                    <TableHead className="text-right">Market Value</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {portfolioData?.stocks.map((stock, index) => (
-                    <TableRow key={index} className="hover:bg-muted/50">
-                      <TableCell className="font-medium">
-                        <div>
-                          <div className="font-semibold">{stock.symbol}</div>
-                          <div className="text-xs text-muted-foreground">{stock.companyName}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-mono">${stock.price.toFixed(2)}</TableCell>
-                      <TableCell className={`font-mono ${stock.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}
-                      </TableCell>
-                      <TableCell className={`font-mono ${stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
-                      </TableCell>
-                      <TableCell className="font-mono">{stock.position}</TableCell>
-                      <TableCell className="text-right font-mono">${stock.marketValue.toLocaleString()}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-            {portfolioData && (
-              <div className="mt-4 pt-4 border-t text-xs text-muted-foreground">
-                Last updated: {portfolioData.timestamp.toLocaleTimeString()} • Updates every 30 seconds
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-4">No symbols in your watchlist</p>
+              <AddSymbolDialog onSymbolAdded={refetchWatchlist} />
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>

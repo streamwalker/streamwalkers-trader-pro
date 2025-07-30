@@ -178,6 +178,15 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
               tickLine={false}
               tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
             />
+            <YAxis 
+              yAxisId="volume"
+              orientation="right"
+              domain={[0, 'dataMax']}
+              axisLine={false}
+              tickLine={false}
+              tick={false}
+              width={0}
+            />
             <Tooltip content={<CustomTooltip />} />
             
             {/* Support Lines */}

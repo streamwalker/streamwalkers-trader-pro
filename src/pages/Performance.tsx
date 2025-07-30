@@ -1,7 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TrendingUp, TrendingDown, Target, Calendar, Download } from "lucide-react";
+import { CapitalGrowthDashboard } from '@/components/CapitalGrowthDashboard';
+import { KellyCriterionCalculator } from '@/components/KellyCriterionCalculator';
+import { CompoundGrowthCalculator } from '@/components/CompoundGrowthCalculator';
+import { HighGrowthStrategies } from '@/components/HighGrowthStrategies';
 
 const Performance = () => {
   const performanceMetrics = [
@@ -28,25 +33,50 @@ const Performance = () => {
   ];
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Performance Analytics</h1>
-          <p className="text-muted-foreground">
-            Detailed analysis of your trading performance and statistics.
-          </p>
+          <h1 className="text-3xl font-bold">Performance & Growth Strategy</h1>
+          <p className="text-muted-foreground">Track performance and optimize for explosive capital growth</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex gap-2">
           <Button variant="outline" size="sm">
-            <Calendar className="mr-2 h-4 w-4" />
+            <Calendar className="h-4 w-4 mr-2" />
             Custom Period
           </Button>
           <Button size="sm">
-            <Download className="mr-2 h-4 w-4" />
+            <Download className="h-4 w-4 mr-2" />
             Export Report
           </Button>
         </div>
       </div>
+
+      <Tabs defaultValue="growth" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="growth">Capital Growth</TabsTrigger>
+          <TabsTrigger value="strategies">High-Growth Strategies</TabsTrigger>
+          <TabsTrigger value="performance">Performance</TabsTrigger>
+          <TabsTrigger value="calculator">Growth Calculator</TabsTrigger>
+          <TabsTrigger value="kelly">Position Sizing</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="growth" className="space-y-6">
+          <CapitalGrowthDashboard />
+        </TabsContent>
+
+        <TabsContent value="strategies" className="space-y-6">
+          <HighGrowthStrategies />
+        </TabsContent>
+
+        <TabsContent value="calculator" className="space-y-6">
+          <CompoundGrowthCalculator />
+        </TabsContent>
+
+        <TabsContent value="kelly" className="space-y-6">
+          <KellyCriterionCalculator />
+        </TabsContent>
+
+        <TabsContent value="performance" className="space-y-6">
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {performanceMetrics.map((metric, index) => (
@@ -205,6 +235,8 @@ const Performance = () => {
           </CardContent>
         </Card>
       </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

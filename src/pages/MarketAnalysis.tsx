@@ -32,7 +32,7 @@ const MarketAnalysis = () => {
   const getMarketSentiment = () => {
     if (!vixData || !futuresData) return 'Loading...';
     const avgChange = futuresData.reduce((sum, item) => sum + item.changePercent, 0) / futuresData.length;
-    return marketDataService.getMarketSentiment(vixData.value, avgChange);
+    return marketDataService.getMarketSentiment(vixData.current, avgChange);
   };
 
   return (
@@ -92,7 +92,7 @@ const MarketAnalysis = () => {
           marketConditions?.map((condition, index) => (
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{condition.metric}</CardTitle>
+                <CardTitle className="text-sm font-medium">{condition.name}</CardTitle>
                 {condition.trend === "up" ? (
                   <TrendingUp className="h-4 w-4 text-green-500" />
                 ) : (
@@ -238,7 +238,7 @@ const MarketAnalysis = () => {
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{signal.symbol}</span>
                         <Badge 
-                          variant={signal.signal === "Buy" ? "default" : signal.signal === "Sell" ? "destructive" : "secondary"}
+                          variant={signal.signal === "buy" ? "default" : signal.signal === "sell" ? "destructive" : "secondary"}
                         >
                           {signal.signal}
                         </Badge>

@@ -1,5 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import MarketDataService, { FuturesData, MarketCondition, VIXData, TradingSignal, CandlestickData, StockData, PortfolioData } from '@/services/MarketDataService';
+import { QuoteData } from '@/services/LiveDataProvider';
 
 const marketDataService = MarketDataService.getInstance();
 
@@ -73,4 +75,106 @@ export const usePortfolioData = () => {
     refetchInterval: 30000, // Refetch every 30 seconds
     staleTime: 25000, // Consider data stale after 25 seconds
   });
+};
+
+// Real-time data hooks with WebSocket subscriptions
+export const useRealTimeQuote = (symbol: string) => {
+  const [quote, setQuote] = useState<QuoteData | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!symbol) return;
+
+    const unsubscribe = marketDataService.subscribeToSymbol(symbol, (data: QuoteData) => {
+      setQuote(data);
+      setIsConnected(true);
+      
+      // Update React Query cache with real-time data
+      queryClient.setQueryData(['quote', symbol], data);
+      
+      // Invalidate related queries to trigger refetch
+      queryClient.invalidateQueries({ queryKey: ['futuresData'] });
+      queryClient.invalidateQueries({ queryKey: ['stockData'] });
+    });
+
+    return () => {
+      unsubscribe();
+      setIsConnected(false);
+    };
+  }, [symbol, queryClient]);
+
+  return { quote, isConnected };
+};
+
+export const useRealTimeQuotes = (symbols: string[]) => {
+  const [quotes, setQuotes] = useState<{ [symbol: string]: QuoteData }>({});
+  const [isConnected, setIsConnected] = useState(false);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!symbols.length) return;
+
+    const quotesMap: { [symbol: string]: QuoteData } = {};
+
+    const unsubscribe = marketDataService.subscribeToMultipleSymbols(symbols, (data: QuoteData) => {
+      quotesMap[data.symbol] = data;
+      setQuotes({ ...quotesMap });
+      setIsConnected(true);
+      
+      // Update React Query cache
+      queryClient.setQueryData(['quote', data.symbol], data);
+      
+      // Invalidate related queries
+      queryClient.invalidateQueries({ queryKey: ['futuresData'] });
+      queryClient.invalidateQueries({ queryKey: ['stockData'] });
+      queryClient.invalidateQueries({ queryKey: ['portfolioData'] });
+    });
+
+    return () => {
+      unsubscribe();
+      setIsConnected(false);
+    };
+  }, [symbols.join(','), queryClient]);
+
+  return { quotes, isConnected };
+};
+
+// Connection status hook
+export const useMarketDataConnection = () => {
+  const [connectionStatus, setConnectionStatus] = useState(marketDataService.getConnectionStatus());
+  const [marketStatus, setMarketStatus] = useState(marketDataService.getMarketStatus());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setConnectionStatus(marketDataService.getConnectionStatus());
+      setMarketStatus(marketDataService.getMarketStatus());
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return { connectionStatus, marketStatus };
+};
+
+// Enhanced hook for live market data with fallback
+export const useLiveMarketData = () => {
+  const futuresData = useFuturesData();
+  const vixData = useVIXData();
+  const marketConditions = useMarketConditions();
+  const connection = useMarketDataConnection();
+  
+  return {
+    ...futuresData,
+    vixData: vixData.data,
+    marketConditions: marketConditions.data,
+    connectionStatus: connection.connectionStatus,
+    marketStatus: connection.marketStatus,
+    isLive: connection.connectionStatus.isConnected,
+    lastUpdated: Math.max(
+      futuresData.dataUpdatedAt || 0,
+      vixData.dataUpdatedAt || 0,
+      marketConditions.dataUpdatedAt || 0
+    )
+  };
 };

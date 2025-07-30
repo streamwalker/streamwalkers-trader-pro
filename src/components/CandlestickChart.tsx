@@ -84,8 +84,8 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
 
   const chartData = candlestickData?.map(item => ({
     ...item,
-    time: new Date(item.time).getTime(),
-    formattedTime: format(new Date(item.time), selectedTimeframe === '1min' || selectedTimeframe === '5min' ? 'HH:mm' : 'MMM dd'),
+    time: new Date(item.timestamp).getTime(),
+    formattedTime: format(new Date(item.timestamp), selectedTimeframe === '1min' || selectedTimeframe === '5min' ? 'HH:mm' : 'MMM dd'),
   })) || [];
 
   const CustomTooltip = ({ active, payload, label }: any) => {

@@ -93,7 +93,7 @@ const MarketAnalysis = () => {
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{condition.name}</CardTitle>
-                {condition.trend === "up" ? (
+                {condition.status === "bullish" ? (
                   <TrendingUp className="h-4 w-4 text-green-500" />
                 ) : (
                   <TrendingDown className="h-4 w-4 text-red-500" />
@@ -102,10 +102,10 @@ const MarketAnalysis = () => {
               <CardContent>
                 <div className="text-2xl font-bold">{condition.value}</div>
                 <Badge 
-                  variant={condition.color === "green" ? "default" : "secondary"}
+                  variant={condition.status === "bullish" ? "default" : "secondary"}
                   className="mt-2"
                 >
-                  {condition.trend === "up" ? "Positive" : "Negative"}
+                  {condition.status === "bullish" ? "Bullish" : condition.status === "bearish" ? "Bearish" : "Neutral"}
                 </Badge>
               </CardContent>
             </Card>
@@ -245,7 +245,7 @@ const MarketAnalysis = () => {
                         <Badge variant="outline">{signal.strength}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        Entry: ${signal.price.toFixed(2)} | Target: ${signal.target.toFixed(2)}
+                        Entry: ${signal.entryPrice.toFixed(2)} | Target: ${signal.targetPrice.toFixed(2)}
                       </div>
                     </div>
                     <div className="text-right">
@@ -345,7 +345,7 @@ const MarketAnalysis = () => {
                     <Skeleton className="h-6 w-20" />
                   ) : (
                     <Badge variant="secondary">
-                      {vixData?.value} ({vixData?.level})
+                      {vixData?.current}
                     </Badge>
                   )}
                 </div>

@@ -39,14 +39,14 @@ const RiskManagement = () => {
     if (!futuresData || !vixData || !marketConditions) return null;
     
     const avgVolatility = futuresData.reduce((sum, item) => sum + Math.abs(item.changePercent), 0) / futuresData.length;
-    const marketStress = vixData.value > 25 ? 'High' : vixData.value > 20 ? 'Medium' : 'Low';
+    const marketStress = vixData.current > 25 ? 'High' : vixData.current > 20 ? 'Medium' : 'Low';
     const overallRisk = avgVolatility > 1.5 ? 'High' : avgVolatility > 0.75 ? 'Medium' : 'Low';
     
     return {
       marketStress,
       avgVolatility: avgVolatility.toFixed(2),
       overallRisk,
-      vixLevel: vixData.value,
+      vixLevel: vixData.current,
       recommendation: overallRisk === 'High' ? 'Reduce position sizes' : overallRisk === 'Medium' ? 'Standard risk management' : 'Favorable conditions'
     };
   };
@@ -188,7 +188,7 @@ const RiskManagement = () => {
                     <div className="grid grid-cols-2 gap-3">
                       {marketConditions?.map((condition, index) => (
                         <div key={index} className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{condition.metric}</span>
+                          <span className="text-sm font-medium">{condition.name}</span>
                           <Badge variant="outline">{condition.value}</Badge>
                         </div>
                       ))}

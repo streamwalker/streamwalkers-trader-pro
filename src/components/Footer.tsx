@@ -1,6 +1,7 @@
 import { TrendingUp, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
+  console.log('Footer component loaded successfully');
   return (
     <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

@@ -183,7 +183,7 @@ const OrderFlow = () => {
               <div className="flex items-center gap-6">
                 <div>
                   <h2 className="text-2xl font-bold">{selectedSymbol}</h2>
-                  <p className="text-sm text-foreground/70">{symbolOptions.find(s => s.value === selectedSymbol)?.label}</p>
+                  <p className="text-sm text-black dark:text-white">{symbolOptions.find(s => s.value === selectedSymbol)?.label}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold">{currentSymbolData.price.toFixed(2)}</div>
@@ -196,15 +196,15 @@ const OrderFlow = () => {
               </div>
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <div className="text-sm text-foreground/70">Volume</div>
+                  <div className="text-sm text-black dark:text-white">Volume</div>
                   <div className="font-semibold">{(Math.abs(currentSymbolData.change) * 1000).toLocaleString()}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-foreground/70">High</div>
+                  <div className="text-sm text-black dark:text-white">High</div>
                   <div className="font-semibold">{(currentSymbolData.price + Math.abs(currentSymbolData.change)).toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-foreground/70">Low</div>
+                  <div className="text-sm text-black dark:text-white">Low</div>
                   <div className="font-semibold">{(currentSymbolData.price - Math.abs(currentSymbolData.change)).toFixed(2)}</div>
                 </div>
               </div>

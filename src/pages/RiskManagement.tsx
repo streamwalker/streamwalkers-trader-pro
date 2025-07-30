@@ -3,14 +3,21 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, AlertTriangle, Calculator, TrendingDown } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Shield, AlertTriangle, Calculator, TrendingDown, Activity, Target, Zap } from "lucide-react";
 import { useState } from "react";
+import { useFuturesData, useVIXData, useMarketConditions } from "@/hooks/useMarketData";
 
 const RiskManagement = () => {
   const [accountSize, setAccountSize] = useState("100000");
   const [riskPercent, setRiskPercent] = useState("2");
   const [entryPrice, setEntryPrice] = useState("4567.25");
   const [stopLoss, setStopLoss] = useState("4540.00");
+
+  // Fetch live market data
+  const { data: futuresData, isLoading: futuresLoading } = useFuturesData();
+  const { data: vixData, isLoading: vixLoading } = useVIXData();
+  const { data: marketConditions, isLoading: conditionsLoading } = useMarketConditions();
 
   const calculatePositionSize = () => {
     const account = parseFloat(accountSize);
@@ -26,6 +33,25 @@ const RiskManagement = () => {
   };
 
   const { riskAmount, pointRisk, positionSize } = calculatePositionSize();
+
+  // Calculate live risk assessment data
+  const getLiveRiskAssessment = () => {
+    if (!futuresData || !vixData || !marketConditions) return null;
+    
+    const avgVolatility = futuresData.reduce((sum, item) => sum + Math.abs(item.changePercent), 0) / futuresData.length;
+    const marketStress = vixData.value > 25 ? 'High' : vixData.value > 20 ? 'Medium' : 'Low';
+    const overallRisk = avgVolatility > 1.5 ? 'High' : avgVolatility > 0.75 ? 'Medium' : 'Low';
+    
+    return {
+      marketStress,
+      avgVolatility: avgVolatility.toFixed(2),
+      overallRisk,
+      vixLevel: vixData.value,
+      recommendation: overallRisk === 'High' ? 'Reduce position sizes' : overallRisk === 'Medium' ? 'Standard risk management' : 'Favorable conditions'
+    };
+  };
+
+  const liveAssessment = getLiveRiskAssessment();
 
   const riskMetrics = [
     { label: "Current Drawdown", value: "-3.2%", status: "good", icon: TrendingDown },
@@ -43,10 +69,140 @@ const RiskManagement = () => {
             Position sizing, risk calculation, and portfolio protection tools.
           </p>
         </div>
-        <Button>
-          <Shield className="mr-2 h-4 w-4" />
-          Risk Assessment
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>
+              <Shield className="mr-2 h-4 w-4" />
+              Risk Assessment
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5" />
+                Live Risk Assessment
+              </DialogTitle>
+              <DialogDescription>
+                Real-time market risk analysis based on current conditions
+              </DialogDescription>
+            </DialogHeader>
+            
+            {futuresLoading || vixLoading || conditionsLoading ? (
+              <div className="space-y-4">
+                <div className="animate-pulse">
+                  <div className="h-20 bg-muted rounded-lg"></div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="animate-pulse">
+                    <div className="h-16 bg-muted rounded-lg"></div>
+                  </div>
+                  <div className="animate-pulse">
+                    <div className="h-16 bg-muted rounded-lg"></div>
+                  </div>
+                </div>
+              </div>
+            ) : liveAssessment ? (
+              <div className="space-y-6">
+                {/* Overall Risk Summary */}
+                <Card className="border-l-4" style={{ borderLeftColor: 
+                  liveAssessment.overallRisk === 'High' ? 'hsl(var(--destructive))' : 
+                  liveAssessment.overallRisk === 'Medium' ? 'hsl(var(--warning))' : 
+                  'hsl(var(--success))' 
+                }}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <span>Market Risk Level</span>
+                      <Badge variant={
+                        liveAssessment.overallRisk === 'High' ? 'destructive' : 
+                        liveAssessment.overallRisk === 'Medium' ? 'secondary' : 
+                        'default'
+                      }>
+                        {liveAssessment.overallRisk}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      <strong>Recommendation:</strong> {liveAssessment.recommendation}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Live Metrics Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">VIX Level</CardTitle>
+                      <Zap className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{liveAssessment.vixLevel}</div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Market Stress: {liveAssessment.marketStress}
+                      </p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Avg Volatility</CardTitle>
+                      <Target className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{liveAssessment.avgVolatility}%</div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Futures price movement
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Live Futures Data */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Live Futures</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {futuresData?.map((future) => (
+                        <div key={future.symbol} className="flex items-center justify-between">
+                          <span className="font-medium">{future.symbol}</span>
+                          <div className="text-right">
+                            <div className="font-mono text-sm">{future.price.toFixed(2)}</div>
+                            <div className={`text-xs ${future.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {future.changePercent >= 0 ? '+' : ''}{future.changePercent.toFixed(2)}%
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Market Conditions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Market Conditions</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-3">
+                      {marketConditions?.map((condition, index) => (
+                        <div key={index} className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{condition.metric}</span>
+                          <Badge variant="outline">{condition.value}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground">Unable to load risk assessment data</p>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

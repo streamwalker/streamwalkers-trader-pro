@@ -7,6 +7,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCandlestickData } from '@/hooks/useMarketData';
 import { ComposedChart, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip, Bar } from 'recharts';
 import { format } from 'date-fns';
+import { Plus } from 'lucide-react';
+import { useWatchlistActions } from '@/hooks/useWatchlist';
 
 interface CandlestickChartProps {
   symbol: string;
@@ -71,6 +73,8 @@ const Candlestick = (props: any) => {
 export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], resistanceLevels = [] }: CandlestickChartProps) => {
   const [selectedSymbol, setSelectedSymbol] = useState(initialSymbol);
   const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
+  const [customSymbol, setCustomSymbol] = useState('');
+  const { addSymbol } = useWatchlistActions();
   
   // Handle both futures and stock symbols
   const isStockSymbol = selectedSymbol.startsWith('STOCK:');
@@ -143,19 +147,30 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
           </TabsList>
         </Tabs>
         
-        {/* Stock Symbol Input */}
+        {/* Stock Symbol Input with Add to Watchlist */}
         <div className="flex items-center gap-2">
           <Input
-            placeholder="Enter stock symbol (e.g., AAPL)"
-            value={selectedSymbol.startsWith('STOCK:') ? selectedSymbol.replace('STOCK:', '') : ''}
+            placeholder="Enter any stock symbol"
+            value={customSymbol}
             onChange={(e) => {
               const value = e.target.value.toUpperCase();
+              setCustomSymbol(value);
               if (value) {
                 setSelectedSymbol(`STOCK:${value}`);
               }
             }}
             className="w-48"
           />
+          {customSymbol && (
+            <Button
+              size="sm"
+              onClick={() => addSymbol(customSymbol, 'NASDAQ')}
+              className="gap-1"
+            >
+              <Plus className="h-3 w-3" />
+              Add to Watchlist
+            </Button>
+          )}
         </div>
           
           <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>

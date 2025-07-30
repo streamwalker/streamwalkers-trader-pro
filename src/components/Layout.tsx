@@ -18,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
           <header className="h-16 border-b border-border bg-background/95 backdrop-blur-sm sticky top-0 z-40">
             <div className="flex items-center justify-between h-full px-4">
               <div className="flex items-center gap-4">
-                <SidebarTrigger className="md:hidden p-2 rounded-md hover:bg-muted/50 backdrop-blur-sm">
+                <SidebarTrigger className="p-2 rounded-md hover:bg-muted/50 backdrop-blur-sm">
                   <Menu className="h-5 w-5" />
                 </SidebarTrigger>
                 

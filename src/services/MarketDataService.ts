@@ -37,6 +37,26 @@ interface CandlestickData {
   volume: number;
 }
 
+interface StockData {
+  symbol: string;
+  companyName: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  marketValue: number;
+  position: number;
+  volume: number;
+  timestamp: Date;
+}
+
+interface PortfolioData {
+  stocks: StockData[];
+  totalValue: number;
+  totalChange: number;
+  totalChangePercent: number;
+  timestamp: Date;
+}
+
 class MarketDataService {
   private static instance: MarketDataService;
   private cache = new Map<string, { data: any; timestamp: number }>();
@@ -259,6 +279,59 @@ class MarketDataService {
     }
   }
 
+  async getStockData(): Promise<StockData[]> {
+    return this.fetchWithCache('stocks', async () => {
+      const stocksConfig = [
+        { symbol: 'CRCL', companyName: 'Curacyte Inc', basePrice: 15.42, position: 100 },
+        { symbol: 'CRWD', companyName: 'CrowdStrike Holdings', basePrice: 342.85, position: 50 },
+        { symbol: 'MNTN', companyName: 'Everest Networks', basePrice: 28.67, position: 200 },
+        { symbol: 'PLTR', companyName: 'Palantir Technologies', basePrice: 75.23, position: 150 },
+        { symbol: 'QBTS', companyName: 'D-Wave Quantum', basePrice: 4.89, position: 500 },
+        { symbol: 'QTUM', companyName: 'Qtum', basePrice: 3.21, position: 1000 },
+        { symbol: 'QUBT', companyName: 'Quantum Computing', basePrice: 12.45, position: 300 },
+        { symbol: 'RGTI', companyName: 'Rigetti Computing', basePrice: 9.87, position: 250 },
+        { symbol: 'TSLA', companyName: 'Tesla Inc', basePrice: 436.58, position: 25 }
+      ];
+
+      return stocksConfig.map(stock => {
+        const change = (Math.random() - 0.5) * stock.basePrice * 0.05; // ±2.5% variation
+        const price = stock.basePrice + change;
+        const changePercent = (change / stock.basePrice) * 100;
+        const marketValue = price * stock.position;
+
+        return {
+          symbol: stock.symbol,
+          companyName: stock.companyName,
+          price: Number(price.toFixed(2)),
+          change: Number(change.toFixed(2)),
+          changePercent: Number(changePercent.toFixed(2)),
+          marketValue: Number(marketValue.toFixed(2)),
+          position: stock.position,
+          volume: Math.floor(Math.random() * 1000000) + 100000,
+          timestamp: new Date()
+        };
+      });
+    });
+  }
+
+  async getPortfolioData(): Promise<PortfolioData> {
+    return this.fetchWithCache('portfolio', async () => {
+      const stocks = await this.getStockData();
+      
+      const totalValue = stocks.reduce((sum, stock) => sum + stock.marketValue, 0);
+      const totalChange = stocks.reduce((sum, stock) => sum + (stock.change * stock.position), 0);
+      const totalChangePercent = stocks.reduce((sum, stock) => sum + stock.changePercent, 0) / stocks.length;
+
+      return {
+        stocks,
+        totalValue: Number(totalValue.toFixed(2)),
+        totalChange: Number(totalChange.toFixed(2)),
+        totalChangePercent: Number(totalChangePercent.toFixed(2)),
+        timestamp: new Date()
+      };
+    });
+  }
+
   getMarketSentiment(vixLevel: number, avgChange: number): string {
     if (vixLevel > 25) return 'Fearful';
     if (vixLevel < 15 && avgChange > 0) return 'Bullish';
@@ -268,4 +341,4 @@ class MarketDataService {
 }
 
 export default MarketDataService;
-export type { FuturesData, MarketCondition, VIXData, TradingSignal, CandlestickData };
+export type { FuturesData, MarketCondition, VIXData, TradingSignal, CandlestickData, StockData, PortfolioData };

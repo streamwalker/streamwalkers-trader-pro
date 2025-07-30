@@ -2,8 +2,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp, TrendingDown, BarChart3, Target, AlertTriangle, RefreshCw } from "lucide-react";
-import { useFuturesData, useVIXData, useMarketConditions, useTradingSignals, useKeyLevels } from "@/hooks/useMarketData";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TrendingUp, TrendingDown, BarChart3, Target, AlertTriangle, RefreshCw, DollarSign, Activity } from "lucide-react";
+import { useFuturesData, useVIXData, useMarketConditions, useTradingSignals, useKeyLevels, usePortfolioData } from "@/hooks/useMarketData";
 import MarketDataService from "@/services/MarketDataService";
 import { CustomAnalysisDialog } from "@/components/CustomAnalysisDialog";
 import { QuickAlertsSheet } from "@/components/QuickAlertsSheet";
@@ -16,11 +17,13 @@ const MarketAnalysis = () => {
   const { data: signals, isLoading: signalsLoading } = useTradingSignals();
   const { data: esLevels, isLoading: esLevelsLoading } = useKeyLevels('ES');
   const { data: nqLevels, isLoading: nqLevelsLoading } = useKeyLevels('NQ');
+  const { data: portfolioData, isLoading: portfolioLoading, refetch: refetchPortfolio } = usePortfolioData();
 
   const marketDataService = MarketDataService.getInstance();
 
   const handleRefresh = () => {
     refetchFutures();
+    refetchPortfolio();
   };
 
   const getMarketSentiment = () => {
@@ -105,6 +108,98 @@ const MarketAnalysis = () => {
             </Card>
           ))
         )}
+      </div>
+
+      {/* Portfolio Analysis Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold flex items-center gap-2">
+            <DollarSign className="h-5 w-5" />
+            Portfolio Analysis
+          </h2>
+          {portfolioData && (
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">Total Value:</span>
+                <span className="font-semibold">${portfolioData.totalValue.toLocaleString()}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">Daily P&L:</span>
+                <span className={`font-semibold ${portfolioData.totalChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {portfolioData.totalChange >= 0 ? '+' : ''}${portfolioData.totalChange.toLocaleString()} 
+                  ({portfolioData.totalChangePercent >= 0 ? '+' : ''}{portfolioData.totalChangePercent.toFixed(2)}%)
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              Live Stock Positions
+            </CardTitle>
+            <CardDescription>Real-time portfolio tracking with live updates</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {portfolioLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 border rounded">
+                    <div className="space-y-1">
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                    <div className="space-y-1 text-right">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-3 w-16" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Symbol</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Change</TableHead>
+                    <TableHead>% Change</TableHead>
+                    <TableHead>Position</TableHead>
+                    <TableHead className="text-right">Market Value</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {portfolioData?.stocks.map((stock, index) => (
+                    <TableRow key={index} className="hover:bg-muted/50">
+                      <TableCell className="font-medium">
+                        <div>
+                          <div className="font-semibold">{stock.symbol}</div>
+                          <div className="text-xs text-muted-foreground">{stock.companyName}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono">${stock.price.toFixed(2)}</TableCell>
+                      <TableCell className={`font-mono ${stock.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}
+                      </TableCell>
+                      <TableCell className={`font-mono ${stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                      </TableCell>
+                      <TableCell className="font-mono">{stock.position}</TableCell>
+                      <TableCell className="text-right font-mono">${stock.marketValue.toLocaleString()}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+            {portfolioData && (
+              <div className="mt-4 pt-4 border-t text-xs text-muted-foreground">
+                Last updated: {portfolioData.timestamp.toLocaleTimeString()} • Updates every 30 seconds
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

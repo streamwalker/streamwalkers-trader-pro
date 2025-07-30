@@ -2,11 +2,36 @@ import Hero from "@/components/Hero";
 import TradingTools from "@/components/TradingTools";
 import PricingSection from "@/components/PricingSection";
 import Footer from "@/components/Footer";
+import { JarvisChat } from "@/components/JarvisChat";
+import { MarketInsights } from "@/components/MarketInsights";
 
 const Index = () => {
   return (
     <div className="bg-background">
       <Hero />
+      
+      {/* Jarvis Trading Assistant */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-2">Meet Jarvis</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Your AI-powered trading assistant that provides real-time market analysis, 
+              trading recommendations, and risk management insights.
+            </p>
+          </div>
+          
+          <div className="grid lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <JarvisChat />
+            </div>
+            <div className="space-y-4">
+              <MarketInsights />
+            </div>
+          </div>
+        </div>
+      </section>
+      
       <TradingTools />
       <PricingSection />
       <Footer />

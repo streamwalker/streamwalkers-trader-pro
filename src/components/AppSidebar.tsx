@@ -12,7 +12,8 @@ import {
   FileText,
   Home,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Search
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
@@ -62,6 +63,12 @@ const tradingToolsItems = [
     url: "/tools/analysis", 
     icon: BarChart3,
     badge: null
+  },
+  { 
+    title: "Stock Screener", 
+    url: "/screener", 
+    icon: Search,
+    badge: "New"
   },
   { 
     title: "Risk Management", 

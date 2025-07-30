@@ -92,7 +92,11 @@ const mockIndicators: Indicator[] = [
   }
 ];
 
-export const TechnicalIndicators = () => {
+interface TechnicalIndicatorsProps {
+  symbol?: string;
+}
+
+export const TechnicalIndicators = ({ symbol = "ES" }: TechnicalIndicatorsProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
 
@@ -295,19 +299,35 @@ export const TechnicalIndicators = () => {
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => window.parent.postMessage({ type: 'ACTIVATE_TREND_ANALYSIS', symbol }, '*')}
+            >
               <TrendingUp className="h-3 w-3 mr-1" />
               Trend Analysis
             </Button>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => window.parent.postMessage({ type: 'ACTIVATE_MOMENTUM_SCAN', symbol }, '*')}
+            >
               <Activity className="h-3 w-3 mr-1" />
               Momentum Scan
             </Button>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => window.parent.postMessage({ type: 'DETECT_SUPPORT_RESISTANCE', symbol }, '*')}
+            >
               <Target className="h-3 w-3 mr-1" />
               Support/Resistance
             </Button>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => window.parent.postMessage({ type: 'TOGGLE_SIGNAL_ALERTS', symbol }, '*')}
+            >
               <Zap className="h-3 w-3 mr-1" />
               Signal Alerts
             </Button>

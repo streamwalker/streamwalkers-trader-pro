@@ -126,8 +126,8 @@ export const JarvisChat = () => {
       });
 
       if (error) {
-        console.error('Supabase function error:', error);
-        throw error;
+        console.error('Jarvis error:', error);
+        throw new Error(error.message || 'Failed to get response from Jarvis');
       }
 
       console.log('Jarvis response:', data);
@@ -153,19 +153,21 @@ export const JarvisChat = () => {
 
     } catch (error) {
       console.error('Error sending message:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Sorry, I encountered an error. Please try again.';
+      
       toast({
-        title: "Error",
-        description: "Failed to get response from Jarvis. Please try again.",
+        title: "Jarvis Error",
+        description: errorMessage,
         variant: "destructive",
       });
 
-      const errorMessage: Message = {
+      const assistantErrorMessage: Message = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: "I'm sorry, I'm having trouble processing your request right now. Please try again in a moment.",
+        content: errorMessage,
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, assistantErrorMessage]);
     } finally {
       setIsLoading(false);
     }

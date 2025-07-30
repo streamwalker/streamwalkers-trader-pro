@@ -41,7 +41,7 @@ serve(async (req) => {
 
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
+      throw new Error('OpenAI API key not configured. Please contact support.');
     }
 
     // Prepare context with market data
@@ -73,7 +73,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4.1-2025-04-14',
         messages: [
           { 
             role: 'system', 
@@ -91,8 +91,17 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
-      throw new Error(`OpenAI API error: ${response.status} ${errorText}`);
+      console.error('OpenAI API error:', response.status, errorText);
+      
+      if (response.status === 429) {
+        throw new Error('I\'m experiencing high demand right now. Please try again in a few moments.');
+      } else if (response.status === 401) {
+        throw new Error('API authentication failed. Please contact support.');
+      } else if (response.status >= 500) {
+        throw new Error('AI service is temporarily unavailable. Please try again shortly.');
+      } else {
+        throw new Error(`AI service error (${response.status}). Please try again.`);
+      }
     }
 
     const data = await response.json();

@@ -5,6 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
+import { TutorialProvider } from "./components/tutorial/TutorialProvider";
+import { TutorialManager } from "./components/tutorial/TutorialManager";
 import Index from "./pages/Index";
 import BusinessPlan from "./pages/BusinessPlan";
 import Analytics from "./pages/Analytics";
@@ -31,10 +33,12 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Layout>
+      <TutorialProvider>
+        <Toaster />
+        <Sonner />
+        <TutorialManager />
+        <BrowserRouter>
+          <Layout>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/business-plan" element={<BusinessPlan />} />
@@ -60,6 +64,7 @@ const App = () => (
           </Routes>
         </Layout>
       </BrowserRouter>
+      </TutorialProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

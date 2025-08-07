@@ -34,12 +34,12 @@ interface Recommendation {
   timeframe?: string;
 }
 
-export const EnhancedJarvisChat = () => {
+export const EnhancedEchelonChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       type: 'assistant',
-      content: "Hello! I'm Jarvis 2.0, your enhanced AI trading assistant specialized in explosive growth strategies. I can analyze high-frequency opportunities, crypto futures, momentum patterns, and provide real-time position sizing for your $27K → $20M journey. What trading opportunities would you like to explore?",
+      content: "Hello! I'm Echelon 2.0, your enhanced AI trading assistant specialized in explosive growth strategies. I can analyze high-frequency opportunities, crypto futures, momentum patterns, and provide real-time position sizing for your $27K → $20M journey. What trading opportunities would you like to explore?",
       timestamp: new Date(),
     }
   ]);
@@ -160,7 +160,7 @@ Please provide specific, actionable trading recommendations with:
 
 Focus on explosive growth opportunities: crypto futures, momentum breakouts, scalping setups, and high-volatility plays.`;
 
-      const { data, error } = await supabase.functions.invoke('jarvis-chat', {
+      const { data, error } = await supabase.functions.invoke('echelon-chat', {
         body: {
           message: enhancedPrompt,
           marketData: {
@@ -180,7 +180,7 @@ Focus on explosive growth opportunities: crypto futures, momentum breakouts, sca
       });
 
       if (error) {
-        throw new Error(error.message || 'Failed to get response from Jarvis');
+        throw new Error(error.message || 'Failed to get response from Echelon');
       }
 
       // Get additional opportunities
@@ -208,7 +208,7 @@ Focus on explosive growth opportunities: crypto futures, momentum breakouts, sca
         const totalOpportunities = recommendations.length + cryptoOpportunities.length + patternSetups.length;
         toast({
           title: "🚀 High-Growth Opportunities Detected",
-          description: `Jarvis found ${totalOpportunities} explosive trading setups ready for execution`,
+          description: `Echelon found ${totalOpportunities} explosive trading setups ready for execution`,
         });
       }
 
@@ -217,7 +217,7 @@ Focus on explosive growth opportunities: crypto futures, momentum breakouts, sca
       const errorMessage = error instanceof Error ? error.message : 'Sorry, I encountered an error. Please try again.';
       
       toast({
-        title: "Jarvis Error",
+        title: "Echelon Error",
         description: errorMessage,
         variant: "destructive",
       });
@@ -280,7 +280,7 @@ Focus on explosive growth opportunities: crypto futures, momentum breakouts, sca
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Bot className="w-5 h-5" />
-          Jarvis 2.0 - High-Growth Trading AI
+          Echelon 2.0 - High-Growth Trading AI
           <Badge variant="default" className="ml-auto bg-gradient-to-r from-green-500 to-blue-500">
             <Zap className="w-3 h-3 mr-1" />
             Phase II Enhanced
@@ -417,23 +417,25 @@ Focus on explosive growth opportunities: crypto futures, momentum breakouts, sca
                         <Separator />
                         <div className="text-sm font-medium flex items-center gap-2">
                           <BarChart3 className="w-4 h-4" />
-                          Technical Patterns:
+                          Pattern Recognition Alerts:
                         </div>
                         <div className="grid gap-2">
                           {message.patterns.map((pattern, index) => (
                             <div key={index} className="p-3 border rounded-lg bg-card">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center gap-2">
-                                  <Badge className={`${getActionColor(pattern.signal)} text-white`}>
-                                    {pattern.signal.toUpperCase()}
-                                  </Badge>
+                                  <Badge variant="outline">{pattern.pattern}</Badge>
                                   <span className="font-medium">{pattern.symbol}</span>
-                                  <Badge variant="outline" className="text-xs">
-                                    {pattern.pattern.replace('_', ' ')}
+                                  <Badge variant="secondary">
+                                    {Math.round(pattern.confidence)}% confidence
                                   </Badge>
                                 </div>
                               </div>
-                              <p className="text-sm text-muted-foreground">{pattern.description}</p>
+                              <p className="text-sm text-muted-foreground mb-2">{pattern.description}</p>
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <p>Signal: <span className="font-medium">{pattern.signal}</span></p>
+                                <p>Timeframe: <span className="font-medium">{pattern.timeframe}</span></p>
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -460,52 +462,55 @@ Focus on explosive growth opportunities: crypto futures, momentum breakouts, sca
                 )}
               </div>
             </ScrollArea>
+
+            <div className="p-4 border-t">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={toggleVoice}
+                  className={isListening ? "bg-red-500 text-white" : ""}
+                >
+                  {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                </Button>
+                <Input
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Ask Echelon about explosive growth strategies, crypto futures, or momentum patterns..."
+                  disabled={isLoading}
+                  className="flex-1"
+                />
+                <Button 
+                  onClick={sendMessage} 
+                  disabled={!inputMessage.trim() || isLoading}
+                  size="icon"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                ⚠️ For educational purposes only. Always do your own research and manage risk appropriately.
+              </p>
+            </div>
           </TabsContent>
 
           <TabsContent value="opportunities" className="flex-1 p-4">
             <div className="text-center text-muted-foreground">
-              Live crypto futures opportunities will be displayed here
+              <Zap className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p>Live Crypto Futures Opportunities</p>
+              <p className="text-sm">Real-time scanning and analysis coming soon...</p>
             </div>
           </TabsContent>
 
           <TabsContent value="patterns" className="flex-1 p-4">
             <div className="text-center text-muted-foreground">
-              Real-time pattern scanner results will be displayed here
+              <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p>Advanced Pattern Scanner</p>
+              <p className="text-sm">Multi-timeframe pattern recognition coming soon...</p>
             </div>
           </TabsContent>
         </Tabs>
-
-        <div className="p-4 border-t">
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={toggleVoice}
-              className={isListening ? "bg-red-500 text-white" : ""}
-            >
-              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-            </Button>
-            <Input
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask about crypto futures, momentum setups, position sizing, or explosive growth strategies..."
-              disabled={isLoading}
-              className="flex-1"
-            />
-            <Button 
-              onClick={sendMessage} 
-              disabled={!inputMessage.trim() || isLoading}
-              size="icon"
-              className="bg-gradient-to-r from-green-500 to-blue-500"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground mt-2 text-center">
-            ⚡ Enhanced AI for explosive growth strategies • $27K → $20M transformation
-          </p>
-        </div>
       </CardContent>
     </Card>
   );

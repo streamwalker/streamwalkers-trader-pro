@@ -27,12 +27,12 @@ interface Recommendation {
   stopLoss?: number;
 }
 
-export const JarvisChat = () => {
+export const EchelonChat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       type: 'assistant',
-      content: "Hello! I'm Jarvis, your AI trading assistant. I can help you analyze markets, identify opportunities, and provide trading insights. What would you like to know about the markets today?",
+      content: "Hello! I'm Echelon, your AI trading assistant. I can help you analyze markets, identify opportunities, and provide trading insights. What would you like to know about the markets today?",
       timestamp: new Date(),
     }
   ]);
@@ -100,7 +100,7 @@ export const JarvisChat = () => {
     setIsLoading(true);
 
     try {
-      console.log('Sending message to Jarvis:', {
+      console.log('Sending message to Echelon:', {
         message: inputMessage,
         marketData: {
           futures: futuresData,
@@ -110,7 +110,7 @@ export const JarvisChat = () => {
         }
       });
 
-      const { data, error } = await supabase.functions.invoke('jarvis-chat', {
+      const { data, error } = await supabase.functions.invoke('echelon-chat', {
         body: {
           message: inputMessage,
           marketData: {
@@ -126,11 +126,11 @@ export const JarvisChat = () => {
       });
 
       if (error) {
-        console.error('Jarvis error:', error);
-        throw new Error(error.message || 'Failed to get response from Jarvis');
+        console.error('Echelon error:', error);
+        throw new Error(error.message || 'Failed to get response from Echelon');
       }
 
-      console.log('Jarvis response:', data);
+      console.log('Echelon response:', data);
 
       const recommendations = parseRecommendations(data.response);
 
@@ -147,7 +147,7 @@ export const JarvisChat = () => {
       if (recommendations.length > 0) {
         toast({
           title: "New Trading Recommendations",
-          description: `Jarvis has identified ${recommendations.length} trading opportunities`,
+          description: `Echelon has identified ${recommendations.length} trading opportunities`,
         });
       }
 
@@ -156,7 +156,7 @@ export const JarvisChat = () => {
       const errorMessage = error instanceof Error ? error.message : 'Sorry, I encountered an error. Please try again.';
       
       toast({
-        title: "Jarvis Error",
+        title: "Echelon Error",
         description: errorMessage,
         variant: "destructive",
       });
@@ -211,7 +211,7 @@ export const JarvisChat = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Bot className="w-5 h-5" />
-          Jarvis Trading Assistant
+          Echelon Trading Assistant
           <Badge variant="outline" className="ml-auto">
             AI Powered
           </Badge>
@@ -320,7 +320,7 @@ export const JarvisChat = () => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask Jarvis about market analysis, trading opportunities, or risk management..."
+              placeholder="Ask Echelon about market analysis, trading opportunities, or risk management..."
               disabled={isLoading}
               className="flex-1"
             />

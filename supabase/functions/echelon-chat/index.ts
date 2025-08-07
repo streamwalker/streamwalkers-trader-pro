@@ -7,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const TRADING_SYSTEM_PROMPT = `You are Jarvis 2.0, an enhanced AI trading assistant specialized in explosive growth strategies for transforming $27,000 into $20,000,000. Your expertise includes:
+const TRADING_SYSTEM_PROMPT = `You are Echelon 2.0, an enhanced AI trading assistant specialized in explosive growth strategies for transforming $27,000 into $20,000,000. Your expertise includes:
 
 1. HIGH-GROWTH STRATEGIES: Focus on aggressive trading approaches including crypto futures, momentum breakouts, scalping, and high-volatility plays
 2. REAL-TIME OPPORTUNITIES: Identify time-sensitive setups with specific entry/exit levels and tight risk management
@@ -151,7 +151,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in jarvis-chat function:', error);
+    console.error('Error in echelon-chat function:', error);
     return new Response(JSON.stringify({ 
       error: error.message,
       timestamp: new Date().toISOString()

@@ -1,6 +1,6 @@
 import { MarketInsights } from '@/components/MarketInsights';
 import { TechnicalIndicators } from '@/components/TechnicalIndicators';
-import { EnhancedJarvisChat } from '@/components/EnhancedJarvisChat';
+import { EnhancedEchelonChat } from '@/components/EnhancedEchelonChat';
 import { OpportunityScanner } from '@/components/OpportunityScanner';
 import { AdvancedRiskManager } from '@/components/AdvancedRiskManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -18,7 +18,7 @@ const Analytics = () => {
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="overview">Market Overview</TabsTrigger>
-          <TabsTrigger value="jarvis">Enhanced Jarvis</TabsTrigger>
+          <TabsTrigger value="jarvis">Enhanced Echelon</TabsTrigger>
           <TabsTrigger value="opportunities">Live Scanner</TabsTrigger>
           <TabsTrigger value="risk">Risk Management</TabsTrigger>
         </TabsList>
@@ -31,13 +31,13 @@ const Analytics = () => {
             </div>
             
             <div className="space-y-6">
-              <EnhancedJarvisChat />
+              <EnhancedEchelonChat />
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="jarvis" className="space-y-6">
-          <EnhancedJarvisChat />
+          <EnhancedEchelonChat />
         </TabsContent>
 
         <TabsContent value="opportunities" className="space-y-6">

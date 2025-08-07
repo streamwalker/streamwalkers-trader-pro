@@ -38,7 +38,7 @@ const RiskManagement = () => {
   const getLiveRiskAssessment = () => {
     if (!futuresData || !vixData || !marketConditions) return null;
     
-    const avgVolatility = futuresData.reduce((sum, item) => sum + Math.abs(item.changePercent), 0) / futuresData.length;
+    const avgVolatility = futuresData.reduce((sum, item) => sum + Math.abs(item.changePercent || 0), 0) / futuresData.length;
     const marketStress = vixData.current > 25 ? 'High' : vixData.current > 20 ? 'Medium' : 'Low';
     const overallRisk = avgVolatility > 1.5 ? 'High' : avgVolatility > 0.75 ? 'Medium' : 'Low';
     
@@ -168,9 +168,9 @@ const RiskManagement = () => {
                         <div key={future.symbol} className="flex items-center justify-between">
                           <span className="font-medium">{future.symbol}</span>
                           <div className="text-right">
-                            <div className="font-mono text-sm">{future.price.toFixed(2)}</div>
-                            <div className={`text-xs ${future.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                              {future.changePercent >= 0 ? '+' : ''}{future.changePercent.toFixed(2)}%
+                            <div className="font-mono text-sm">{future.price ? future.price.toFixed(2) : '0.00'}</div>
+                            <div className={`text-xs ${future.changePercent && future.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              {future.changePercent ? (future.changePercent >= 0 ? '+' : '') + future.changePercent.toFixed(2) + '%' : '0.00%'}
                             </div>
                           </div>
                         </div>

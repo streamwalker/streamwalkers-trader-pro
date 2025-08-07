@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TrendingUp, TrendingDown, BarChart3, Target, AlertTriangle, RefreshCw, DollarSign, Activity, X } from "lucide-react";
 import { AddSymbolDialog } from "@/components/AddSymbolDialog";
+import { InfoTooltip } from "@/components/InfoTooltip";
 import { useFuturesData, useVIXData, useMarketConditions, useTradingSignals, useKeyLevels } from "@/hooks/useMarketData";
 import { useWatchlistData, useWatchlistActions } from "@/hooks/useWatchlist";
 import MarketDataService from "@/services/MarketDataService";
@@ -92,7 +93,10 @@ const MarketAnalysis = () => {
           marketConditions?.map((condition, index) => (
             <Card key={index}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{condition.name}</CardTitle>
+                <div className="flex items-center gap-1">
+                  <CardTitle className="text-sm font-medium">{condition.name}</CardTitle>
+                  <InfoTooltip content={`${condition.name} indicator shows current market sentiment and trend direction. Values above average indicate bullish conditions, while below average suggests bearish sentiment.`} />
+                </div>
                 {condition.status === "bullish" ? (
                   <TrendingUp className="h-4 w-4 text-green-500" />
                 ) : (
@@ -159,12 +163,30 @@ const MarketAnalysis = () => {
               {/* Live Stock Positions */}
               <div className="space-y-2">
                 <div className="grid grid-cols-7 gap-4 text-xs font-medium text-muted-foreground pb-2 border-b">
-                  <div>Symbol</div>
-                  <div>Exchange</div>
-                  <div>Price</div>
-                  <div>Change</div>
-                  <div>% Change</div>
-                  <div>Position</div>
+                  <div className="flex items-center gap-1">
+                    <span>Symbol</span>
+                    <InfoTooltip content="The stock ticker symbol representing the company or security being traded." />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>Exchange</span>
+                    <InfoTooltip content="The stock exchange where this security is listed and traded (e.g., NASDAQ, NYSE)." />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>Price</span>
+                    <InfoTooltip content="The current market price of the security in real-time or last known price." />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>Change</span>
+                    <InfoTooltip content="The dollar amount change in price from the previous trading session close." />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>% Change</span>
+                    <InfoTooltip content="The percentage change in price from the previous trading session close, showing relative performance." />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>Position</span>
+                    <InfoTooltip content="Number of shares currently owned in your portfolio for this security." />
+                  </div>
                   <div>Actions</div>
                 </div>
                 {watchlistData.map((stock) => (

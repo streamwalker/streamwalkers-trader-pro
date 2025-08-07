@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Shield, AlertTriangle, Calculator, TrendingDown, Activity, Target, Zap } from "lucide-react";
 import { useState } from "react";
+import { InfoTooltip } from "@/components/InfoTooltip";
 import { useFuturesData, useVIXData, useMarketConditions } from "@/hooks/useMarketData";
 
 const RiskManagement = () => {
@@ -209,7 +210,15 @@ const RiskManagement = () => {
         {riskMetrics.map((metric, index) => (
           <Card key={index}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{metric.label}</CardTitle>
+              <div className="flex items-center gap-1">
+                <CardTitle className="text-sm font-medium">{metric.label}</CardTitle>
+                <InfoTooltip content={
+                  metric.label === "Current Drawdown" ? "The percentage decline from your account's peak value. Lower values indicate better capital preservation." :
+                  metric.label === "Max Daily Risk" ? "The maximum percentage of your account you're willing to risk in a single day. Helps limit losses." :
+                  metric.label === "Risk-Reward Ratio" ? "The ratio of potential profit to potential loss per trade. Higher ratios indicate better trade setups." :
+                  "The minimum win percentage needed to break even with your current risk-reward ratio."
+                } />
+              </div>
               <metric.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -236,7 +245,10 @@ const RiskManagement = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="accountSize">Account Size ($)</Label>
+              <div className="flex items-center gap-1">
+                <Label htmlFor="accountSize">Account Size ($)</Label>
+                <InfoTooltip content="The total value of your trading account. This is used to calculate position sizes and risk amounts in dollar terms." />
+              </div>
               <Input
                 type="number"
                 id="accountSize"
@@ -246,7 +258,10 @@ const RiskManagement = () => {
               />
             </div>
             <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="riskPercent">Risk Percentage (%)</Label>
+              <div className="flex items-center gap-1">
+                <Label htmlFor="riskPercent">Risk Percentage (%)</Label>
+                <InfoTooltip content="The percentage of your account you're willing to risk on this trade. Professional traders typically risk 1-2% per trade." />
+              </div>
               <Input
                 type="number"
                 id="riskPercent"
@@ -257,7 +272,10 @@ const RiskManagement = () => {
               />
             </div>
             <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="entryPrice">Entry Price</Label>
+              <div className="flex items-center gap-1">
+                <Label htmlFor="entryPrice">Entry Price</Label>
+                <InfoTooltip content="The price at which you plan to enter the trade. This should be based on your technical analysis and entry strategy." />
+              </div>
               <Input
                 type="number"
                 id="entryPrice"
@@ -268,7 +286,10 @@ const RiskManagement = () => {
               />
             </div>
             <div className="grid w-full items-center gap-1.5">
-              <Label htmlFor="stopLoss">Stop Loss</Label>
+              <div className="flex items-center gap-1">
+                <Label htmlFor="stopLoss">Stop Loss</Label>
+                <InfoTooltip content="The price at which you'll exit the trade to limit losses. This should be placed below support (for longs) or above resistance (for shorts)." />
+              </div>
               <Input
                 type="number"
                 id="stopLoss"
@@ -281,15 +302,24 @@ const RiskManagement = () => {
             
             <div className="pt-4 border-t space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Risk Amount:</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm font-medium">Risk Amount:</span>
+                  <InfoTooltip content="The dollar amount you'll lose if the trade hits your stop loss. This is calculated from your account size and risk percentage." />
+                </div>
                 <span className="text-sm font-mono">${riskAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Point Risk:</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm font-medium">Point Risk:</span>
+                  <InfoTooltip content="The difference in points between your entry price and stop loss. This represents your risk per contract or share." />
+                </div>
                 <span className="text-sm font-mono">{pointRisk.toFixed(2)} pts</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm font-medium">Position Size:</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm font-medium">Position Size:</span>
+                  <InfoTooltip content="The number of contracts or shares to trade to stay within your risk tolerance. This is the optimal size for your risk parameters." />
+                </div>
                 <span className="text-sm font-mono font-bold">{positionSize} contracts</span>
               </div>
             </div>

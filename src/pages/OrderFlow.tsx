@@ -8,6 +8,7 @@ import { ArrowUp, ArrowDown, Volume2, Clock, TrendingUp, Activity, BarChart3, Ta
 import { Link } from "react-router-dom";
 import { EnhancedOrderBook } from "@/components/EnhancedOrderBook";
 import { TechnicalIndicators } from "@/components/TechnicalIndicators";
+import { InfoTooltip } from "@/components/InfoTooltip";
 import { useFuturesData, useVIXData, useMarketConditions } from "@/hooks/useMarketData";
 import { toast } from "sonner";
 
@@ -196,15 +197,24 @@ const OrderFlow = () => {
               </div>
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <div className="text-sm text-card-foreground">Volume</div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-card-foreground">Volume</span>
+                    <InfoTooltip content="Total number of shares or contracts traded during the current session. Higher volume indicates increased market activity and liquidity." />
+                  </div>
                   <div className="font-semibold text-card-foreground">{(Math.abs(currentSymbolData.change) * 1000).toLocaleString()}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-card-foreground">High</div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-card-foreground">High</span>
+                    <InfoTooltip content="The highest price reached during the current trading session. This level often acts as resistance for price movement." />
+                  </div>
                   <div className="font-semibold text-card-foreground">{(currentSymbolData.price + Math.abs(currentSymbolData.change)).toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-card-foreground">Low</div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm text-card-foreground">Low</span>
+                    <InfoTooltip content="The lowest price reached during the current trading session. This level often acts as support for price movement." />
+                  </div>
                   <div className="font-semibold text-card-foreground">{(currentSymbolData.price - Math.abs(currentSymbolData.change)).toFixed(2)}</div>
                 </div>
               </div>
@@ -285,7 +295,10 @@ const OrderFlow = () => {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Current Bid</CardTitle>
+                <div className="flex items-center gap-1">
+                  <CardTitle className="text-sm font-medium">Current Bid</CardTitle>
+                  <InfoTooltip content="The highest price that buyers are willing to pay for the security. This represents demand in the market." />
+                </div>
                 <ArrowDown className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
@@ -300,7 +313,10 @@ const OrderFlow = () => {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Current Ask</CardTitle>
+                <div className="flex items-center gap-1">
+                  <CardTitle className="text-sm font-medium">Current Ask</CardTitle>
+                  <InfoTooltip content="The lowest price that sellers are willing to accept for the security. This represents supply in the market." />
+                </div>
                 <ArrowUp className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
@@ -315,7 +331,10 @@ const OrderFlow = () => {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Volume Delta</CardTitle>
+                <div className="flex items-center gap-1">
+                  <CardTitle className="text-sm font-medium">Volume Delta</CardTitle>
+                  <InfoTooltip content="The difference between buying and selling volume. Positive values indicate more aggressive buying, negative values show more aggressive selling." />
+                </div>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -330,7 +349,10 @@ const OrderFlow = () => {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Volume</CardTitle>
+                <div className="flex items-center gap-1">
+                  <CardTitle className="text-sm font-medium">Total Volume</CardTitle>
+                  <InfoTooltip content="The total number of contracts or shares traded during the current session. Higher volume confirms price movements and indicates market participation." />
+                </div>
                 <Volume2 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -351,11 +373,26 @@ const OrderFlow = () => {
               <CardContent>
                 <div className="space-y-2">
                   <div className="grid grid-cols-5 text-xs font-medium text-card-foreground border-b pb-2">
-                    <span>Price</span>
-                    <span>Bid Size</span>
-                    <span>Ask Size</span>
-                    <span>Volume</span>
-                    <span>Delta</span>
+                    <div className="flex items-center gap-1">
+                      <span>Price</span>
+                      <InfoTooltip content="The price level at which orders are placed in the market depth." />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>Bid Size</span>
+                      <InfoTooltip content="Number of contracts or shares buyers want to purchase at this price level." />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>Ask Size</span>
+                      <InfoTooltip content="Number of contracts or shares sellers want to sell at this price level." />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>Volume</span>
+                      <InfoTooltip content="Total trading activity at this price level during the session." />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>Delta</span>
+                      <InfoTooltip content="Net difference between buying and selling pressure at this price level." />
+                    </div>
                   </div>
                   {orderFlowData.map((level, index) => (
                     <div key={index} className="grid grid-cols-5 text-sm py-1 hover:bg-muted/50 rounded">
@@ -380,7 +417,10 @@ const OrderFlow = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-card-foreground">Aggressive Buying</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-medium text-card-foreground">Aggressive Buying</span>
+                      <InfoTooltip content="Percentage of market orders that lift the ask (buyers paying market price). High values indicate strong buying pressure." />
+                    </div>
                     <div className="flex items-center gap-2">
                       <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
                         <div 
@@ -392,7 +432,10 @@ const OrderFlow = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-card-foreground">Aggressive Selling</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm font-medium text-card-foreground">Aggressive Selling</span>
+                      <InfoTooltip content="Percentage of market orders that hit the bid (sellers accepting current bid price). High values indicate strong selling pressure." />
+                    </div>
                     <div className="flex items-center gap-2">
                       <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
                         <div 

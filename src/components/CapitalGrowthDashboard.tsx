@@ -76,9 +76,9 @@ export const CapitalGrowthDashboard = () => {
       </Card>
 
       {nextMilestone && (
-        <Card className="border-blue-200 bg-blue-50/50">
+        <Card className="border-gray-700 bg-black">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-blue-700">
+            <CardTitle className="flex items-center gap-2 text-white">
               <TrendingUp className="h-5 w-5" />
               Next Milestone: {nextMilestone.label}
             </CardTitle>
@@ -86,22 +86,22 @@ export const CapitalGrowthDashboard = () => {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-white">
                   ${nextMilestone.amount.toLocaleString()}
                 </div>
-                <div className="text-sm text-muted-foreground">Target Amount</div>
+                <div className="text-sm text-gray-400">Target Amount</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-white">
                   {nextMilestone.requiredReturn}%
                 </div>
-                <div className="text-sm text-muted-foreground">Required Return</div>
+                <div className="text-sm text-gray-400">Required Return</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-white">
                   {nextMilestone.timeframe}
                 </div>
-                <div className="text-sm text-muted-foreground">Timeline</div>
+                <div className="text-sm text-gray-400">Timeline</div>
               </div>
             </div>
           </CardContent>

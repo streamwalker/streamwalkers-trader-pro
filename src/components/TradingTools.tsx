@@ -125,6 +125,13 @@ const TradingTools = () => {
       description: "Custom indicators, strategies, and market analyzer columns for NinjaTrader platform integration.",
       features: ["Custom indicators", "Strategy automation", "Market analyzer tools"],
       category: "Platform Integration"
+    },
+    {
+      icon: TrendingUp,
+      title: "PE Expansion Analyzer",
+      description: "Evaluate company scalability potential and expansion requirements for private equity investment decisions.",
+      features: ["Scalability scoring", "Capital requirements", "Expansion roadmap", "Risk assessment"],
+      category: "Investment Analysis"
     }
   ];
 

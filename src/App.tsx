@@ -28,6 +28,7 @@ import CourseModule from "./pages/CourseModule";
 import CourseCategories from "./pages/CourseCategories";
 import Resources from "./pages/Resources";
 import AlertConfiguration from "./pages/AlertConfiguration";
+import PEAnalyzer from "./pages/PEAnalyzer";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +59,7 @@ const App = () => (
             <Route path="/education/categories" element={<CourseCategories />} />
             <Route path="/resources" element={<Resources />} />
             <Route path="/tools/order-flow/alerts" element={<AlertConfiguration />} />
+            <Route path="/tools/pe-analyzer" element={<PEAnalyzer />} />
             <Route path="/screener" element={<Screener />} />
             <Route path="/support" element={<Support />} />
             <Route path="/faq" element={<FAQ />} />

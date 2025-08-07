@@ -41,7 +41,32 @@ serve(async (req) => {
   }
 
   try {
-    const { message, marketData, userContext } = await req.json();
+    const body = await req.json();
+    const { message, marketData, userContext } = body;
+
+    // Input validation and sanitization
+    if (!message || typeof message !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid message format' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      );
+    }
+
+    // Sanitize message input (basic XSS prevention)
+    const sanitizedMessage = message.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '').trim();
+    
+    if (sanitizedMessage.length > 2000) {
+      return new Response(
+        JSON.stringify({ error: 'Message too long' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400 
+        }
+      );
+    }
     console.log('Received request:', { message, marketData, userContext });
 
     if (!message) {
@@ -71,7 +96,7 @@ serve(async (req) => {
       }
     }
 
-    contextMessage += `\nUser Question: ${message}`;
+    contextMessage += `\nUser Question: ${sanitizedMessage}`;
 
     console.log('Sending to OpenAI with context:', contextMessage);
 
@@ -82,7 +107,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'gpt-4o-mini',
         messages: [
           { 
             role: 'system', 

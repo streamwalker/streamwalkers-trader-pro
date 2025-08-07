@@ -1,9 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Menu, X, TrendingUp } from "lucide-react";
+import { Menu, X, TrendingUp, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
@@ -38,12 +42,26 @@ const Navigation = () => {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="outline" size="sm">
-              Login
-            </Button>
-            <Button variant="hero" size="sm">
-              Get Funded
-            </Button>
+            {user ? (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  {user.email}
+                </span>
+                <Button variant="outline" size="sm" onClick={signOut}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
+                  Login
+                </Button>
+                <Button variant="hero" size="sm" onClick={() => navigate('/auth')}>
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -75,12 +93,26 @@ const Navigation = () => {
                 About
               </a>
               <div className="pt-4 pb-2 space-y-2">
-                <Button variant="outline" size="sm" className="w-full">
-                  Login
-                </Button>
-                <Button variant="hero" size="sm" className="w-full">
-                  Get Funded
-                </Button>
+                {user ? (
+                  <>
+                    <div className="px-3 py-2 text-sm text-muted-foreground">
+                      {user.email}
+                    </div>
+                    <Button variant="outline" size="sm" className="w-full" onClick={signOut}>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => navigate('/auth')}>
+                      Login
+                    </Button>
+                    <Button variant="hero" size="sm" className="w-full" onClick={() => navigate('/auth')}>
+                      Get Started
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

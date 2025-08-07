@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MessageCircle, Phone, Mail, HelpCircle, FileText, Clock, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Support = () => {
   const supportChannels = [
@@ -226,17 +227,23 @@ const Support = () => {
                     </h4>
                     <div className="ml-6 space-y-1">
                       {category.questions.map((question, qIndex) => (
-                        <div key={qIndex} className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">
+                        <Link 
+                          key={qIndex} 
+                          to={`/faq#${category.category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                          className="block text-sm text-muted-foreground hover:text-foreground cursor-pointer hover:underline"
+                        >
                           • {question}
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>
                 ))}
               </div>
-              <Button variant="outline" className="w-full mt-4">
-                View All FAQs
-              </Button>
+              <Link to="/faq">
+                <Button variant="outline" className="w-full mt-4">
+                  View All FAQs
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 

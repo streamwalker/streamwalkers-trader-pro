@@ -20,6 +20,7 @@ import Settings from "./pages/Settings";
 import Education from "./pages/Education";
 import Screener from "./pages/Screener";
 import Support from "./pages/Support";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 import CourseCatalog from "./pages/CourseCatalog";
 import CourseDetail from "./pages/CourseDetail";
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/tools/order-flow/alerts" element={<AlertConfiguration />} />
             <Route path="/screener" element={<Screener />} />
             <Route path="/support" element={<Support />} />
+            <Route path="/faq" element={<FAQ />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

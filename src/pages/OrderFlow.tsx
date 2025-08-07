@@ -177,16 +177,16 @@ const OrderFlow = () => {
 
       {/* Live Price Ticker */}
       {currentSymbolData && (
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+        <Card className="bg-card border border-border">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-6">
                 <div>
-                  <h2 className="text-2xl font-bold">{selectedSymbol}</h2>
+                  <h2 className="text-2xl font-bold text-card-foreground">{selectedSymbol}</h2>
                   <p className="text-sm text-muted-foreground">{symbolOptions.find(s => s.value === selectedSymbol)?.label}</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-bold">{currentSymbolData.price.toFixed(2)}</div>
+                  <div className="text-3xl font-bold text-card-foreground">{currentSymbolData.price.toFixed(2)}</div>
                   <div className={`flex items-center gap-1 ${currentSymbolData.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {currentSymbolData.change >= 0 ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
                     <span>{currentSymbolData.change >= 0 ? '+' : ''}{currentSymbolData.change.toFixed(2)}</span>
@@ -196,16 +196,16 @@ const OrderFlow = () => {
               </div>
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
-                  <div className="text-sm text-foreground">Volume</div>
-                  <div className="font-semibold text-foreground">{(Math.abs(currentSymbolData.change) * 1000).toLocaleString()}</div>
+                  <div className="text-sm text-card-foreground">Volume</div>
+                  <div className="font-semibold text-card-foreground">{(Math.abs(currentSymbolData.change) * 1000).toLocaleString()}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-foreground">High</div>
-                  <div className="font-semibold text-foreground">{(currentSymbolData.price + Math.abs(currentSymbolData.change)).toFixed(2)}</div>
+                  <div className="text-sm text-card-foreground">High</div>
+                  <div className="font-semibold text-card-foreground">{(currentSymbolData.price + Math.abs(currentSymbolData.change)).toFixed(2)}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-foreground">Low</div>
-                  <div className="font-semibold text-foreground">{(currentSymbolData.price - Math.abs(currentSymbolData.change)).toFixed(2)}</div>
+                  <div className="text-sm text-card-foreground">Low</div>
+                  <div className="font-semibold text-card-foreground">{(currentSymbolData.price - Math.abs(currentSymbolData.change)).toFixed(2)}</div>
                 </div>
               </div>
             </div>
@@ -292,7 +292,7 @@ const OrderFlow = () => {
                 <div className="text-2xl font-bold">
                   {orderFlowData.find(level => level.bid > 0)?.price.toFixed(2) || "0.00"}
                 </div>
-                <p className="text-xs text-foreground/70">
+                <p className="text-xs text-muted-foreground">
                   Size: {orderFlowData.find(level => level.bid > 0)?.bid.toLocaleString() || "0"} contracts
                 </p>
               </CardContent>
@@ -307,7 +307,7 @@ const OrderFlow = () => {
                 <div className="text-2xl font-bold">
                   {orderFlowData.find(level => level.ask > 0)?.price.toFixed(2) || "0.00"}
                 </div>
-                <p className="text-xs text-foreground/70">
+                <p className="text-xs text-muted-foreground">
                   Size: {orderFlowData.find(level => level.ask > 0)?.ask.toLocaleString() || "0"} contracts
                 </p>
               </CardContent>
@@ -322,7 +322,7 @@ const OrderFlow = () => {
                 <div className={`text-2xl font-bold ${liveMetrics.volumeDelta >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                   {liveMetrics.volumeDelta >= 0 ? '+' : ''}{liveMetrics.volumeDelta.toFixed(0)}
                 </div>
-                <p className="text-xs text-foreground/70">
+                <p className="text-xs text-muted-foreground">
                   {liveMetrics.volumeDelta >= 0 ? 'Bullish' : 'Bearish'} momentum
                 </p>
               </CardContent>
@@ -335,7 +335,7 @@ const OrderFlow = () => {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{liveMetrics.totalVolume.toLocaleString()}</div>
-                <p className="text-xs text-foreground/70">
+                <p className="text-xs text-muted-foreground">
                   Live session
                 </p>
               </CardContent>
@@ -350,7 +350,7 @@ const OrderFlow = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <div className="grid grid-cols-5 text-xs font-medium text-muted-foreground border-b pb-2">
+                  <div className="grid grid-cols-5 text-xs font-medium text-card-foreground border-b pb-2">
                     <span>Price</span>
                     <span>Bid Size</span>
                     <span>Ask Size</span>
@@ -359,10 +359,10 @@ const OrderFlow = () => {
                   </div>
                   {orderFlowData.map((level, index) => (
                     <div key={index} className="grid grid-cols-5 text-sm py-1 hover:bg-muted/50 rounded">
-                      <span className="font-mono">{level.price.toFixed(2)}</span>
+                      <span className="font-mono text-card-foreground">{level.price.toFixed(2)}</span>
                       <span className="text-red-500">{level.bid}</span>
                       <span className="text-green-500">{level.ask}</span>
-                      <span>{level.volume}</span>
+                      <span className="text-card-foreground">{level.volume}</span>
                       <span className={level.delta > 0 ? "text-green-500" : "text-red-500"}>
                         {level.delta > 0 ? "+" : ""}{level.delta}
                       </span>
@@ -380,7 +380,7 @@ const OrderFlow = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Aggressive Buying</span>
+                    <span className="text-sm font-medium text-card-foreground">Aggressive Buying</span>
                     <div className="flex items-center gap-2">
                       <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
                         <div 
@@ -392,7 +392,7 @@ const OrderFlow = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Aggressive Selling</span>
+                    <span className="text-sm font-medium text-card-foreground">Aggressive Selling</span>
                     <div className="flex items-center gap-2">
                       <div className="w-20 h-2 bg-muted rounded-full overflow-hidden">
                         <div 
@@ -404,20 +404,20 @@ const OrderFlow = () => {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Order Flow Imbalance</span>
+                    <span className="text-sm font-medium text-card-foreground">Order Flow Imbalance</span>
                     <Badge variant={liveMetrics.aggressiveBuying > 60 ? "default" : "destructive"}>
                       {liveMetrics.aggressiveBuying > 60 ? "Bullish" : "Bearish"}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">VWAP Distance</span>
+                    <span className="text-sm font-medium text-card-foreground">VWAP Distance</span>
                     <span className={`text-sm ${liveMetrics.vwapDistance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {liveMetrics.vwapDistance >= 0 ? '+' : ''}{liveMetrics.vwapDistance.toFixed(2)} pts
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">POC (Point of Control)</span>
-                    <span className="text-sm font-mono">{liveMetrics.pocPrice.toFixed(2)}</span>
+                    <span className="text-sm font-medium text-card-foreground">POC (Point of Control)</span>
+                    <span className="text-sm font-mono text-card-foreground">{liveMetrics.pocPrice.toFixed(2)}</span>
                   </div>
                 </div>
               </CardContent>

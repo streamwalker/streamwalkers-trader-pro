@@ -13,7 +13,8 @@ import {
   Home,
   ChevronLeft,
   ChevronRight,
-  Search
+  Search,
+  Building2
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
@@ -75,6 +76,12 @@ const tradingToolsItems = [
     url: "/tools/risk", 
     icon: Shield,
     badge: "Pro"
+  },
+  { 
+    title: "PE Analyzer", 
+    url: "/tools/pe-analyzer", 
+    icon: Building2,
+    badge: "New"
   },
 ]
 

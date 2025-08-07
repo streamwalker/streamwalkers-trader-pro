@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { 
   RadarChart, 
   PolarGrid, 
@@ -20,7 +21,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   LineChart,
   Line
 } from 'recharts';
@@ -33,7 +34,8 @@ import {
   AlertTriangle,
   CheckCircle2,
   Calculator,
-  ChartLine
+  ChartLine,
+  Info
 } from 'lucide-react';
 
 interface CompanyMetrics {
@@ -180,14 +182,30 @@ const PEAnalyzer = () => {
     return 'destructive';
   };
 
+  // InfoTooltip component for reusable tooltips
+  const InfoTooltip = ({ content }: { content: string }) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Info className="w-4 h-4 text-muted-foreground hover:text-foreground cursor-help ml-1" />
+      </TooltipTrigger>
+      <TooltipContent className="max-w-xs">
+        <p className="text-sm">{content}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Private Equity Expansion Analyzer</h1>
-        <p className="text-muted-foreground">
-          Evaluate company scalability potential and expansion requirements for private equity investment
-        </p>
-      </div>
+    <TooltipProvider>
+      <div className="container mx-auto p-6 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight flex items-center">
+            Private Equity Expansion Analyzer
+            <InfoTooltip content="This tool analyzes a company's potential for growth and expansion from a private equity perspective. It evaluates financial health, market opportunity, operational efficiency, and risks to determine scalability and calculate expansion requirements." />
+          </h1>
+          <p className="text-muted-foreground">
+            Evaluate company scalability potential and expansion requirements for private equity investment
+          </p>
+        </div>
 
       <Tabs defaultValue="input" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
@@ -209,7 +227,10 @@ const PEAnalyzer = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="currentRevenue">Current Revenue ($M)</Label>
+                  <Label htmlFor="currentRevenue" className="flex items-center">
+                    Current Revenue ($M)
+                    <InfoTooltip content="The company's total annual revenue in millions of dollars. This is the starting point for measuring growth potential. Higher revenue indicates a more established business, but growth rate matters more for PE investment." />
+                  </Label>
                   <Input
                     id="currentRevenue"
                     type="number"
@@ -219,7 +240,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="revenueGrowth1Y">Revenue Growth 1Y (%)</Label>
+                  <Label htmlFor="revenueGrowth1Y" className="flex items-center">
+                    Revenue Growth 1Y (%)
+                    <InfoTooltip content="How much the company's revenue increased in the last year as a percentage. Shows recent momentum. PE firms love consistent growth above 20% annually. This indicates strong market demand and execution capability." />
+                  </Label>
                   <Input
                     id="revenueGrowth1Y"
                     type="number"
@@ -229,7 +253,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="revenueGrowth3Y">Revenue Growth 3Y (%)</Label>
+                  <Label htmlFor="revenueGrowth3Y" className="flex items-center">
+                    Revenue Growth 3Y (%)
+                    <InfoTooltip content="Average annual revenue growth over the last 3 years. Shows sustained growth patterns rather than one-time spikes. Consistent 15%+ growth indicates a scalable business model that can weather market changes." />
+                  </Label>
                   <Input
                     id="revenueGrowth3Y"
                     type="number"
@@ -239,7 +266,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="ebitdaMargin">EBITDA Margin (%)</Label>
+                  <Label htmlFor="ebitdaMargin" className="flex items-center">
+                    EBITDA Margin (%)
+                    <InfoTooltip content="Earnings Before Interest, Taxes, Depreciation, and Amortization as a percentage of revenue. Measures operational profitability. Higher margins (20%+) show efficient operations and pricing power, which allows for reinvestment and debt servicing." />
+                  </Label>
                   <Input
                     id="ebitdaMargin"
                     type="number"
@@ -249,7 +279,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="debtToEquity">Debt to Equity Ratio</Label>
+                  <Label htmlFor="debtToEquity" className="flex items-center">
+                    Debt to Equity Ratio
+                    <InfoTooltip content="Total debt divided by total equity. Shows financial leverage. Lower ratios (under 1.0) indicate financial stability and capacity for PE firms to add strategic debt for growth without over-leveraging the business." />
+                  </Label>
                   <Input
                     id="debtToEquity"
                     type="number"
@@ -272,7 +305,10 @@ const PEAnalyzer = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="marketCap">Market Cap ($M)</Label>
+                  <Label htmlFor="marketCap" className="flex items-center">
+                    Market Cap ($M)
+                    <InfoTooltip content="Total market value of the company (shares outstanding × share price). Indicates current market valuation. PE firms look for companies trading below their growth potential, offering room for value creation through operational improvements." />
+                  </Label>
                   <Input
                     id="marketCap"
                     type="number"
@@ -282,7 +318,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="tamSize">Total Addressable Market ($B)</Label>
+                  <Label htmlFor="tamSize" className="flex items-center">
+                    Total Addressable Market ($B)
+                    <InfoTooltip content="The total revenue opportunity if the company captured 100% of its target market. Larger TAMs ($10B+) provide more room for growth. PE firms prefer markets big enough to support significant expansion without market saturation." />
+                  </Label>
                   <Input
                     id="tamSize"
                     type="number"
@@ -292,7 +331,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="marketShare">Market Share (%)</Label>
+                  <Label htmlFor="marketShare" className="flex items-center">
+                    Market Share (%)
+                    <InfoTooltip content="Company's revenue as a percentage of the total market. Shows competitive position. Companies with 5-15% market share often have the best expansion potential - large enough to have proven the model, small enough to grow significantly." />
+                  </Label>
                   <Input
                     id="marketShare"
                     type="number"
@@ -303,7 +345,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="competitorCount">Number of Major Competitors</Label>
+                  <Label htmlFor="competitorCount" className="flex items-center">
+                    Number of Major Competitors
+                    <InfoTooltip content="Count of significant competitors in the same market. Fewer competitors (under 10) often indicate less saturated markets with more growth opportunity. Too many competitors can limit pricing power and market share growth." />
+                  </Label>
                   <Input
                     id="competitorCount"
                     type="number"
@@ -325,7 +370,10 @@ const PEAnalyzer = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="employeeCount">Employee Count</Label>
+                  <Label htmlFor="employeeCount" className="flex items-center">
+                    Employee Count
+                    <InfoTooltip content="Total number of full-time employees. Helps assess operational scale and efficiency. Revenue per employee ratios indicate productivity levels. Companies with 50-500 employees often have the best balance of operational efficiency and growth potential." />
+                  </Label>
                   <Input
                     id="employeeCount"
                     type="number"
@@ -335,7 +383,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="employeeGrowth">Employee Growth (%/year)</Label>
+                  <Label htmlFor="employeeGrowth" className="flex items-center">
+                    Employee Growth (%/year)
+                    <InfoTooltip content="Annual rate of employee count increase. Shows hiring pace and organizational scaling. Healthy growth of 20-30% indicates strong demand requiring more staff, but too rapid growth can indicate inefficiency or management challenges." />
+                  </Label>
                   <Input
                     id="employeeGrowth"
                     type="number"
@@ -345,7 +396,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="techScore">Technology Score (1-100)</Label>
+                  <Label htmlFor="techScore" className="flex items-center">
+                    Technology Score (1-100)
+                    <InfoTooltip content="Assessment of the company's technology infrastructure, digital capabilities, and innovation level. Higher scores (70+) indicate better scalability potential through automation, data analytics, and operational efficiency. Modern tech enables faster growth with fewer resources." />
+                  </Label>
                   <Input
                     id="techScore"
                     type="number"
@@ -357,7 +411,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="processAutomation">Process Automation (1-100)</Label>
+                  <Label htmlFor="processAutomation" className="flex items-center">
+                    Process Automation (1-100)
+                    <InfoTooltip content="Degree to which business processes are automated rather than manual. Higher automation (60+) means the company can scale revenue without proportionally scaling headcount. This improves margins and reduces operational risk during rapid growth." />
+                  </Label>
                   <Input
                     id="processAutomation"
                     type="number"
@@ -369,7 +426,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="managementDepth">Management Depth (1-100)</Label>
+                  <Label htmlFor="managementDepth" className="flex items-center">
+                    Management Depth (1-100)
+                    <InfoTooltip content="Quality and depth of the management team beyond the founder/CEO. Strong management (70+) with specialized expertise in key functions reduces founder dependency and enables scalable decision-making as the company grows rapidly." />
+                  </Label>
                   <Input
                     id="managementDepth"
                     type="number"
@@ -395,7 +455,10 @@ const PEAnalyzer = () => {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="customerConcentration">Customer Concentration Risk (1-100)</Label>
+                  <Label htmlFor="customerConcentration" className="flex items-center">
+                    Customer Concentration Risk (1-100)
+                    <InfoTooltip content="Risk level from depending too heavily on a few major customers. High scores (50+) mean losing one big customer could severely hurt revenue. Lower scores indicate a diversified customer base, reducing business risk and making growth more predictable." />
+                  </Label>
                   <Input
                     id="customerConcentration"
                     type="number"
@@ -407,7 +470,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="regulatoryRisk">Regulatory Risk (1-100)</Label>
+                  <Label htmlFor="regulatoryRisk" className="flex items-center">
+                    Regulatory Risk (1-100)
+                    <InfoTooltip content="Exposure to government regulation changes that could impact the business model. High scores (50+) indicate heavy regulation like finance or healthcare. Lower scores suggest more stable regulatory environments allowing predictable growth planning." />
+                  </Label>
                   <Input
                     id="regulatoryRisk"
                     type="number"
@@ -419,7 +485,10 @@ const PEAnalyzer = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="cyclicalSensitivity">Cyclical Sensitivity (1-100)</Label>
+                  <Label htmlFor="cyclicalSensitivity" className="flex items-center">
+                    Cyclical Sensitivity (1-100)
+                    <InfoTooltip content="How much the business performance varies with economic cycles. High scores (50+) mean revenue drops significantly in recessions. Lower scores indicate recession-resistant businesses with more predictable cash flows throughout economic cycles." />
+                  </Label>
                   <Input
                     id="cyclicalSensitivity"
                     type="number"
@@ -439,7 +508,10 @@ const PEAnalyzer = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Scalability Score</CardTitle>
+                <CardTitle className="flex items-center">
+                  Scalability Score
+                  <InfoTooltip content="Overall assessment of how easily this company can grow. Combines financial strength (40%), market opportunity (30%), operational efficiency (20%), and risk factors (10%). Scores above 80 indicate highly scalable businesses perfect for PE investment." />
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center space-y-4">
@@ -457,11 +529,17 @@ const PEAnalyzer = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Score Breakdown</CardTitle>
+                <CardTitle className="flex items-center">
+                  Score Breakdown
+                  <InfoTooltip content="Individual component scores that make up the overall scalability rating. Each area is weighted differently: Financial health matters most (40%), followed by market opportunity (30%), operational capabilities (20%), and risk management (10%)." />
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span>Financial (40%)</span>
+                  <span className="flex items-center">
+                    Financial (40%)
+                    <InfoTooltip content="Measures financial health through revenue growth, profitability margins, and debt levels. This has the highest weight because strong financials provide the foundation for all other growth initiatives." />
+                  </span>
                   <div className="flex items-center gap-2">
                     <Progress value={scalabilityAnalysis.financialScore} className="w-20" />
                     <span className={`font-semibold ${getScoreColor(scalabilityAnalysis.financialScore)}`}>
@@ -470,7 +548,10 @@ const PEAnalyzer = () => {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Market (30%)</span>
+                  <span className="flex items-center">
+                    Market (30%)
+                    <InfoTooltip content="Evaluates market opportunity through total addressable market size, current penetration, and competitive landscape. Large untapped markets with manageable competition offer the best growth potential." />
+                  </span>
                   <div className="flex items-center gap-2">
                     <Progress value={scalabilityAnalysis.marketScore} className="w-20" />
                     <span className={`font-semibold ${getScoreColor(scalabilityAnalysis.marketScore)}`}>
@@ -479,7 +560,10 @@ const PEAnalyzer = () => {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Operational (20%)</span>
+                  <span className="flex items-center">
+                    Operational (20%)
+                    <InfoTooltip content="Assesses operational efficiency through technology adoption, process automation, and management capabilities. Strong operations enable profitable scaling by doing more with fewer resources." />
+                  </span>
                   <div className="flex items-center gap-2">
                     <Progress value={scalabilityAnalysis.operationalScore} className="w-20" />
                     <span className={`font-semibold ${getScoreColor(scalabilityAnalysis.operationalScore)}`}>
@@ -488,7 +572,10 @@ const PEAnalyzer = () => {
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Risk Management (10%)</span>
+                  <span className="flex items-center">
+                    Risk Management (10%)
+                    <InfoTooltip content="Evaluates risk factors including customer concentration, regulatory exposure, and economic sensitivity. Lower risk scores indicate more stable, predictable business performance." />
+                  </span>
                   <div className="flex items-center gap-2">
                     <Progress value={scalabilityAnalysis.riskScore} className="w-20" />
                     <span className={`font-semibold ${getScoreColor(scalabilityAnalysis.riskScore)}`}>
@@ -500,10 +587,13 @@ const PEAnalyzer = () => {
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Scalability Radar Analysis</CardTitle>
-            </CardHeader>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  Scalability Radar Analysis
+                  <InfoTooltip content="Visual representation of the company's strengths and weaknesses across key scalability dimensions. The larger the area, the more scalable the business. Look for balanced scores across all areas." />
+                </CardTitle>
+              </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
                 <RadarChart data={radarData}>
@@ -530,6 +620,7 @@ const PEAnalyzer = () => {
                 <CardTitle className="flex items-center gap-2">
                   <Calculator className="w-5 h-5" />
                   Capital Requirements
+                  <InfoTooltip content="Estimated funding needed to achieve 3x revenue growth. Calculations include technology upgrades, marketing expansion, and operational scaling. Based on industry benchmarks and the company's current efficiency ratios." />
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -568,6 +659,7 @@ const PEAnalyzer = () => {
                 <CardTitle className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
                   Human Resources
+                  <InfoTooltip content="Staffing requirements to support expansion goals. Timeline estimates are based on the company's scalability score - higher scores enable faster, more efficient growth with fewer resource constraints." />
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -593,9 +685,12 @@ const PEAnalyzer = () => {
           </div>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Expansion Roadmap</CardTitle>
-            </CardHeader>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  Expansion Roadmap
+                  <InfoTooltip content="Phased approach to scaling the business based on the scalability analysis. Each phase builds upon the previous one, with timeline adjusted based on the company's readiness score. Higher scores enable more aggressive timelines." />
+                </CardTitle>
+              </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {scalabilityAnalysis.overallScore >= 80 && (
@@ -660,7 +755,10 @@ const PEAnalyzer = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Financial Metrics Overview</CardTitle>
+                <CardTitle className="flex items-center">
+                  Financial Metrics Overview
+                  <InfoTooltip content="Key financial performance indicators that drive scalability assessment. Strong growth rates and healthy margins indicate a business model that can support rapid expansion with proper capital allocation." />
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -682,7 +780,10 @@ const PEAnalyzer = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>Market Opportunity</CardTitle>
+                <CardTitle className="flex items-center">
+                  Market Opportunity
+                  <InfoTooltip content="Analysis of remaining market potential and competitive environment. Low market penetration in large markets with manageable competition represents the ideal expansion opportunity for PE investment." />
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center">
@@ -713,10 +814,13 @@ const PEAnalyzer = () => {
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Investment Summary</CardTitle>
-            </CardHeader>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  Investment Summary
+                  <InfoTooltip content="Key investment metrics at a glance. These numbers represent the core investment thesis: required capital, expected timeline, resource needs, and overall scalability assessment for decision-making." />
+                </CardTitle>
+              </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 border rounded-lg">
@@ -742,7 +846,8 @@ const PEAnalyzer = () => {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 };
 

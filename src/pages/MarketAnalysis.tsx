@@ -144,14 +144,14 @@ const MarketAnalysis = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Total Value</p>
                   <p className="text-2xl font-bold">
-                    ${watchlistData.reduce((sum, stock) => sum + stock.marketValue, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ${watchlistData.reduce((sum, stock) => sum + (stock.marketValue || 0), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Daily P&L</p>
-                  <p className={`text-2xl font-bold ${watchlistData.reduce((sum, stock) => sum + (stock.change * stock.position), 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {watchlistData.reduce((sum, stock) => sum + (stock.change * stock.position), 0) >= 0 ? '+' : ''}
-                    ${watchlistData.reduce((sum, stock) => sum + (stock.change * stock.position), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  <p className={`text-2xl font-bold ${watchlistData.reduce((sum, stock) => sum + ((stock.change || 0) * (stock.position || 0)), 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {watchlistData.reduce((sum, stock) => sum + ((stock.change || 0) * (stock.position || 0)), 0) >= 0 ? '+' : ''}
+                    ${watchlistData.reduce((sum, stock) => sum + ((stock.change || 0) * (stock.position || 0)), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
               </div>
@@ -175,12 +175,12 @@ const MarketAnalysis = () => {
                         {stock.exchange || 'NASDAQ'}
                       </Badge>
                     </div>
-                    <div>${stock.price.toFixed(2)}</div>
-                    <div className={stock.change >= 0 ? 'text-green-600' : 'text-red-600'}>
-                      {stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}
+                    <div>${stock.price ? stock.price.toFixed(2) : '0.00'}</div>
+                    <div className={stock.change && stock.change >= 0 ? 'text-green-600' : 'text-red-600'}>
+                      {stock.change ? (stock.change >= 0 ? '+' : '') + '$' + stock.change.toFixed(2) : '$0.00'}
                     </div>
-                    <div className={stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}>
-                      {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%
+                    <div className={stock.changePercent && stock.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}>
+                      {stock.changePercent ? (stock.changePercent >= 0 ? '+' : '') + stock.changePercent.toFixed(2) + '%' : '0.00%'}
                     </div>
                     <div>{stock.position} shares</div>
                     <div>
@@ -245,7 +245,7 @@ const MarketAnalysis = () => {
                         <Badge variant="outline">{signal.strength}</Badge>
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        Entry: ${signal.entryPrice.toFixed(2)} | Target: ${signal.targetPrice.toFixed(2)}
+                        Entry: ${signal.entryPrice ? signal.entryPrice.toFixed(2) : '0.00'} | Target: ${signal.targetPrice ? signal.targetPrice.toFixed(2) : '0.00'}
                       </div>
                     </div>
                     <div className="text-right">
@@ -289,13 +289,13 @@ const MarketAnalysis = () => {
                     <div>
                       <div className="text-xs text-muted-foreground">Resistance</div>
                       {esLevels?.resistance.map((level, idx) => (
-                        <div key={idx} className="font-mono">{level.toFixed(2)}</div>
+                        <div key={idx} className="font-mono">{level ? level.toFixed(2) : '0.00'}</div>
                       ))}
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">Support</div>
                       {esLevels?.support.map((level, idx) => (
-                        <div key={idx} className="font-mono">{level.toFixed(2)}</div>
+                        <div key={idx} className="font-mono">{level ? level.toFixed(2) : '0.00'}</div>
                       ))}
                     </div>
                   </div>
@@ -325,13 +325,13 @@ const MarketAnalysis = () => {
                     <div>
                       <div className="text-xs text-muted-foreground">Resistance</div>
                       {nqLevels?.resistance.map((level, idx) => (
-                        <div key={idx} className="font-mono">{level.toFixed(2)}</div>
+                        <div key={idx} className="font-mono">{level ? level.toFixed(2) : '0.00'}</div>
                       ))}
                     </div>
                     <div>
                       <div className="text-xs text-muted-foreground">Support</div>
                       {nqLevels?.support.map((level, idx) => (
-                        <div key={idx} className="font-mono">{level.toFixed(2)}</div>
+                        <div key={idx} className="font-mono">{level ? level.toFixed(2) : '0.00'}</div>
                       ))}
                     </div>
                   </div>

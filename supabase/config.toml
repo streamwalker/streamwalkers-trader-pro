@@ -34,3 +34,6 @@ enabled = false
 
 [functions.jarvis-chat]
 verify_jwt = false
+
+[functions.get-market-keys]
+verify_jwt = false

@@ -27,11 +27,18 @@ export class LiveMarketDataService {
     
     try {
       // Try to get real API key from Supabase edge function
-      const response = await fetch('/api/get-market-keys');
+      const response = await fetch('https://tfcnxybvwcxfuksnqngq.supabase.co/functions/v1/get-market-keys', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
       if (response.ok) {
         const keys = await response.json();
         alphaVantageKey = keys.alphaVantageKey || 'demo';
         finnhubKey = keys.finnhubKey || 'demo';
+        console.log('Successfully loaded API keys from Supabase');
       }
     } catch (error) {
       console.warn('Failed to get API keys from edge function, using demo keys:', error);

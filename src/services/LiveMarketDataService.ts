@@ -21,9 +21,21 @@ export class LiveMarketDataService {
   }
 
   private async initializeProviders() {
-    // In a real implementation, these would come from Supabase secrets
-    const alphaVantageKey = 'demo'; // Replace with actual API key
-    const finnhubKey = 'demo'; // Replace with actual API key
+    // Get API keys from Supabase secrets via edge function
+    let alphaVantageKey = 'demo';
+    let finnhubKey = 'demo';
+    
+    try {
+      // Try to get real API key from Supabase edge function
+      const response = await fetch('/api/get-market-keys');
+      if (response.ok) {
+        const keys = await response.json();
+        alphaVantageKey = keys.alphaVantageKey || 'demo';
+        finnhubKey = keys.finnhubKey || 'demo';
+      }
+    } catch (error) {
+      console.warn('Failed to get API keys from edge function, using demo keys:', error);
+    }
 
     this.providers = [
       new FinnhubProvider(finnhubKey),
@@ -178,18 +190,21 @@ export class LiveMarketDataService {
   // Utility methods for simulated data (fallback)
   private getSimulatedQuote(symbol: string): QuoteData {
     const basePrice = this.getBasePriceForSymbol(symbol);
-    const change = (Math.random() - 0.5) * (basePrice * 0.05);
+    // Smaller, more realistic price movements (0.5% to 2%)
+    const changePercent = (Math.random() - 0.5) * 0.04; // -2% to +2%
+    const change = basePrice * changePercent;
+    const price = Math.max(0.01, basePrice + change); // Ensure price never goes negative
     
     return {
       symbol,
-      price: basePrice + change,
-      change,
-      changePercent: (change / basePrice) * 100,
-      volume: Math.floor(Math.random() * 10000000),
-      high: basePrice + Math.abs(change) + Math.random() * 5,
-      low: basePrice - Math.abs(change) - Math.random() * 5,
-      open: basePrice + (Math.random() - 0.5) * 3,
-      previousClose: basePrice,
+      price: Math.round(price * 100) / 100, // Round to 2 decimal places
+      change: Math.round(change * 100) / 100,
+      changePercent: Math.round(changePercent * 10000) / 100, // Round to 2 decimal places
+      volume: Math.floor(Math.random() * 5000000) + 1000000, // 1M to 6M volume
+      high: Math.round((price + Math.abs(change) * 0.5) * 100) / 100,
+      low: Math.round((price - Math.abs(change) * 0.5) * 100) / 100,
+      open: Math.round((basePrice + (Math.random() - 0.5) * change * 0.3) * 100) / 100,
+      previousClose: Math.round(basePrice * 100) / 100,
       timestamp: Date.now()
     };
   }
@@ -223,23 +238,31 @@ export class LiveMarketDataService {
   }
 
   private getBasePriceForSymbol(symbol: string): number {
+    // More realistic current market prices (as of 2024)
     const priceMap: { [key: string]: number } = {
-      'AAPL': 175,
-      'GOOGL': 2800,
-      'MSFT': 340,
-      'TSLA': 250,
-      'AMZN': 3200,
-      'META': 320,
-      'NVDA': 450,
-      'SPY': 420,
-      'QQQ': 360,
-      'ES': 4500,
-      'NQ': 15000,
-      'YM': 34000,
-      'RTY': 2000
+      'AAPL': 190,
+      'GOOGL': 140,
+      'MSFT': 420,
+      'TSLA': 240,
+      'AMZN': 155,
+      'META': 500,
+      'NVDA': 875,
+      'SPY': 570,
+      'QQQ': 470,
+      'ES': 5800,
+      'NQ': 20500,
+      'YM': 42000,
+      'RTY': 2200,
+      'CRWD': 280,
+      'AMD': 140,
+      'NFLX': 630,
+      'BABA': 85,
+      'UBER': 70,
+      'SHOP': 75,
+      'SQ': 65
     };
     
-    return priceMap[symbol.toUpperCase()] || 100 + Math.random() * 400;
+    return priceMap[symbol.toUpperCase()] || 50 + Math.random() * 200;
   }
 
   // Connection status

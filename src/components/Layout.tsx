@@ -26,7 +26,7 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="flex items-center gap-2 md:hidden">
                   <TrendingUp className="w-6 h-6 text-primary" />
                   <span className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">
-                    StreamWalkers
+                    Equiforge
                   </span>
                 </div>
               </div>

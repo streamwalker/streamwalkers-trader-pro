@@ -259,7 +259,7 @@ export function AppSidebar() {
                     transition={{ duration: 0.3 }}
                     className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent whitespace-nowrap"
                   >
-                    StreamWalkers
+                    Equiforge
                   </motion.span>
                 )}
               </AnimatePresence>

@@ -61,7 +61,7 @@ const Index = () => {
             <div>
               <h3 className="font-semibold text-sm text-foreground mb-3">AVAILABLE INSTRUMENTS:</h3>
               <p className="leading-relaxed">
-                Streamwalkers Trader Pro customers are allowed to only trade Futures products, listed on the following exchanges: CME, COMEX, NYMEX & CBOT. Trading of Spot Currencies, CFD's Stocks, Options, and Cryptocurrencies are not permitted or available in our programs vendors or platforms.
+                Equiforge ™️ Trader Pro customers are allowed to only trade Futures products, listed on the following exchanges: CME, COMEX, NYMEX & CBOT. Trading of Spot Currencies, CFD's Stocks, Options, and Cryptocurrencies are not permitted or available in our programs vendors or platforms.
               </p>
             </div>
 
@@ -84,7 +84,7 @@ const Index = () => {
             {/* Updated Copyright */}
             <div className="border-t border-border pt-8 text-center">
               <p className="text-xs text-muted-foreground">
-                © 2021-2031, Streamwalkers Corp. All rights reserved.
+                © 2021-2031, Equiforge Corp. All rights reserved.
               </p>
             </div>
           </div>

@@ -12,7 +12,7 @@ const BusinessPlan = () => {
             Strategic Business Plan
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-profit bg-clip-text text-transparent">
-            StreamWalkers Trader Pro
+            Equiforge ™️ Trader Pro
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto">
             Build a proprietary funded trader platform generating <span className="text-profit font-semibold">$13M/month in net profit</span> within 18-24 months
@@ -31,7 +31,7 @@ const BusinessPlan = () => {
           </CardHeader>
           <CardContent>
             <p className="text-lg text-muted-foreground">
-              Build a proprietary funded trader platform using StreamWalkers Trader Pro that generates at least 
+              Build a proprietary funded trader platform using Equiforge ™️ Trader Pro that generates at least 
               <span className="text-profit font-semibold"> $10–13M/month in net profit</span> within 
               <span className="text-primary font-semibold"> 18–24 months</span> by onboarding, evaluating, and scaling profitable traders.
             </p>
@@ -304,7 +304,7 @@ const BusinessPlan = () => {
         <Card className="border-accent/20">
           <CardHeader>
             <CardTitle className="text-3xl flex items-center gap-3">
-              🧠 Key Advantages for StreamWalkers
+              🧠 Key Advantages for Equiforge
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -514,7 +514,7 @@ const BusinessPlan = () => {
         <Card className="border-profit/20 bg-gradient-to-br from-profit/5 to-primary/5">
           <CardHeader>
             <CardTitle className="text-3xl flex items-center gap-3">
-              🔧 StreamWalkers Token (SWT) - Tokenomics & Blockchain Incentives
+              🔧 Equiforge Token (EQT) - Tokenomics & Blockchain Incentives
             </CardTitle>
             <CardDescription>
               Build a decentralized reward system that incentivizes trader engagement, data contributions, and platform loyalty
@@ -530,7 +530,7 @@ const BusinessPlan = () => {
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <h4 className="text-xl font-semibold text-profit">✅ Key Use Cases for SWT Tokens</h4>
+                <h4 className="text-xl font-semibold text-profit">✅ Key Use Cases for EQT Tokens</h4>
                 <ul className="space-y-2 text-muted-foreground">
                   <li className="flex items-start gap-2">
                     <span className="text-profit">•</span>
@@ -645,35 +645,35 @@ const BusinessPlan = () => {
                 <TableRow>
                   <TableCell className="font-semibold">Year 1</TableCell>
                   <TableCell>5,000 holders</TableCell>
-                  <TableCell>50K SWT/month</TableCell>
+                  <TableCell>50K EQT/month</TableCell>
                   <TableCell>$25K equivalent value</TableCell>
                   <TableCell>Community building phase</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">Year 2</TableCell>
                   <TableCell>15,000 holders</TableCell>
-                  <TableCell>150K SWT/month</TableCell>
+                  <TableCell>150K EQT/month</TableCell>
                   <TableCell>$150K equivalent value</TableCell>
                   <TableCell>Active governance participation</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">Year 3</TableCell>
                   <TableCell>35,000 holders</TableCell>
-                  <TableCell>300K SWT/month</TableCell>
+                  <TableCell>300K EQT/month</TableCell>
                   <TableCell>$500K equivalent value</TableCell>
                   <TableCell>Mature ecosystem with staking</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className="font-semibold">Year 4</TableCell>
                   <TableCell>65,000 holders</TableCell>
-                  <TableCell>500K SWT/month</TableCell>
+                  <TableCell>500K EQT/month</TableCell>
                   <TableCell>$1.2M equivalent value</TableCell>
                   <TableCell>Cross-platform integrations</TableCell>
                 </TableRow>
                 <TableRow className="bg-profit/5">
                   <TableCell className="font-bold">Year 5</TableCell>
                   <TableCell className="font-bold">100,000+ holders</TableCell>
-                  <TableCell className="font-bold">750K SWT/month</TableCell>
+                  <TableCell className="font-bold">750K EQT/month</TableCell>
                   <TableCell className="font-bold text-profit">$2.5M equivalent value</TableCell>
                   <TableCell className="font-bold">Significant revenue driver</TableCell>
                 </TableRow>
@@ -688,7 +688,7 @@ const BusinessPlan = () => {
             <CardTitle className="text-3xl flex items-center gap-3">
               🎯 Token Earning Mechanisms
             </CardTitle>
-            <CardDescription>How traders and users earn StreamWalkers Tokens (SWT)</CardDescription>
+            <CardDescription>How traders and users earn Equiforge Tokens (EQT)</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">
@@ -698,25 +698,25 @@ const BusinessPlan = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Achievement</TableHead>
-                      <TableHead>SWT Reward</TableHead>
+                      <TableHead>EQT Reward</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <TableRow>
                       <TableCell>Complete Evaluation Challenge</TableCell>
-                      <TableCell>100 SWT</TableCell>
+                      <TableCell>100 EQT</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Pass Funded Account Review</TableCell>
-                      <TableCell>250 SWT</TableCell>
+                      <TableCell>250 EQT</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Monthly Profit Target Hit</TableCell>
-                      <TableCell>500 SWT</TableCell>
+                      <TableCell>500 EQT</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Consistent 6-Month Performance</TableCell>
-                      <TableCell>2,000 SWT</TableCell>
+                      <TableCell>2,000 EQT</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -728,25 +728,25 @@ const BusinessPlan = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Activity</TableHead>
-                      <TableHead>SWT Reward</TableHead>
+                      <TableHead>EQT Reward</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <TableRow>
                       <TableCell>Submit Trading Feedback</TableCell>
-                      <TableCell>25 SWT</TableCell>
+                      <TableCell>25 EQT</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Successful Trader Referral</TableCell>
-                      <TableCell>150 SWT</TableCell>
+                      <TableCell>150 EQT</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Educational Content Creation</TableCell>
-                      <TableCell>300 SWT</TableCell>
+                      <TableCell>300 EQT</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>DAO Governance Participation</TableCell>
-                      <TableCell>50 SWT/vote</TableCell>
+                      <TableCell>50 EQT/vote</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -862,17 +862,17 @@ const BusinessPlan = () => {
                     <TableRow>
                       <TableCell>Strategy Insights</TableCell>
                       <TableCell>User submissions</TableCell>
-                      <TableCell>50-200 SWT</TableCell>
+                      <TableCell>50-200 EQT</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Market Analysis</TableCell>
                       <TableCell>Community contributions</TableCell>
-                      <TableCell>100-500 SWT</TableCell>
+                      <TableCell>100-500 EQT</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Educational Content</TableCell>
                       <TableCell>Creator submissions</TableCell>
-                      <TableCell>200-1000 SWT</TableCell>
+                      <TableCell>200-1000 EQT</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>

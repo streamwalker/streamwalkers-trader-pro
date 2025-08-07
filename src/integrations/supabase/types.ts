@@ -52,7 +52,7 @@ export type Database = {
           latitude: number
           longitude: number
           stream_title: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           id?: string
@@ -61,7 +61,7 @@ export type Database = {
           latitude: number
           longitude: number
           stream_title?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           id?: string
@@ -70,7 +70,7 @@ export type Database = {
           latitude?: number
           longitude?: number
           stream_title?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }

@@ -16,12 +16,16 @@ export const symbolSchema = z.string()
   .max(10, 'Symbol must be 10 characters or less')
   .regex(/^[A-Z0-9.-]+$/, 'Symbol can only contain letters, numbers, dots, and hyphens');
 
-// Sanitization functions
+// Enhanced sanitization functions
 export const sanitizeInput = (input: string): string => {
   return input
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove script tags
-    .replace(/[<>]/g, '') // Remove angle brackets
-    .trim();
+    .replace(/<[^>]*>/g, '') // Remove all HTML tags
+    .replace(/javascript:/gi, '') // Remove javascript: protocols
+    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .replace(/[<>'"]/g, '') // Remove potentially dangerous characters
+    .trim()
+    .substring(0, 1000); // Limit length to prevent DoS
 };
 
 export const sanitizeNumber = (input: string): number => {
@@ -29,7 +33,15 @@ export const sanitizeNumber = (input: string): number => {
   return parseFloat(cleaned) || 0;
 };
 
-// Form validation utilities
+// Enhanced validation schemas for security
+export const messageSchema = z.string()
+  .min(1, 'Message cannot be empty')
+  .max(1000, 'Message too long')
+  .refine(val => !/<script|javascript:|on\w+=/i.test(val), 'Invalid content detected');
+
+export const userIdSchema = z.string().uuid('Invalid user ID format');
+
+// Form validation utilities with rate limiting consideration
 export const validateFormField = <T,>(schema: z.ZodSchema<T>, value: T): { isValid: boolean; error?: string } => {
   try {
     schema.parse(value);
@@ -40,4 +52,26 @@ export const validateFormField = <T,>(schema: z.ZodSchema<T>, value: T): { isVal
     }
     return { isValid: false, error: 'Validation error' };
   }
+};
+
+// Rate limiting helper for API calls
+export const createRateLimiter = (maxRequests: number, windowMs: number) => {
+  const requests = new Map<string, { count: number; resetTime: number }>();
+  
+  return (userId: string): boolean => {
+    const now = Date.now();
+    const userRequests = requests.get(userId);
+    
+    if (!userRequests || now > userRequests.resetTime) {
+      requests.set(userId, { count: 1, resetTime: now + windowMs });
+      return true;
+    }
+    
+    if (userRequests.count >= maxRequests) {
+      return false;
+    }
+    
+    userRequests.count++;
+    return true;
+  };
 };

@@ -91,7 +91,12 @@ serve(async (req) => {
 
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
     if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured. Please contact support.');
+      console.error('Missing OPENAI_API_KEY');
+      const safeMessage = 'AI assistant is temporarily unavailable (missing API key). Please try again later.';
+      return new Response(JSON.stringify({
+        response: safeMessage,
+        timestamp: new Date().toISOString()
+      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     // Prepare context with market data
@@ -142,16 +147,20 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('OpenAI API error:', response.status, errorText);
-      
+
+      let safeMessage = 'AI assistant is temporarily unavailable. Please try again shortly.';
       if (response.status === 429) {
-        throw new Error('I\'m experiencing high demand right now. Please try again in a few moments.');
+        safeMessage = 'AI service is at capacity or quota exceeded. Please try again later.';
       } else if (response.status === 401) {
-        throw new Error('API authentication failed. Please contact support.');
-      } else if (response.status >= 500) {
-        throw new Error('AI service is temporarily unavailable. Please try again shortly.');
-      } else {
-        throw new Error(`AI service error (${response.status}). Please try again.`);
+        safeMessage = 'AI service authentication failed. Please contact support.';
       }
+
+      return new Response(JSON.stringify({
+        response: safeMessage,
+        timestamp: new Date().toISOString()
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const data = await response.json();
@@ -168,11 +177,11 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in echelon-chat function:', error);
+    const safeMessage = 'AI assistant encountered an error and is unavailable right now. Please try again later.';
     return new Response(JSON.stringify({ 
-      error: error.message,
+      response: safeMessage,
       timestamp: new Date().toISOString()
     }), {
-      status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }

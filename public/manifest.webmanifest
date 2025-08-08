@@ -1,0 +1,22 @@
+{
+  "name": "Equiforge Trader Pro",
+  "short_name": "Equiforge",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "icons": [
+    {
+      "src": "/lovable-uploads/3e3efcef-12bd-475d-b27d-abab2135de8f.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/3e3efcef-12bd-475d-b27d-abab2135de8f.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

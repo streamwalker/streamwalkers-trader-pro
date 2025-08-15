@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -46,28 +46,37 @@ export type Database = {
       }
       stream_locations: {
         Row: {
+          approximate_latitude: number | null
+          approximate_longitude: number | null
           id: string
           is_live: boolean | null
           last_updated_at: string | null
           latitude: number
+          location_consent: boolean | null
           longitude: number
           stream_title: string | null
           user_id: string
         }
         Insert: {
+          approximate_latitude?: number | null
+          approximate_longitude?: number | null
           id?: string
           is_live?: boolean | null
           last_updated_at?: string | null
           latitude: number
+          location_consent?: boolean | null
           longitude: number
           stream_title?: string | null
           user_id: string
         }
         Update: {
+          approximate_latitude?: number | null
+          approximate_longitude?: number | null
           id?: string
           is_live?: boolean | null
           last_updated_at?: string | null
           latitude?: number
+          location_consent?: boolean | null
           longitude?: number
           stream_title?: string | null
           user_id?: string
@@ -76,10 +85,42 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_stream_locations: {
+        Row: {
+          id: string | null
+          is_live: boolean | null
+          last_updated_at: string | null
+          latitude: number | null
+          longitude: number | null
+          stream_title: string | null
+        }
+        Insert: {
+          id?: string | null
+          is_live?: boolean | null
+          last_updated_at?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          stream_title?: string | null
+        }
+        Update: {
+          id?: string | null
+          is_live?: boolean | null
+          last_updated_at?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          stream_title?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
-      [_ in never]: never
+      obfuscate_coordinates: {
+        Args: { lat: number; lng: number }
+        Returns: {
+          obfuscated_lat: number
+          obfuscated_lng: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

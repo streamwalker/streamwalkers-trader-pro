@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAnalysisEngine } from "@/hooks/useAnalysisEngine";
-import { useMarketOracle } from "@/hooks/useMarketOracle";
+import { useMarketOracle, usePredictions } from "@/hooks/useMarketOracle";
 import { Brain, Network, Target, TrendingUp, Loader2, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
@@ -336,6 +336,9 @@ export function AnalysisEnginePanel() {
                         </div>
                       )}
 
+                      {/* Trade Recommendations */}
+                      <PredictionsForEvent eventId={event.id} />
+
                       {/* Actions */}
                       <div className="flex gap-2 pt-2">
                         <Button
@@ -433,6 +436,125 @@ export function AnalysisEnginePanel() {
           The Analysis Engine uses GPT-5 to perform sophisticated causal analysis. It learns from prediction accuracy over time to improve future forecasts.
         </AlertDescription>
       </Alert>
+    </div>
+  );
+}
+
+function PredictionsForEvent({ eventId }: { eventId: string }) {
+  const { data: predictions, isLoading } = usePredictions(eventId);
+  
+  if (isLoading) {
+    return (
+      <div className="mb-4">
+        <h5 className="text-xs font-semibold mb-2">Trade Recommendations:</h5>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Loader2 className="w-3 h-3 animate-spin" />
+          Loading recommendations...
+        </div>
+      </div>
+    );
+  }
+  
+  if (!predictions || predictions.length === 0) {
+    return null;
+  }
+  
+  const latestPrediction = predictions[0];
+  const recommendations = (latestPrediction.trade_recommendations || []) as any[];
+  
+  if (!Array.isArray(recommendations) || recommendations.length === 0) {
+    return null;
+  }
+  
+  const predictedImpact = latestPrediction.predicted_impact as any;
+  
+  return (
+    <div className="mb-4">
+      <h5 className="text-xs font-semibold mb-2 flex items-center gap-2">
+        <TrendingUp className="w-4 h-4" />
+        Trade Recommendations:
+      </h5>
+      <div className="space-y-3">
+        {recommendations.map((rec: any, idx: number) => (
+          <div key={idx} className="border rounded-lg p-3 bg-card/50">
+            {/* Header: Action + Symbols + Confidence */}
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Badge 
+                  variant={rec.action === 'BUY' || rec.action === 'LONG' ? 'default' : 'destructive'}
+                  className="text-xs font-bold"
+                >
+                  {rec.action}
+                </Badge>
+                <div className="text-sm font-mono font-semibold">
+                  {rec.symbols?.join(', ') || 'N/A'}
+                </div>
+              </div>
+              <Badge variant="outline" className="text-xs">
+                {Math.round(rec.confidence * 100)}% confidence
+              </Badge>
+            </div>
+            
+            {/* Sector */}
+            {rec.sector && (
+              <div className="text-xs text-muted-foreground mb-2">
+                <span className="font-semibold">Sector:</span> {rec.sector}
+              </div>
+            )}
+            
+            {/* Reasoning */}
+            {rec.reasoning && (
+              <div className="text-xs mb-2 text-muted-foreground italic">
+                {rec.reasoning}
+              </div>
+            )}
+            
+            {/* Trading Levels - Grid Layout */}
+            <div className="grid grid-cols-3 gap-2 text-xs mt-2 pt-2 border-t">
+              <div>
+                <span className="text-muted-foreground">Entry:</span>
+                <div className="font-medium">{rec.entry || 'Market'}</div>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Target:</span>
+                <div className="font-medium text-green-600">{rec.target || 'N/A'}</div>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Stop:</span>
+                <div className="font-medium text-red-600">{rec.stop_loss || 'N/A'}</div>
+              </div>
+            </div>
+            
+            {/* Timeframe + Position Size */}
+            <div className="flex items-center justify-between text-xs mt-2 pt-2 border-t text-muted-foreground">
+              <span>⏱️ {rec.timeframe || 'N/A'}</span>
+              <span>📊 Position: {rec.position_size || 'N/A'}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Predicted Impact Summary */}
+      {predictedImpact && (
+        <div className="mt-3 p-3 bg-muted/50 rounded-lg text-xs">
+          <div className="font-semibold mb-2">Market Impact Forecast:</div>
+          {predictedImpact.short_term && (
+            <div className="mb-1">
+              <span className="font-semibold">Short-term:</span> {predictedImpact.short_term}
+            </div>
+          )}
+          {predictedImpact.medium_term && (
+            <div className="mb-1">
+              <span className="font-semibold">Medium-term:</span> {predictedImpact.medium_term}
+            </div>
+          )}
+          {predictedImpact.long_term && (
+            <div>
+              <span className="font-semibold">Long-term:</span> {predictedImpact.long_term}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

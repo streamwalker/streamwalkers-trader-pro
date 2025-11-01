@@ -38,11 +38,32 @@ export interface CycleIndicator {
   historical_context: any;
 }
 
+export interface TradeRecommendation {
+  action: 'BUY' | 'SELL' | 'SHORT' | 'LONG';
+  symbols: string[];
+  sector: string;
+  confidence: number;
+  reasoning: string;
+  entry: string;
+  target: string;
+  stop_loss: string;
+  timeframe: string;
+  position_size: string;
+}
+
+export interface PredictedImpact {
+  short_term?: string;
+  medium_term?: string;
+  long_term?: string;
+}
+
 export interface Prediction {
   id: string;
   event_id: string;
-  predicted_impact: any;
-  trade_recommendations: any[];
+  predicted_impact: PredictedImpact;
+  actual_impact?: any;
+  accuracy_score?: number;
+  trade_recommendations: TradeRecommendation[];
   prediction_date: string;
 }
 

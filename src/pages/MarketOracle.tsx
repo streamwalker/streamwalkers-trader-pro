@@ -1,12 +1,16 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MarketOracleDashboard } from "@/components/MarketOracleDashboard";
 import { AnalysisEnginePanel } from "@/components/AnalysisEnginePanel";
+import { OracleWatchlist } from "@/components/OracleWatchlist";
+import { useMarketOracle } from "@/hooks/useMarketOracle";
 import Layout from "@/components/Layout";
-import { Brain, Network, Activity } from "lucide-react";
+import { Brain, Network, Activity, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export default function MarketOracle() {
+  const { predictions } = useMarketOracle();
+  
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8 space-y-8">
@@ -77,7 +81,7 @@ export default function MarketOracle() {
 
         {/* Main Content */}
         <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="dashboard" className="text-base">
               <Brain className="w-4 h-4 mr-2" />
               Oracle Dashboard
@@ -85,6 +89,10 @@ export default function MarketOracle() {
             <TabsTrigger value="engine" className="text-base">
               <Network className="w-4 h-4 mr-2" />
               Analysis Engine
+            </TabsTrigger>
+            <TabsTrigger value="watchlist" className="text-base">
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Watchlist
             </TabsTrigger>
             <TabsTrigger value="examples" className="text-base">
               <Activity className="w-4 h-4 mr-2" />
@@ -98,6 +106,10 @@ export default function MarketOracle() {
 
           <TabsContent value="engine">
             <AnalysisEnginePanel />
+          </TabsContent>
+
+          <TabsContent value="watchlist">
+            <OracleWatchlist predictions={predictions.data as any} />
           </TabsContent>
 
           <TabsContent value="examples" className="space-y-6">

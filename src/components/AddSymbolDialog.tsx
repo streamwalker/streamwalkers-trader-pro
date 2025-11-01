@@ -24,10 +24,16 @@ import { SUPPORTED_EXCHANGES } from '@/types/watchlist';
 
 interface AddSymbolDialogProps {
   onSymbolAdded?: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function AddSymbolDialog({ onSymbolAdded }: AddSymbolDialogProps) {
-  const [open, setOpen] = useState(false);
+export function AddSymbolDialog({ onSymbolAdded, open: externalOpen, onOpenChange: externalOnOpenChange }: AddSymbolDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  
+  // Use external state if provided, otherwise use internal state
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setOpen = externalOnOpenChange || setInternalOpen;
   const [symbol, setSymbol] = useState('');
   const [exchange, setExchange] = useState('NASDAQ');
   const [position, setPosition] = useState('');

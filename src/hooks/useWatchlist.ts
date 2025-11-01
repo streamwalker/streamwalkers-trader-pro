@@ -161,3 +161,80 @@ export const useWatchlistActions = () => {
     importWatchlist,
   };
 };
+
+// Oracle Watchlist Hook - Enhanced with prediction data
+export const useOracleWatchlist = (predictions?: any[]) => {
+  const { data: watchlist } = useWatchlist();
+  const { data: watchlistData, isLoading } = useWatchlistData();
+  const { addSymbol, removeSymbol: removeSymbolAction } = useWatchlistActions();
+
+  // Extract symbols from predictions with metadata
+  const extractSymbolsFromPredictions = () => {
+    if (!predictions || predictions.length === 0) return [];
+    
+    const symbolMap = new Map();
+    
+    predictions.forEach(pred => {
+      pred.trade_recommendations?.forEach((rec: any) => {
+        rec.symbols?.forEach((symbol: string) => {
+          if (!symbolMap.has(symbol)) {
+            symbolMap.set(symbol, {
+              symbol,
+              exchange: 'NASDAQ',
+              action: rec.action,
+              confidence: rec.confidence,
+              entry: rec.entry,
+              target: rec.target,
+              stop_loss: rec.stop_loss,
+              sector: rec.sector,
+              reasoning: rec.reasoning,
+              timeframe: rec.timeframe,
+              fromPrediction: true,
+            });
+          }
+        });
+      });
+    });
+    
+    return Array.from(symbolMap.values());
+  };
+
+  const predictionSymbolsData = extractSymbolsFromPredictions();
+
+  // Auto-add prediction symbols to watchlist
+  predictionSymbolsData.forEach(symbolData => {
+    const existsInWatchlist = watchlist?.some(
+      item => item.symbol === symbolData.symbol && item.exchange === symbolData.exchange
+    );
+    
+    if (!existsInWatchlist) {
+      addSymbol(symbolData.symbol, symbolData.exchange);
+    }
+  });
+
+  // Merge watchlist data with prediction metadata
+  const enhancedWatchlistData = watchlistData?.map(stockData => {
+    const predictionData = predictionSymbolsData.find(
+      p => p.symbol === stockData.symbol
+    );
+    
+    return {
+      ...stockData,
+      action: predictionData?.action,
+      confidence: predictionData?.confidence,
+      entry: predictionData?.entry,
+      target: predictionData?.target,
+      stop_loss: predictionData?.stop_loss,
+      reasoning: predictionData?.reasoning,
+      timeframe: predictionData?.timeframe,
+      fromPrediction: predictionData?.fromPrediction || false,
+    };
+  });
+
+  return {
+    enhancedWatchlistData,
+    isLoading,
+    predictionSymbols: predictionSymbolsData.length,
+    removeSymbol: removeSymbolAction,
+  };
+};

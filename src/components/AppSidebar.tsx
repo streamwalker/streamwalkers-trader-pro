@@ -14,7 +14,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Search,
-  Building2
+  Building2,
+  Brain
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
@@ -82,6 +83,12 @@ const tradingToolsItems = [
     url: "/tools/pe-analyzer", 
     icon: Building2,
     badge: "New"
+  },
+  { 
+    title: "Market Oracle", 
+    url: "/tools/market-oracle", 
+    icon: Brain,
+    badge: "AI"
   },
 ]
 

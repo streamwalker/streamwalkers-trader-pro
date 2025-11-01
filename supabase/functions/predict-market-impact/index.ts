@@ -145,15 +145,54 @@ Provide comprehensive predictions with specific entry/exit levels and confidence
       })
     })
 
+    if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error('Rate limits exceeded, please try again later.')
+      }
+      if (response.status === 402) {
+        throw new Error('Payment required, please add funds to your Lovable AI workspace.')
+      }
+      const error = await response.text()
+      console.error('Lovable AI API error:', error)
+      throw new Error(`Lovable AI API error: ${response.status}`)
+    }
+
     const data = await response.json()
+    
+    // Validate response structure
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid AI API response structure:', JSON.stringify(data))
+      throw new Error('Invalid AI API response structure')
+    }
+
     const content = data.choices[0].message.content
+
+    // Validate content exists and is not empty
+    if (!content || content.trim() === '') {
+      console.error('Empty content from AI API')
+      throw new Error('Empty response from AI API')
+    }
+
+    console.log('AI response content:', content)
     
-    const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/\{[\s\S]*\}/)
-    const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : content
-    
-    return JSON.parse(jsonStr)
+    // Parse JSON with error handling
+    try {
+      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/\{[\s\S]*\}/)
+      const jsonStr = jsonMatch ? (jsonMatch[1] || jsonMatch[0]) : content
+      
+      const predictions = JSON.parse(jsonStr)
+      console.log('Successfully parsed predictions:', predictions)
+      return predictions
+    } catch (parseError) {
+      console.error('Failed to parse AI response as JSON:', parseError)
+      console.error('Content received:', content)
+      throw new Error(`Failed to parse AI response: ${parseError.message}`)
+    }
   } catch (error) {
-    console.error('Error with AI predictions:', error)
+    console.error('Error with AI predictions:', error.message)
+    console.error('Full error:', error)
+    // Return basic predictions as fallback
+    console.log('Falling back to basic predictions')
     return generateBasicPredictions(symbols, timeframe)
   }
 }

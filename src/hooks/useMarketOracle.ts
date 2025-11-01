@@ -164,6 +164,10 @@ export function usePredictMarketImpact() {
       if (error) throw error;
       return data;
     },
+    onSuccess: (data) => {
+      const predCount = data?.predictions?.length || 0;
+      toast.success(`Generated ${predCount} market predictions successfully!`);
+    },
     onError: (error) => {
       toast.error('Failed to generate predictions');
       console.error('Error predicting market impact:', error);

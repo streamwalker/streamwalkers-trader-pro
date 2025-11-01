@@ -56,8 +56,17 @@ export function MarketOracleDashboard() {
             Fetch News
           </Button>
           <Button onClick={handlePredict} size="sm" disabled={predictImpact.isPending}>
-            <Target className="w-4 h-4 mr-2" />
-            Generate Predictions
+            {predictImpact.isPending ? (
+              <>
+                <Brain className="w-4 h-4 mr-2 animate-pulse" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <Target className="w-4 h-4 mr-2" />
+                Generate Predictions
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -285,15 +294,32 @@ export function MarketOracleDashboard() {
             <p className="text-muted-foreground mb-4">
               Scanning for high-probability setups based on current events and cycle positions
             </p>
-            <Button onClick={handlePredict}>
-              <Target className="w-4 h-4 mr-2" />
-              Scan for Opportunities
+            <Button onClick={handlePredict} disabled={predictImpact.isPending} className="min-w-[200px]">
+              {predictImpact.isPending ? (
+                <>
+                  <Brain className="w-4 h-4 mr-2 animate-pulse" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <Target className="w-4 h-4 mr-2" />
+                  Scan for Opportunities
+                </>
+              )}
             </Button>
           </Card>
 
           {/* Display prediction results if available */}
           {predictImpact.data && (
-            <Card className="p-6">
+            <>
+              <div className="flex items-center gap-2 my-4">
+                <div className="flex-1 h-px bg-border" />
+                <Badge className="bg-green-500/90 hover:bg-green-500 text-white">
+                  ✓ New Predictions Available
+                </Badge>
+                <div className="flex-1 h-px bg-border" />
+              </div>
+              <Card className="p-6 border-green-500/50">
               <h3 className="text-xl font-semibold mb-4">Latest Market Predictions</h3>
               
               {predictImpact.data.market_regime && (
@@ -335,6 +361,7 @@ export function MarketOracleDashboard() {
                 </div>
               )}
             </Card>
+            </>
           )}
         </TabsContent>
       </Tabs>

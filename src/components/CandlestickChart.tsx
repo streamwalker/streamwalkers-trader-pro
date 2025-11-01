@@ -14,14 +14,25 @@ interface CandlestickChartProps {
   symbol: string;
   supportLevels?: number[];
   resistanceLevels?: number[];
+  mode?: 'futures' | 'stock';
 }
 
 const timeframes = [
   { value: '1min', label: '1m' },
   { value: '5min', label: '5m' },
   { value: '15min', label: '15m' },
+  { value: '30min', label: '30m' },
   { value: '1h', label: '1h' },
-  { value: '1d', label: '1d' }
+  { value: '4h', label: '4h' },
+  { value: '1d', label: '1d' },
+  { value: '1w', label: '1w' },
+  { value: '1M', label: '1M' },
+  { value: '1y', label: '1y' },
+  { value: '3y', label: '3y' },
+  { value: '5y', label: '5y' },
+  { value: '7y', label: '7y' },
+  { value: '15y', label: '15y' },
+  { value: 'all', label: 'All Time' }
 ];
 
 const symbols = [
@@ -70,7 +81,7 @@ const Candlestick = (props: any) => {
   );
 };
 
-export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], resistanceLevels = [] }: CandlestickChartProps) => {
+export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], resistanceLevels = [], mode = 'futures' }: CandlestickChartProps) => {
   const [selectedSymbol, setSelectedSymbol] = useState(initialSymbol);
   const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
   const [customSymbol, setCustomSymbol] = useState('');
@@ -137,55 +148,83 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-4">
-        <Tabs value={selectedSymbol} onValueChange={setSelectedSymbol} className="w-auto">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="ES">ES</TabsTrigger>
-            <TabsTrigger value="NQ">NQ</TabsTrigger>
-            <TabsTrigger value="YM">YM</TabsTrigger>
-            <TabsTrigger value="RTY">RTY</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        
-        {/* Stock Symbol Input with Add to Watchlist */}
-        <div className="flex items-center gap-2">
-          <Input
-            placeholder="Enter any stock symbol"
-            value={customSymbol}
-            onChange={(e) => {
-              const value = e.target.value.toUpperCase();
-              setCustomSymbol(value);
-              if (value) {
-                setSelectedSymbol(`STOCK:${value}`);
-              }
-            }}
-            className="w-48"
-          />
-          {customSymbol && (
-            <Button
-              size="sm"
-              onClick={() => addSymbol(customSymbol, 'NASDAQ')}
-              className="gap-1"
-            >
-              <Plus className="h-3 w-3" />
-              Add to Watchlist
-            </Button>
-          )}
-        </div>
-          
-          <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
-            <SelectTrigger className="w-20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {timeframes.map(tf => (
-                <SelectItem key={tf.value} value={tf.value}>
-                  {tf.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {mode === 'stock' ? (
+          // Stock mode: Just symbol name and timeframe selector
+          <div className="flex items-center gap-4 flex-1">
+            <h3 className="text-xl font-bold font-mono">{actualSymbol}</h3>
+            
+            <Tabs value={selectedTimeframe} onValueChange={setSelectedTimeframe} className="flex-1">
+              <TabsList className="grid w-full grid-cols-8 lg:grid-cols-15">
+                <TabsTrigger value="1min">1m</TabsTrigger>
+                <TabsTrigger value="5min">5m</TabsTrigger>
+                <TabsTrigger value="15min">15m</TabsTrigger>
+                <TabsTrigger value="30min">30m</TabsTrigger>
+                <TabsTrigger value="1h">1h</TabsTrigger>
+                <TabsTrigger value="4h">4h</TabsTrigger>
+                <TabsTrigger value="1d">1d</TabsTrigger>
+                <TabsTrigger value="1w">1w</TabsTrigger>
+                <TabsTrigger value="1M" className="hidden lg:inline-flex">1M</TabsTrigger>
+                <TabsTrigger value="1y" className="hidden lg:inline-flex">1y</TabsTrigger>
+                <TabsTrigger value="3y" className="hidden lg:inline-flex">3y</TabsTrigger>
+                <TabsTrigger value="5y" className="hidden lg:inline-flex">5y</TabsTrigger>
+                <TabsTrigger value="7y" className="hidden lg:inline-flex">7y</TabsTrigger>
+                <TabsTrigger value="15y" className="hidden lg:inline-flex">15y</TabsTrigger>
+                <TabsTrigger value="all" className="hidden lg:inline-flex">All</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+        ) : (
+          // Futures mode: Show tabs and custom input (existing UI)
+          <div className="flex items-center gap-4">
+            <Tabs value={selectedSymbol} onValueChange={setSelectedSymbol} className="w-auto">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="ES">ES</TabsTrigger>
+                <TabsTrigger value="NQ">NQ</TabsTrigger>
+                <TabsTrigger value="YM">YM</TabsTrigger>
+                <TabsTrigger value="RTY">RTY</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            
+            {/* Stock Symbol Input with Add to Watchlist */}
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="Enter any stock symbol"
+                value={customSymbol}
+                onChange={(e) => {
+                  const value = e.target.value.toUpperCase();
+                  setCustomSymbol(value);
+                  if (value) {
+                    setSelectedSymbol(`STOCK:${value}`);
+                  }
+                }}
+                className="w-48"
+              />
+              {customSymbol && (
+                <Button
+                  size="sm"
+                  onClick={() => addSymbol(customSymbol, 'NASDAQ')}
+                  className="gap-1"
+                >
+                  <Plus className="h-3 w-3" />
+                  Add to Watchlist
+                </Button>
+              )}
+            </div>
+              
+            <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
+              <SelectTrigger className="w-20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {timeframes.map(tf => (
+                  <SelectItem key={tf.value} value={tf.value}>
+                    {tf.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleDownload}>

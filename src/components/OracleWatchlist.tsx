@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AddSymbolDialog } from "./AddSymbolDialog";
+import { SymbolChartDialog } from "./SymbolChartDialog";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -33,6 +34,8 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
   } = useOracleWatchlist(predictions);
 
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [selectedChartSymbol, setSelectedChartSymbol] = useState<string | null>(null);
+  const [selectedChartName, setSelectedChartName] = useState<string>('');
 
   if (isLoading) {
     return (
@@ -128,7 +131,11 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
                 return (
                   <tr 
                     key={`${item.symbol}-${item.exchange}-${index}`}
-                    className="hover:bg-muted/30 transition-colors"
+                    onClick={() => {
+                      setSelectedChartSymbol(item.symbol);
+                      setSelectedChartName(item.name || item.symbol);
+                    }}
+                    className="hover:bg-muted/30 transition-colors cursor-pointer"
                   >
                     {/* Symbol */}
                     <td className="p-3">
@@ -246,7 +253,10 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => removeSymbol(item.symbol, item.exchange)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeSymbol(item.symbol, item.exchange);
+                        }}
                         className="h-7 w-7 p-0 hover:bg-destructive/10 hover:text-destructive"
                       >
                         <X className="w-4 h-4" />
@@ -264,6 +274,15 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
         open={showAddDialog}
         onOpenChange={setShowAddDialog}
       />
+
+      {selectedChartSymbol && (
+        <SymbolChartDialog
+          symbol={selectedChartSymbol}
+          companyName={selectedChartName}
+          isOpen={!!selectedChartSymbol}
+          onClose={() => setSelectedChartSymbol(null)}
+        />
+      )}
     </div>
   );
 }

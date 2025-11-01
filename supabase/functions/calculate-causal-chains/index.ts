@@ -248,7 +248,29 @@ Provide comprehensive multi-order causal analysis with specific trade recommenda
     }
 
   const data = await response.json();
+  
+  // Validate response structure
+  if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+    console.error('Invalid AI API response structure:', JSON.stringify(data));
+    throw new Error('Invalid AI API response structure');
+  }
+  
   const content = data.choices[0].message.content;
   
-  return JSON.parse(content);
+  // Validate content exists and is not empty
+  if (!content || content.trim() === '') {
+    console.error('Empty content from AI API');
+    throw new Error('Empty response from AI API');
+  }
+  
+  console.log('AI response content:', content);
+  
+  // Parse JSON with error handling
+  try {
+    return JSON.parse(content);
+  } catch (parseError) {
+    console.error('Failed to parse AI response as JSON:', parseError);
+    console.error('Content received:', content);
+    throw new Error(`Failed to parse AI response: ${parseError.message}`);
+  }
 }

@@ -29,6 +29,7 @@ import CourseCategories from "./pages/CourseCategories";
 import Resources from "./pages/Resources";
 import AlertConfiguration from "./pages/AlertConfiguration";
 import PEAnalyzer from "./pages/PEAnalyzer";
+import MarketOracle from "./pages/MarketOracle";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/resources" element={<Resources />} />
             <Route path="/tools/order-flow/alerts" element={<AlertConfiguration />} />
             <Route path="/tools/pe-analyzer" element={<PEAnalyzer />} />
+            <Route path="/tools/market-oracle" element={<MarketOracle />} />
             <Route path="/screener" element={<Screener />} />
             <Route path="/support" element={<Support />} />
             <Route path="/faq" element={<FAQ />} />

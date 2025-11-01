@@ -46,3 +46,15 @@ verify_jwt = false
 
 [functions.predict-market-impact]
 verify_jwt = false
+
+[functions.parse-and-classify-event]
+verify_jwt = false
+
+[functions.calculate-causal-chains]
+verify_jwt = false
+
+[functions.score-predictions]
+verify_jwt = false
+
+[functions.map-sector-impacts]
+verify_jwt = false

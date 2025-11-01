@@ -48,8 +48,17 @@ export function MarketOracleDashboard() {
         </div>
         <div className="flex gap-2">
           <Button onClick={handleFetchMacro} variant="outline" size="sm" disabled={fetchData.isPending}>
-            <Activity className="w-4 h-4 mr-2" />
-            Update Macro
+            {fetchData.isPending ? (
+              <>
+                <Brain className="w-4 h-4 mr-2 animate-pulse" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <Activity className="w-4 h-4 mr-2" />
+                Update Macro
+              </>
+            )}
           </Button>
           <Button onClick={handleFetchNews} variant="outline" size="sm" disabled={fetchData.isPending}>
             <TrendingUp className="w-4 h-4 mr-2" />

@@ -58,3 +58,6 @@ verify_jwt = false
 
 [functions.map-sector-impacts]
 verify_jwt = false
+
+[functions.analyze-economic-cycle]
+verify_jwt = false

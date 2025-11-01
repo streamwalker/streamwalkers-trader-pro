@@ -106,14 +106,35 @@ export function usePredictions(eventId?: string) {
 }
 
 export function useFetchEconomicData() {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: async (dataType: 'macro_indicators' | 'news' | 'global_indicators') => {
+      // For macro indicators, use the AI-powered cycle analysis
+      if (dataType === 'macro_indicators') {
+        const { data, error } = await supabase.functions.invoke('analyze-economic-cycle', {
+          body: {}
+        });
+        if (error) throw error;
+        return data;
+      }
+      
+      // For other data types, use the original fetch function
       const { data, error } = await supabase.functions.invoke('fetch-economic-data', {
         body: { dataType }
       });
       
       if (error) throw error;
       return data;
+    },
+    onSuccess: (data, variables) => {
+      if (variables === 'macro_indicators') {
+        queryClient.invalidateQueries({ queryKey: ['cycle-indicators'] });
+        const businessPhase = data?.business_cycle_phase || 'Unknown';
+        toast.success(`Economic cycle analysis complete: ${businessPhase}`);
+      } else {
+        toast.success('Economic data fetched successfully');
+      }
     },
     onError: (error) => {
       toast.error('Failed to fetch economic data');

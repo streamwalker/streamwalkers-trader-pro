@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCandlestickData } from '@/hooks/useMarketData';
-import { ComposedChart, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip, Bar } from 'recharts';
+import { createChart, ColorType } from 'lightweight-charts';
+import type { IChartApi, ISeriesApi, CandlestickData, HistogramData } from 'lightweight-charts';
 import { format } from 'date-fns';
-import { Plus } from 'lucide-react';
+import { Plus, Download, Maximize2 } from 'lucide-react';
 import { useWatchlistActions } from '@/hooks/useWatchlist';
 
 interface CandlestickChartProps {
@@ -17,22 +17,31 @@ interface CandlestickChartProps {
   mode?: 'futures' | 'stock';
 }
 
+// Timeframes matching the reference image
 const timeframes = [
-  { value: '1min', label: '1m' },
-  { value: '5min', label: '5m' },
-  { value: '15min', label: '15m' },
-  { value: '30min', label: '30m' },
-  { value: '1h', label: '1h' },
-  { value: '4h', label: '4h' },
-  { value: '1d', label: '1d' },
-  { value: '1w', label: '1w' },
+  { value: '1D', label: '1D' },
+  { value: '2D', label: '2D' },
+  { value: '5D', label: '5D' },
+  { value: '10D', label: '10D' },
   { value: '1M', label: '1M' },
-  { value: '1y', label: '1y' },
-  { value: '3y', label: '3y' },
-  { value: '5y', label: '5y' },
-  { value: '7y', label: '7y' },
-  { value: '15y', label: '15y' },
-  { value: 'all', label: 'All Time' }
+  { value: '3M', label: '3M' },
+  { value: '6M', label: '6M' },
+  { value: 'YTD', label: 'YTD' },
+  { value: '1Y', label: '1Y' },
+  { value: '2Y', label: '2Y' },
+  { value: '5Y', label: '5Y' },
+  { value: '10Y', label: '10Y' },
+  { value: 'MAX', label: 'MAX' }
+];
+
+// Intraday frequency options
+const frequencies = [
+  { value: '1min', label: '1 Minute' },
+  { value: '5min', label: '5 Minutes' },
+  { value: '15min', label: '15 Minutes' },
+  { value: '30min', label: '30 Minutes' },
+  { value: '1h', label: '1 Hour' },
+  { value: '4h', label: '4 Hours' }
 ];
 
 const symbols = [
@@ -42,95 +51,61 @@ const symbols = [
   { value: 'RTY', label: 'RTY (Russell)' }
 ];
 
-// Custom Candlestick component for Recharts
-const Candlestick = (props: any) => {
-  const { payload, x, y, width, height } = props;
-  if (!payload) return null;
-  
-  const { open, close, high, low } = payload;
-  const isGreen = close > open;
-  const color = isGreen ? 'hsl(var(--success))' : 'hsl(var(--destructive))';
-  
-  const bodyHeight = Math.abs(close - open);
-  const bodyY = Math.min(open, close);
-  const wickTop = Math.max(high, Math.max(open, close));
-  const wickBottom = Math.min(low, Math.min(open, close));
-  
-  return (
-    <g>
-      {/* Wick */}
-      <line
-        x1={x + width / 2}
-        y1={wickTop}
-        x2={x + width / 2}
-        y2={wickBottom}
-        stroke={color}
-        strokeWidth={1}
-      />
-      {/* Body */}
-      <rect
-        x={x + width * 0.25}
-        y={bodyY}
-        width={width * 0.5}
-        height={bodyHeight || 1}
-        fill={isGreen ? 'transparent' : color}
-        stroke={color}
-        strokeWidth={1}
-      />
-    </g>
-  );
-};
+interface OHLCData {
+  time: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
 
 export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], resistanceLevels = [], mode = 'futures' }: CandlestickChartProps) => {
   const [selectedSymbol, setSelectedSymbol] = useState(initialSymbol);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1M');
+  const [selectedFrequency, setSelectedFrequency] = useState('1h');
   const [customSymbol, setCustomSymbol] = useState('');
+  const [hoveredCandle, setHoveredCandle] = useState<OHLCData | null>(null);
   const { addSymbol } = useWatchlistActions();
+  
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const candlestickSeriesRef = useRef<any>(null);
+  const volumeSeriesRef = useRef<any>(null);
   
   // Handle both futures and stock symbols
   const isStockSymbol = selectedSymbol.startsWith('STOCK:');
   const actualSymbol = isStockSymbol ? selectedSymbol.replace('STOCK:', '') : selectedSymbol;
   
-  const { data: candlestickData, isLoading } = useCandlestickData(actualSymbol, selectedTimeframe);
+  // Determine the actual interval to use based on timeframe
+  const getInterval = () => {
+    if (['1D', '2D', '5D'].includes(selectedTimeframe)) return selectedFrequency;
+    if (['10D', '1M'].includes(selectedTimeframe)) return '1h';
+    if (['3M', '6M'].includes(selectedTimeframe)) return '1d';
+    return '1d'; // For longer timeframes
+  };
+  
+  const { data: candlestickData, isLoading } = useCandlestickData(actualSymbol, getInterval());
 
   const chartData = candlestickData?.filter(item => {
-    // Filter out invalid data points
     const date = new Date(item.timestamp);
     return !isNaN(date.getTime()) && date.getTime() > 0;
-  }).map(item => ({
-    ...item,
-    time: new Date(item.timestamp).getTime(),
-    formattedTime: format(new Date(item.timestamp), selectedTimeframe === '1min' || selectedTimeframe === '5min' ? 'HH:mm' : 'MMM dd'),
-  })) || [];
+  }) || [];
 
   const hasValidData = chartData.length > 0;
+  
+  // Get the latest candle for display
+  const latestCandle = chartData.length > 0 ? chartData[chartData.length - 1] : null;
+  const displayCandle = hoveredCandle || latestCandle;
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      const date = new Date(label);
-      const isValidDate = !isNaN(date.getTime()) && date.getTime() > 0;
-      
-      return (
-        <div className="bg-background border rounded-lg p-3 shadow-lg">
-          {isValidDate && (
-            <p className="text-sm font-medium">{format(date, 'MMM dd, yyyy HH:mm')}</p>
-          )}
-          <div className="grid grid-cols-2 gap-2 text-xs mt-2">
-            <div>O: {data.open?.toFixed(2)}</div>
-            <div>H: {data.high?.toFixed(2)}</div>
-            <div>L: {data.low?.toFixed(2)}</div>
-            <div>C: {data.close?.toFixed(2)}</div>
-          </div>
-          <div className="text-xs mt-1">Vol: {data.volume?.toLocaleString()}</div>
-        </div>
-      );
-    }
-    return null;
+  // Format volume to M/K
+  const formatVolume = (volume: number) => {
+    if (volume >= 1000000) return `${(volume / 1000000).toFixed(2)}M`;
+    if (volume >= 1000) return `${(volume / 1000).toFixed(2)}K`;
+    return volume.toFixed(0);
   };
 
   const handleDownload = () => {
-    // Simple implementation - in a real app, you'd capture the chart as image
     const dataStr = JSON.stringify(candlestickData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
@@ -142,15 +117,163 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
   };
 
   const handleFullscreen = () => {
-    // For now, just a placeholder - in a real implementation, you'd handle fullscreen
-    console.log('Fullscreen requested');
+    if (chartContainerRef.current) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        chartContainerRef.current.requestFullscreen();
+      }
+    }
   };
+
+  // Initialize and update chart
+  useEffect(() => {
+    if (!chartContainerRef.current || !hasValidData) return;
+
+    const container = chartContainerRef.current;
+    
+    // Create chart
+    const chart = createChart(container, {
+      layout: {
+        background: { type: ColorType.Solid, color: 'transparent' },
+        textColor: '#666',
+      },
+      width: container.clientWidth,
+      height: 500,
+      grid: {
+        vertLines: { color: '#f0f0f0' },
+        horzLines: { color: '#f0f0f0' },
+      },
+      rightPriceScale: {
+        borderColor: '#e0e0e0',
+      },
+      timeScale: {
+        borderColor: '#e0e0e0',
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      crosshair: {
+        mode: 1,
+      },
+    });
+
+    chartRef.current = chart;
+
+    // Add candlestick series
+    const candlestickSeries = (chart as any).addCandlestickSeries({
+      upColor: '#26a69a',
+      downColor: '#ef5350',
+      borderVisible: false,
+      wickUpColor: '#26a69a',
+      wickDownColor: '#ef5350',
+    });
+    candlestickSeriesRef.current = candlestickSeries;
+
+    // Add volume series
+    const volumeSeries = (chart as any).addHistogramSeries({
+      color: '#26a69a',
+      priceFormat: {
+        type: 'volume',
+      },
+      priceScaleId: '',
+      scaleMargins: {
+        top: 0.8,
+        bottom: 0,
+      },
+    });
+    volumeSeriesRef.current = volumeSeries;
+
+    // Transform and set data
+    const formattedCandleData = chartData.map(item => ({
+      time: Math.floor(item.timestamp / 1000) as any,
+      open: item.open,
+      high: item.high,
+      low: item.low,
+      close: item.close,
+    }));
+
+    const formattedVolumeData = chartData.map(item => ({
+      time: Math.floor(item.timestamp / 1000) as any,
+      value: item.volume,
+      color: item.close >= item.open ? '#26a69a80' : '#ef535080',
+    }));
+
+    candlestickSeries.setData(formattedCandleData);
+    volumeSeries.setData(formattedVolumeData);
+
+    // Add support/resistance lines
+    supportLevels.forEach(level => {
+      candlestickSeries.createPriceLine({
+        price: level,
+        color: '#26a69a',
+        lineWidth: 1,
+        lineStyle: 2, // Dashed
+        axisLabelVisible: true,
+        title: 'Support',
+      });
+    });
+
+    resistanceLevels.forEach(level => {
+      candlestickSeries.createPriceLine({
+        price: level,
+        color: '#ef5350',
+        lineWidth: 1,
+        lineStyle: 2, // Dashed
+        axisLabelVisible: true,
+        title: 'Resistance',
+      });
+    });
+
+    // Subscribe to crosshair move for hover data
+    chart.subscribeCrosshairMove((param) => {
+      if (param.time && param.seriesData.get(candlestickSeries)) {
+        const data = param.seriesData.get(candlestickSeries) as any;
+        if (data) {
+          const originalData = chartData.find(
+            item => Math.floor(item.timestamp / 1000) === param.time
+          );
+          if (originalData) {
+            setHoveredCandle({
+              time: format(new Date(originalData.timestamp), 'MMM dd, yyyy HH:mm'),
+              open: originalData.open,
+              high: originalData.high,
+              low: originalData.low,
+              close: originalData.close,
+              volume: originalData.volume,
+            });
+          }
+        }
+      } else {
+        setHoveredCandle(null);
+      }
+    });
+
+    // Fit content
+    chart.timeScale().fitContent();
+
+    // Handle resize
+    const handleResize = () => {
+      if (container && chartRef.current) {
+        chartRef.current.applyOptions({
+          width: container.clientWidth,
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      chart.remove();
+      chartRef.current = null;
+    };
+  }, [chartData, hasValidData, supportLevels, resistanceLevels]);
 
   if (isLoading) {
     return (
       <Card className="p-6">
         <div className="animate-pulse">
-          <div className="h-[400px] bg-muted rounded-lg"></div>
+          <div className="h-[600px] bg-muted rounded-lg"></div>
         </div>
       </Card>
     );
@@ -159,7 +282,7 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
   if (!isLoading && !hasValidData) {
     return (
       <Card className="p-6">
-        <div className="flex items-center justify-center h-[400px] text-muted-foreground">
+        <div className="flex items-center justify-center h-[600px] text-muted-foreground">
           <div className="text-center space-y-2">
             <p className="text-lg font-medium">No chart data available</p>
             <p className="text-sm">This symbol may not have data for the selected timeframe</p>
@@ -170,49 +293,29 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
   }
 
   return (
-    <Card className="p-6">
-      <div className="flex items-center justify-between mb-4">
+    <Card className="p-6 space-y-4">
+      {/* Symbol Header and Controls */}
+      <div className="flex items-center justify-between">
         {mode === 'stock' ? (
-          // Stock mode: Just symbol name and timeframe selector
-          <div className="flex items-center gap-4 flex-1">
-            <h3 className="text-xl font-bold font-mono">{actualSymbol}</h3>
-            
-            <Tabs value={selectedTimeframe} onValueChange={setSelectedTimeframe} className="flex-1">
-              <TabsList className="grid w-full grid-cols-8 lg:grid-cols-15">
-                <TabsTrigger value="1min">1m</TabsTrigger>
-                <TabsTrigger value="5min">5m</TabsTrigger>
-                <TabsTrigger value="15min">15m</TabsTrigger>
-                <TabsTrigger value="30min">30m</TabsTrigger>
-                <TabsTrigger value="1h">1h</TabsTrigger>
-                <TabsTrigger value="4h">4h</TabsTrigger>
-                <TabsTrigger value="1d">1d</TabsTrigger>
-                <TabsTrigger value="1w">1w</TabsTrigger>
-                <TabsTrigger value="1M" className="hidden lg:inline-flex">1M</TabsTrigger>
-                <TabsTrigger value="1y" className="hidden lg:inline-flex">1y</TabsTrigger>
-                <TabsTrigger value="3y" className="hidden lg:inline-flex">3y</TabsTrigger>
-                <TabsTrigger value="5y" className="hidden lg:inline-flex">5y</TabsTrigger>
-                <TabsTrigger value="7y" className="hidden lg:inline-flex">7y</TabsTrigger>
-                <TabsTrigger value="15y" className="hidden lg:inline-flex">15y</TabsTrigger>
-                <TabsTrigger value="all" className="hidden lg:inline-flex">All</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+          <h3 className="text-xl font-bold font-mono">{actualSymbol}</h3>
         ) : (
-          // Futures mode: Show tabs and custom input (existing UI)
-          <div className="flex items-center gap-4">
-            <Tabs value={selectedSymbol} onValueChange={setSelectedSymbol} className="w-auto">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="ES">ES</TabsTrigger>
-                <TabsTrigger value="NQ">NQ</TabsTrigger>
-                <TabsTrigger value="YM">YM</TabsTrigger>
-                <TabsTrigger value="RTY">RTY</TabsTrigger>
-              </TabsList>
-            </Tabs>
+          <div className="flex items-center gap-3">
+            <Select value={selectedSymbol} onValueChange={setSelectedSymbol}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {symbols.map(s => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             
-            {/* Stock Symbol Input with Add to Watchlist */}
             <div className="flex items-center gap-2">
               <Input
-                placeholder="Enter any stock symbol"
+                placeholder="Stock symbol"
                 value={customSymbol}
                 onChange={(e) => {
                   const value = e.target.value.toUpperCase();
@@ -221,127 +324,104 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
                     setSelectedSymbol(`STOCK:${value}`);
                   }
                 }}
-                className="w-48"
+                className="w-32"
               />
               {customSymbol && (
                 <Button
                   size="sm"
+                  variant="outline"
                   onClick={() => addSymbol(customSymbol, 'NASDAQ')}
                   className="gap-1"
                 >
                   <Plus className="h-3 w-3" />
-                  Add to Watchlist
+                  Add
                 </Button>
               )}
             </div>
-              
-            <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
-              <SelectTrigger className="w-20">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {timeframes.map(tf => (
-                  <SelectItem key={tf.value} value={tf.value}>
-                    {tf.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
         )}
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleDownload}>
-            Export
+          <Button variant="ghost" size="icon" onClick={handleDownload}>
+            <Download className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="sm" onClick={handleFullscreen}>
-            Fullscreen
+          <Button variant="ghost" size="icon" onClick={handleFullscreen}>
+            <Maximize2 className="h-4 w-4" />
           </Button>
         </div>
       </div>
 
-      <div className="w-full h-[400px] bg-background rounded-lg border">
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-            <XAxis 
-              dataKey="formattedTime"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-            />
-            <YAxis 
-              domain={['dataMin - 10', 'dataMax + 10']}
-              axisLine={false}
-              tickLine={false}
-              tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-            />
-            <YAxis 
-              yAxisId="volume"
-              orientation="right"
-              domain={[0, 'dataMax']}
-              axisLine={false}
-              tickLine={false}
-              tick={false}
-              width={0}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            
-            {/* Support Lines */}
-            {supportLevels.map((level, idx) => (
-              <ReferenceLine 
-                key={`support-${idx}`} 
-                y={level} 
-                stroke="hsl(var(--success))" 
-                strokeDasharray="5 5"
-                strokeOpacity={0.7}
-              />
-            ))}
-            
-            {/* Resistance Lines */}
-            {resistanceLevels.map((level, idx) => (
-              <ReferenceLine 
-                key={`resistance-${idx}`} 
-                y={level} 
-                stroke="hsl(var(--destructive))" 
-                strokeDasharray="5 5"
-                strokeOpacity={0.7}
-              />
-            ))}
-            
-            {/* Volume Bars */}
-            <Bar 
-              dataKey="volume" 
-              fill="hsl(var(--muted-foreground))" 
-              opacity={0.3}
-              yAxisId="volume"
-            />
-            
-            {/* Custom Candlestick rendering would go here */}
-            {/* For now, we'll use a line chart as a simplified representation */}
-            <Bar dataKey="close" fill="hsl(var(--primary))" opacity={0.8} />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </div>
-      
-      <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-success rounded"></div>
-            <span>Support</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-destructive rounded"></div>
-            <span>Resistance</span>
-          </div>
+      {/* OHLCV Summary */}
+      {displayCandle && (
+        <div className="flex items-center gap-6 text-sm">
+          <span className="text-muted-foreground">
+            {'time' in displayCandle ? displayCandle.time : format(new Date((displayCandle as any).timestamp), 'MMM dd, yyyy')}
+          </span>
+          <span className="font-mono">O: <span className="font-semibold">{displayCandle.open.toFixed(2)}</span></span>
+          <span className="font-mono">H: <span className="font-semibold">{displayCandle.high.toFixed(2)}</span></span>
+          <span className="font-mono">L: <span className="font-semibold">{displayCandle.low.toFixed(2)}</span></span>
+          <span className={`font-mono ${displayCandle.close >= displayCandle.open ? 'text-[#26a69a]' : 'text-[#ef5350]'}`}>
+            C: <span className="font-semibold">{displayCandle.close.toFixed(2)}</span>
+          </span>
+          <span className="font-mono text-muted-foreground">V: {formatVolume(displayCandle.volume)}</span>
         </div>
-        <div>
-          {candlestickData && candlestickData.length > 0 && (
-            <span>
-              Last: {candlestickData[candlestickData.length - 1]?.close.toFixed(2)}
-            </span>
+      )}
+
+      {/* Timeframe Selector */}
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 flex-wrap">
+          {timeframes.map(tf => (
+            <Button
+              key={tf.value}
+              variant={selectedTimeframe === tf.value ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => setSelectedTimeframe(tf.value)}
+              className="h-8 px-3"
+            >
+              {tf.label}
+            </Button>
+          ))}
+        </div>
+        
+        <div className="ml-auto">
+          <Select value={selectedFrequency} onValueChange={setSelectedFrequency}>
+            <SelectTrigger className="w-32 h-8">
+              <SelectValue placeholder="Frequency" />
+            </SelectTrigger>
+            <SelectContent>
+              {frequencies.map(freq => (
+                <SelectItem key={freq.value} value={freq.value}>
+                  {freq.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Chart Container */}
+      <div 
+        ref={chartContainerRef} 
+        className="w-full h-[500px] bg-white rounded-lg border"
+      />
+
+      {/* Legend */}
+      {(supportLevels.length > 0 || resistanceLevels.length > 0) && (
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          {supportLevels.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-0.5 bg-[#26a69a] border-dashed"></div>
+              <span>Support</span>
+            </div>
+          )}
+          {resistanceLevels.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-0.5 bg-[#ef5350] border-dashed"></div>
+              <span>Resistance</span>
+            </div>
           )}
         </div>
-      </div>
+      )}
     </Card>
   );
 };

@@ -16,7 +16,7 @@ export function SymbolChartDialog({
 }: SymbolChartDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl h-[90vh] flex flex-col">
+      <DialogContent className="max-w-7xl h-[95vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <span className="font-mono text-2xl">{symbol}</span>

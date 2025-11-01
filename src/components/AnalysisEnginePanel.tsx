@@ -1,15 +1,18 @@
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAnalysisEngine } from "@/hooks/useAnalysisEngine";
 import { useMarketOracle } from "@/hooks/useMarketOracle";
-import { Brain, Network, Target, TrendingUp, Loader2 } from "lucide-react";
+import { Brain, Network, Target, TrendingUp, Loader2, AlertTriangle, ChevronDown, ChevronUp } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useState } from "react";
 
 export function AnalysisEnginePanel() {
   const { parseEvents, calculateChains, mapSectors, isAnalyzing } = useAnalysisEngine();
-  const { activeEvents, fetchData } = useMarketOracle();
+  const { activeEvents, fetchData, events } = useMarketOracle();
+  const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
 
   const handleFullAnalysis = async () => {
     // Step 1: Fetch latest news
@@ -26,6 +29,18 @@ export function AnalysisEnginePanel() {
   const handleAnalyzeEvent = async (eventId: string) => {
     // Calculate causal chains
     await calculateChains.mutateAsync(eventId);
+  };
+
+  const getSeverityColor = (severity: number) => {
+    if (severity >= 8) return "text-destructive";
+    if (severity >= 5) return "text-warning";
+    return "text-success";
+  };
+
+  const getSeverityBadge = (severity: number) => {
+    if (severity >= 8) return "destructive";
+    if (severity >= 5) return "default";
+    return "secondary";
   };
 
   return (
@@ -196,12 +211,126 @@ export function AnalysisEnginePanel() {
         </Card>
       </div>
 
-      {/* Recent Analysis Results */}
+      {/* Detected Events */}
+      {events.data && events.data.length > 0 && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5" />
+            Detected Events ({events.data.length})
+          </h3>
+          
+          <div className="space-y-4">
+            {events.data.map((event) => (
+              <Collapsible
+                key={event.id}
+                open={expandedEventId === event.id}
+                onOpenChange={(open) => setExpandedEventId(open ? event.id : null)}
+              >
+                <Card className="border-l-4" style={{ borderLeftColor: event.severity >= 8 ? 'hsl(var(--destructive))' : event.severity >= 5 ? 'hsl(var(--warning))' : 'hsl(var(--success))' }}>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline" className="text-xs">
+                            {event.event_type.replace(/_/g, ' ').toUpperCase()}
+                          </Badge>
+                          <Badge variant={getSeverityBadge(event.severity)} className="text-xs">
+                            Severity: {event.severity}/10
+                          </Badge>
+                          {event.confidence_score && (
+                            <Badge variant="secondary" className="text-xs">
+                              {Math.round(event.confidence_score * 100)}% confidence
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm font-medium">{event.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {new Date(event.start_date).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric', 
+                            year: 'numeric' 
+                          })}
+                        </p>
+                      </div>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          {expandedEventId === event.id ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </Button>
+                      </CollapsibleTrigger>
+                    </div>
+                  </CardHeader>
+
+                  <CollapsibleContent>
+                    <CardContent className="pt-0">
+                      {/* Affected Sectors */}
+                      {event.affected_sectors && Array.isArray(event.affected_sectors) && event.affected_sectors.length > 0 && (
+                        <div className="mb-4">
+                          <h5 className="text-xs font-semibold mb-2">Affected Sectors:</h5>
+                          <div className="flex flex-wrap gap-1">
+                            {event.affected_sectors.map((sector: string, idx: number) => (
+                              <Badge key={idx} variant="secondary" className="text-xs">
+                                {sector}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Impact Timeline */}
+                      {event.impact_timeline && typeof event.impact_timeline === 'object' && (
+                        <div className="mb-4">
+                          <h5 className="text-xs font-semibold mb-2">Impact Timeline:</h5>
+                          <div className="space-y-1 text-xs text-muted-foreground">
+                            {Object.entries(event.impact_timeline).map(([key, value]) => (
+                              <div key={key} className="flex justify-between">
+                                <span className="capitalize">{key.replace(/_/g, ' ')}:</span>
+                                <span>{String(value)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Actions */}
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          onClick={() => handleAnalyzeEvent(event.id)}
+                          disabled={calculateChains.isPending}
+                          size="sm"
+                          className="flex-1"
+                        >
+                          {calculateChains.isPending ? (
+                            <>
+                              <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                              Analyzing...
+                            </>
+                          ) : (
+                            <>
+                              <Network className="w-3 h-3 mr-2" />
+                              Analyze Causal Chains
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </CollapsibleContent>
+                </Card>
+              </Collapsible>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Recent Analysis Summary */}
       {(parseEvents.data || calculateChains.data) && (
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <TrendingUp className="w-5 h-5" />
-            Latest Analysis Results
+            Latest Analysis Summary
           </h3>
           
           {parseEvents.data && (

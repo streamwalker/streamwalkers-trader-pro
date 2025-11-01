@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { UserWatchlistItem, SymbolSearchResult } from '@/types/watchlist';
 import WatchlistService from '@/services/WatchlistService';
 import MarketDataService, { StockData } from '@/services/MarketDataService';
@@ -36,9 +37,109 @@ export const useWatchlistData = () => {
       return Promise.all(promises);
     },
     enabled: !!watchlist?.length,
-    refetchInterval: 30000, // Refetch every 30 seconds
-    staleTime: 25000,
+    staleTime: 300000, // 5 minutes
   });
+};
+
+// Optimistic Watchlist Hook - Instant display with background updates
+export const useOptimisticWatchlist = () => {
+  const queryClient = useQueryClient();
+  const [optimisticData, setOptimisticData] = useState<(StockData & { stale?: boolean })[]>([]);
+  const [loadingSymbols, setLoadingSymbols] = useState<Set<string>>(new Set());
+  
+  // Get watchlist symbols instantly (localStorage, no API)
+  const watchlist = watchlistService.getUserWatchlist();
+  
+  // Initialize with cached/placeholder data immediately
+  useEffect(() => {
+    const initialData = watchlist.map(item => {
+      // Try to get cached data first
+      const cachedData = queryClient.getQueryData<StockData>(['symbolData', item.symbol, item.exchange]);
+      
+      if (cachedData) {
+        return { ...cachedData, stale: true }; // Mark as stale but display immediately
+      }
+      
+      // Return placeholder data for instant display
+      return {
+        symbol: item.symbol,
+        name: item.companyName || item.symbol,
+        price: 0,
+        change: 0,
+        changePercent: 0,
+        volume: 0,
+        marketCap: 0,
+        pe: 0,
+        dividendYield: 0,
+        sector: 'Loading...',
+        lastUpdated: Date.now(),
+        marketValue: 0,
+        position: item.position || 0,
+        exchange: item.exchange,
+        stale: true, // Flag to show loading indicator
+      };
+    });
+    
+    setOptimisticData(initialData);
+  }, [watchlist.length]);
+  
+  // Fetch real data in background (non-blocking)
+  useEffect(() => {
+    if (!watchlist.length) return;
+    
+    // Rate limiter - 5 requests per minute
+    let requestCount = 0;
+    const maxRequests = 5;
+    const timeWindow = 60000; // 1 minute
+    
+    const fetchSymbolData = async (item: UserWatchlistItem, index: number) => {
+      // Stagger requests to avoid rate limiting
+      await new Promise(resolve => setTimeout(resolve, index * 500));
+      
+      // Rate limiting check
+      if (requestCount >= maxRequests) {
+        console.warn(`Rate limit reached, delaying ${item.symbol}`);
+        await new Promise(resolve => setTimeout(resolve, timeWindow));
+        requestCount = 0;
+      }
+      
+      setLoadingSymbols(prev => new Set(prev).add(item.symbol));
+      
+      try {
+        requestCount++;
+        const stockData = await marketDataService.getStockDataBySymbol(item.symbol, item.exchange);
+        
+        // Update optimistic data with real data
+        setOptimisticData(prev => 
+          prev.map(stock => 
+            stock.symbol === item.symbol 
+              ? { ...stockData, stale: false, position: item.position || 0 }
+              : stock
+          )
+        );
+      } catch (error) {
+        console.warn(`Failed to fetch ${item.symbol}:`, error);
+        // Keep placeholder data on error
+      } finally {
+        setLoadingSymbols(prev => {
+          const next = new Set(prev);
+          next.delete(item.symbol);
+          return next;
+        });
+      }
+    };
+    
+    // Start background fetching
+    watchlist.forEach((item, index) => {
+      fetchSymbolData(item, index);
+    });
+  }, [watchlist.length]);
+  
+  return {
+    data: optimisticData,
+    isLoading: false, // Never show loading spinner!
+    loadingSymbols, // Individual symbols currently fetching
+  };
 };
 
 // Search symbols
@@ -165,7 +266,7 @@ export const useWatchlistActions = () => {
 // Oracle Watchlist Hook - Enhanced with prediction data
 export const useOracleWatchlist = (predictions?: any[]) => {
   const { data: watchlist } = useWatchlist();
-  const { data: watchlistData, isLoading } = useWatchlistData();
+  const { data: watchlistData, isLoading, loadingSymbols } = useOptimisticWatchlist();
   const { addSymbol, removeSymbol: removeSymbolAction } = useWatchlistActions();
 
   // Extract symbols from predictions with metadata
@@ -234,6 +335,7 @@ export const useOracleWatchlist = (predictions?: any[]) => {
   return {
     enhancedWatchlistData,
     isLoading,
+    loadingSymbols,
     predictionSymbols: predictionSymbolsData.length,
     removeSymbol: removeSymbolAction,
   };

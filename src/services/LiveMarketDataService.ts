@@ -10,6 +10,7 @@ export class LiveMarketDataService {
   private subscriptions = new Map<string, (() => void)[]>();
 
   private constructor() {
+    this.loadCacheFromStorage();
     this.initializeProviders();
   }
 
@@ -72,6 +73,27 @@ export class LiveMarketDataService {
     return `${method}_${args.join('_')}`;
   }
 
+  private loadCacheFromStorage() {
+    try {
+      const stored = localStorage.getItem('market_data_cache');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        this.cache = new Map(Object.entries(parsed));
+      }
+    } catch (error) {
+      console.warn('Failed to load cache from storage:', error);
+    }
+  }
+
+  private saveCacheToStorage() {
+    try {
+      const cacheObj = Object.fromEntries(this.cache);
+      localStorage.setItem('market_data_cache', JSON.stringify(cacheObj));
+    } catch (error) {
+      console.warn('Failed to save cache to storage:', error);
+    }
+  }
+
   private async fetchWithCache<T>(
     key: string,
     fetchFn: () => Promise<T>,
@@ -85,6 +107,7 @@ export class LiveMarketDataService {
     try {
       const data = await fetchFn();
       this.cache.set(key, { data, timestamp: Date.now(), ttl });
+      this.saveCacheToStorage(); // Persist to localStorage
       return data;
     } catch (error) {
       // Return cached data if available, even if expired
@@ -106,7 +129,7 @@ export class LiveMarketDataService {
         }
         return this.getSimulatedQuote(symbol);
       },
-      5000 // 5 second cache for quotes
+      300000 // 5 minute cache for quotes
     );
   }
 

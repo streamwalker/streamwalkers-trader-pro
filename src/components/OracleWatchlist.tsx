@@ -11,8 +11,10 @@ import {
   Plus, 
   X, 
   AlertCircle,
-  Loader2 
+  Loader2,
+  RefreshCw
 } from "lucide-react";
+import { useQueryClient } from '@tanstack/react-query';
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -26,9 +28,11 @@ interface OracleWatchlistProps {
 }
 
 export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
+  const queryClient = useQueryClient();
   const { 
     enhancedWatchlistData, 
     isLoading, 
+    loadingSymbols,
     predictionSymbols,
     removeSymbol 
   } = useOracleWatchlist(predictions);
@@ -37,16 +41,10 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
   const [selectedChartSymbol, setSelectedChartSymbol] = useState<string | null>(null);
   const [selectedChartName, setSelectedChartName] = useState<string>('');
 
-  if (isLoading) {
-    return (
-      <Card className="p-8">
-        <div className="flex items-center justify-center gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-primary" />
-          <span className="text-muted-foreground">Loading watchlist data...</span>
-        </div>
-      </Card>
-    );
-  }
+  const handleRefresh = () => {
+    queryClient.invalidateQueries({ queryKey: ['watchlistData'] });
+    queryClient.invalidateQueries({ queryKey: ['symbolData'] });
+  };
 
   if (!enhancedWatchlistData || enhancedWatchlistData.length === 0) {
     return (
@@ -80,7 +78,12 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
           <div>
             <h2 className="text-xl font-bold mb-1">Oracle Watchlist</h2>
             <p className="text-sm text-muted-foreground">
-              Live market data for AI-predicted symbols • Updates every 30s
+              Live market data for AI-predicted symbols
+              {loadingSymbols && loadingSymbols.size > 0 && (
+                <span className="text-primary ml-2">
+                  • Updating {loadingSymbols.size} symbols...
+                </span>
+              )}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -90,6 +93,15 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
                 {predictionSymbols} from predictions
               </Badge>
             )}
+            <Button 
+              onClick={handleRefresh} 
+              size="sm" 
+              variant="outline"
+              disabled={loadingSymbols && loadingSymbols.size > 0}
+            >
+              <RefreshCw className={cn("w-4 h-4 mr-2", loadingSymbols && loadingSymbols.size > 0 && "animate-spin")} />
+              Refresh
+            </Button>
             <Button onClick={() => setShowAddDialog(true)} size="sm">
               <Plus className="w-4 h-4 mr-2" />
               Add Symbol
@@ -135,36 +147,44 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
                       setSelectedChartSymbol(item.symbol);
                       setSelectedChartName(item.name || item.symbol);
                     }}
-                    className="hover:bg-muted/30 transition-colors cursor-pointer"
+                    className={cn(
+                      "hover:bg-muted/30 transition-colors cursor-pointer",
+                      item.stale && "opacity-60"
+                    )}
                   >
                     {/* Symbol */}
                     <td className="p-3">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="cursor-help">
-                              <div className="font-mono font-bold text-sm">
-                                {item.symbol}
+                      <div className="flex items-center gap-2">
+                        {loadingSymbols?.has(item.symbol) && (
+                          <Loader2 className="w-3 h-3 animate-spin text-muted-foreground shrink-0" />
+                        )}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="cursor-help">
+                                <div className="font-mono font-bold text-sm">
+                                  {item.symbol}
+                                </div>
+                                {item.sector && (
+                                  <div className="text-xs text-muted-foreground">
+                                    {item.sector}
+                                  </div>
+                                )}
                               </div>
-                              {item.sector && (
-                                <div className="text-xs text-muted-foreground">
-                                  {item.sector}
-                                </div>
-                              )}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent side="right" className="max-w-xs">
-                            <div className="space-y-1">
-                              <div className="font-semibold">{item.name}</div>
-                              {item.reasoning && (
-                                <div className="text-xs text-muted-foreground">
-                                  {item.reasoning}
-                                </div>
-                              )}
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                            </TooltipTrigger>
+                            <TooltipContent side="right" className="max-w-xs">
+                              <div className="space-y-1">
+                                <div className="font-semibold">{item.name}</div>
+                                {item.reasoning && (
+                                  <div className="text-xs text-muted-foreground">
+                                    {item.reasoning}
+                                  </div>
+                                )}
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </td>
 
                     {/* Action */}

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useCandlestickData } from '@/hooks/useMarketData';
-import { createChart, ColorType } from 'lightweight-charts';
+import { createChart, ColorType, CandlestickSeries, HistogramSeries } from 'lightweight-charts';
 import type { IChartApi, ISeriesApi, CandlestickData, HistogramData } from 'lightweight-charts';
 import { format } from 'date-fns';
 import { Plus, Download, Maximize2 } from 'lucide-react';
@@ -160,7 +160,7 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
     chartRef.current = chart;
 
     // Add candlestick series
-    const candlestickSeries = (chart as any).addCandlestickSeries({
+    const candlestickSeries = chart.addSeries(CandlestickSeries, {
       upColor: '#26a69a',
       downColor: '#ef5350',
       borderVisible: false,
@@ -170,18 +170,22 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
     candlestickSeriesRef.current = candlestickSeries;
 
     // Add volume series
-    const volumeSeries = (chart as any).addHistogramSeries({
+    const volumeSeries = chart.addSeries(HistogramSeries, {
       color: '#26a69a',
       priceFormat: {
         type: 'volume',
       },
       priceScaleId: '',
+    });
+    volumeSeriesRef.current = volumeSeries;
+
+    // Apply scale margins to volume series
+    volumeSeries.priceScale().applyOptions({
       scaleMargins: {
         top: 0.8,
         bottom: 0,
       },
     });
-    volumeSeriesRef.current = volumeSeries;
 
     // Transform and set data
     const formattedCandleData = chartData.map(item => ({

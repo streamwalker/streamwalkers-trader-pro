@@ -31,7 +31,13 @@ serve(async (req) => {
       throw fetchError;
     }
 
-    console.log('Macro indicators fetched:', macroData?.indicators?.length || 0);
+    // Convert indicators object to array for counting
+    const indicatorCount = macroData?.indicators ? Object.keys(macroData.indicators).length : 0;
+    console.log('Macro indicators fetched:', indicatorCount);
+
+    if (indicatorCount === 0) {
+      throw new Error('No macro indicators received from fetch-economic-data');
+    }
 
     // Step 2: Use Lovable AI to analyze the indicators
     const prompt = `Analyze the following macroeconomic indicators and determine the current economic cycle phases:
@@ -129,7 +135,7 @@ Return your analysis in this exact JSON structure:
           supporting_indicators: analysis.business_cycle.supporting_indicators,
           key_risks: analysis.key_risks,
           expected_duration: analysis.expected_duration_months,
-          raw_indicators: macroData.indicators.slice(0, 10) // Store subset of raw data
+          raw_indicators: macroData.indicators // Store all indicators as object
         },
         historical_context: {
           reasoning: analysis.business_cycle.reasoning,

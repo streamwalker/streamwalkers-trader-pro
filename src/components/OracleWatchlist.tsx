@@ -115,9 +115,15 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
             </thead>
             <tbody className="divide-y">
               {enhancedWatchlistData.map((item, index) => {
-                const isPositive = item.changePercent >= 0;
-                const bid = item.price * 0.9998;
-                const ask = item.price * 1.0002;
+                // Add null checks for all numeric values
+                const price = item.price ?? 0;
+                const change = item.change ?? 0;
+                const changePercent = item.changePercent ?? 0;
+                const volume = item.volume ?? 0;
+                
+                const isPositive = changePercent >= 0;
+                const bid = price * 0.9998;
+                const ask = price * 1.0002;
                 
                 return (
                   <tr 
@@ -174,7 +180,7 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
 
                     {/* Last Price */}
                     <td className="p-3 text-right font-mono font-semibold">
-                      ${item.price.toFixed(2)}
+                      ${price.toFixed(2)}
                     </td>
 
                     {/* Change */}
@@ -182,7 +188,7 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
                       "p-3 text-right font-mono text-sm",
                       isPositive ? "text-green-600" : "text-red-600"
                     )}>
-                      {isPositive ? '+' : ''}${item.change.toFixed(2)}
+                      {isPositive ? '+' : ''}${change.toFixed(2)}
                     </td>
 
                     {/* % Change */}
@@ -196,13 +202,13 @@ export function OracleWatchlist({ predictions }: OracleWatchlistProps) {
                         ) : (
                           <TrendingDown className="w-3 h-3" />
                         )}
-                        {isPositive ? '+' : ''}{item.changePercent.toFixed(2)}%
+                        {isPositive ? '+' : ''}{changePercent.toFixed(2)}%
                       </div>
                     </td>
 
                     {/* Volume */}
                     <td className="p-3 text-right font-mono text-sm text-muted-foreground">
-                      {(item.volume / 1000000).toFixed(2)}M
+                      {(volume / 1000000).toFixed(2)}M
                     </td>
 
                     {/* Bid/Ask */}

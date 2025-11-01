@@ -37,3 +37,12 @@ verify_jwt = false
 
 [functions.get-market-keys]
 verify_jwt = false
+
+[functions.fetch-economic-data]
+verify_jwt = false
+
+[functions.analyze-economic-event]
+verify_jwt = false
+
+[functions.predict-market-impact]
+verify_jwt = false

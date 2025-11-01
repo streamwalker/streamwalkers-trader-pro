@@ -2,6 +2,21 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+export interface ImpactOrderData {
+  timeline: string;
+  effects: string[];
+  sectors: string[];
+  mechanism: string;
+  confidence: number;
+}
+
+export interface ImpactTimeline {
+  first_order?: ImpactOrderData;
+  second_order?: ImpactOrderData;
+  third_order?: ImpactOrderData;
+  fourth_order?: ImpactOrderData;
+}
+
 export interface EconomicEvent {
   id: string;
   event_type: string;
@@ -10,7 +25,7 @@ export interface EconomicEvent {
   end_date?: string;
   description: string;
   affected_sectors: string[];
-  impact_timeline: any;
+  impact_timeline: ImpactTimeline;
   confidence_score: number;
 }
 

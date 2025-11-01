@@ -140,21 +140,53 @@ export function MarketOracleDashboard() {
                 <div className="space-y-2">
                   <h4 className="text-sm font-semibold">Multi-Order Impact Analysis:</h4>
                   <div className="grid grid-cols-2 gap-3">
-                    {Object.entries(event.impact_timeline).map(([order, data]: [string, any]) => (
-                      <div key={order} className="border rounded-lg p-3 bg-card">
-                        <div className="font-medium text-sm mb-1 capitalize">{order.replace('_', ' ')}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {data.timeline && <div className="mb-1">⏱️ {data.timeline}</div>}
-                          {data.effects && (
-                            <ul className="list-disc list-inside space-y-1">
-                              {data.effects.map((effect: string, idx: number) => (
-                                <li key={idx}>{effect}</li>
-                              ))}
-                            </ul>
-                          )}
+                    {Object.entries(event.impact_timeline).map(([order, data]: [string, any]) => {
+                      console.log(`Rendering ${order}:`, data);
+                      
+                      return (
+                        <div key={order} className="border rounded-lg p-3 bg-card">
+                          <div className="font-medium text-sm mb-1 capitalize">
+                            {order.replace(/_/g, ' ')}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {/* Timeline */}
+                            {data?.timeline && (
+                              <div className="mb-1">⏱️ {data.timeline}</div>
+                            )}
+                            
+                            {/* Effects List */}
+                            {data?.effects && Array.isArray(data.effects) && data.effects.length > 0 && (
+                              <ul className="list-disc list-inside space-y-1 mt-2">
+                                {data.effects.map((effect: string, idx: number) => (
+                                  <li key={idx}>{effect}</li>
+                                ))}
+                              </ul>
+                            )}
+                            
+                            {/* Mechanism */}
+                            {data?.mechanism && (
+                              <div className="mt-2 italic text-xs">
+                                <span className="font-semibold">How:</span> {data.mechanism}
+                              </div>
+                            )}
+                            
+                            {/* Confidence Score */}
+                            {data?.confidence !== undefined && (
+                              <div className="mt-2 text-xs">
+                                <span className="font-semibold">Confidence:</span> {(data.confidence * 100).toFixed(0)}%
+                              </div>
+                            )}
+                            
+                            {/* Fallback for debugging */}
+                            {!data?.timeline && !data?.effects && (
+                              <div className="text-xs text-red-500">
+                                No timeline or effects. Raw: {JSON.stringify(data).substring(0, 100)}...
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}

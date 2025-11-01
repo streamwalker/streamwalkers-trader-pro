@@ -3,7 +3,6 @@ import { MarketOracleDashboard } from "@/components/MarketOracleDashboard";
 import { AnalysisEnginePanel } from "@/components/AnalysisEnginePanel";
 import { OracleWatchlist } from "@/components/OracleWatchlist";
 import { useMarketOracle } from "@/hooks/useMarketOracle";
-import Layout from "@/components/Layout";
 import { Brain, Network, Activity, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +11,7 @@ export default function MarketOracle() {
   const { predictions } = useMarketOracle();
   
   return (
-    <Layout>
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Hero Section */}
         <div className="text-center space-y-4 mb-8">
@@ -265,6 +264,6 @@ export default function MarketOracle() {
           </TabsContent>
         </Tabs>
       </div>
-    </Layout>
+    </div>
   );
 }

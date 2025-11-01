@@ -93,18 +93,29 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
   
   const { data: candlestickData, isLoading } = useCandlestickData(actualSymbol, selectedTimeframe);
 
-  const chartData = candlestickData?.map(item => ({
+  const chartData = candlestickData?.filter(item => {
+    // Filter out invalid data points
+    const date = new Date(item.timestamp);
+    return !isNaN(date.getTime()) && date.getTime() > 0;
+  }).map(item => ({
     ...item,
     time: new Date(item.timestamp).getTime(),
     formattedTime: format(new Date(item.timestamp), selectedTimeframe === '1min' || selectedTimeframe === '5min' ? 'HH:mm' : 'MMM dd'),
   })) || [];
 
+  const hasValidData = chartData.length > 0;
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      const date = new Date(label);
+      const isValidDate = !isNaN(date.getTime()) && date.getTime() > 0;
+      
       return (
         <div className="bg-background border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-medium">{format(new Date(label), 'MMM dd, yyyy HH:mm')}</p>
+          {isValidDate && (
+            <p className="text-sm font-medium">{format(date, 'MMM dd, yyyy HH:mm')}</p>
+          )}
           <div className="grid grid-cols-2 gap-2 text-xs mt-2">
             <div>O: {data.open?.toFixed(2)}</div>
             <div>H: {data.high?.toFixed(2)}</div>
@@ -140,6 +151,19 @@ export const CandlestickChart = ({ symbol: initialSymbol, supportLevels = [], re
       <Card className="p-6">
         <div className="animate-pulse">
           <div className="h-[400px] bg-muted rounded-lg"></div>
+        </div>
+      </Card>
+    );
+  }
+
+  if (!isLoading && !hasValidData) {
+    return (
+      <Card className="p-6">
+        <div className="flex items-center justify-center h-[400px] text-muted-foreground">
+          <div className="text-center space-y-2">
+            <p className="text-lg font-medium">No chart data available</p>
+            <p className="text-sm">This symbol may not have data for the selected timeframe</p>
+          </div>
         </div>
       </Card>
     );

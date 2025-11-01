@@ -76,12 +76,12 @@ serve(async (req) => {
     
     console.log('Mapping sector impacts for:', eventType);
     
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
-    if (!openAIApiKey) {
-      throw new Error('OPENAI_API_KEY not configured');
+    if (!lovableApiKey) {
+      throw new Error('LOVABLE_API_KEY not configured');
     }
     
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -98,7 +98,7 @@ serve(async (req) => {
       eventDescription,
       severity,
       historicalImpacts || [],
-      openAIApiKey
+      lovableApiKey
     );
     
     console.log('Sector mapping result:', JSON.stringify(sectorMapping, null, 2));
@@ -221,14 +221,14 @@ ${JSON.stringify(historicalImpacts.slice(0, 15), null, 2)}
 
 Identify all affected sectors across all 4 orders of causation.`;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-5-2025-08-07',
+      model: 'openai/gpt-5',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -239,9 +239,15 @@ Identify all affected sectors across all 4 orders of causation.`;
   });
 
   if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error('Rate limits exceeded, please try again later.');
+    }
+    if (response.status === 402) {
+      throw new Error('Payment required, please add funds to your Lovable AI workspace.');
+    }
     const error = await response.text();
-    console.error('OpenAI API error:', error);
-    throw new Error(`OpenAI API error: ${response.status}`);
+    console.error('Lovable AI API error:', error);
+    throw new Error(`Lovable AI API error: ${response.status}`);
   }
 
   const data = await response.json();

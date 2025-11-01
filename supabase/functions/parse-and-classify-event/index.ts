@@ -17,12 +17,12 @@ serve(async (req) => {
     
     console.log('Parsing and classifying events...');
     
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
-    if (!openAIApiKey) {
-      throw new Error('OPENAI_API_KEY not configured');
+    if (!lovableApiKey) {
+      throw new Error('LOVABLE_API_KEY not configured');
     }
     
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -30,8 +30,8 @@ serve(async (req) => {
     // Prepare content for AI classification
     const content = formatContentForAI(newsArticles, economicData);
     
-    // Use GPT-5 to parse and classify events
-    const classification = await classifyEvents(content, openAIApiKey);
+    // Use Lovable AI to parse and classify events
+    const classification = await classifyEvents(content, lovableApiKey);
     
     console.log('Classification result:', classification);
     
@@ -151,14 +151,14 @@ Return JSON in this exact format:
 
 IMPORTANT: Only return events with significance_score >= 5. Focus on actionable, market-moving events.`;
 
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-5-2025-08-07',
+      model: 'google/gemini-2.5-flash',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content }
@@ -169,9 +169,15 @@ IMPORTANT: Only return events with significance_score >= 5. Focus on actionable,
   });
 
   if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error('Rate limits exceeded, please try again later.');
+    }
+    if (response.status === 402) {
+      throw new Error('Payment required, please add funds to your Lovable AI workspace.');
+    }
     const error = await response.text();
-    console.error('OpenAI API error:', error);
-    throw new Error(`OpenAI API error: ${response.status}`);
+    console.error('Lovable AI API error:', error);
+    throw new Error(`Lovable AI API error: ${response.status}`);
   }
 
   const data = await response.json();

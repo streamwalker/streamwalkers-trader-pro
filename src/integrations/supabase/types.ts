@@ -52,6 +52,44 @@ export type Database = {
           },
         ]
       }
+      alert_status_history: {
+        Row: {
+          alert_id: string
+          created_at: string
+          id: string
+          new_status: Database["public"]["Enums"]["alert_status"]
+          notes: string | null
+          old_status: Database["public"]["Enums"]["alert_status"] | null
+          user_id: string | null
+        }
+        Insert: {
+          alert_id: string
+          created_at?: string
+          id?: string
+          new_status: Database["public"]["Enums"]["alert_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["alert_status"] | null
+          user_id?: string | null
+        }
+        Update: {
+          alert_id?: string
+          created_at?: string
+          id?: string
+          new_status?: Database["public"]["Enums"]["alert_status"]
+          notes?: string | null
+          old_status?: Database["public"]["Enums"]["alert_status"] | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_status_history_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "scraping_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           appointment_date: string
@@ -611,6 +649,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_report_configs: {
+        Row: {
+          created_at: string
+          email: string
+          frequency: string
+          id: string
+          is_active: boolean
+          last_sent_at: string | null
+          report_types: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          frequency: string
+          id?: string
+          is_active?: boolean
+          last_sent_at?: string | null
+          report_types?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          last_sent_at?: string | null
+          report_types?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       encounter_diagnoses: {
         Row: {
@@ -1634,6 +1708,57 @@ export type Database = {
           },
         ]
       }
+      scraping_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          created_at: string
+          details: Json | null
+          detected_at: string
+          id: string
+          message: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          status: Database["public"]["Enums"]["alert_status"]
+          updated_at: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: string
+          created_at?: string
+          details?: Json | null
+          detected_at?: string
+          id?: string
+          message: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          status?: Database["public"]["Enums"]["alert_status"]
+          updated_at?: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string
+          details?: Json | null
+          detected_at?: string
+          id?: string
+          message?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          status?: Database["public"]["Enums"]["alert_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       scraping_logs: {
         Row: {
           articles_found: number | null
@@ -2267,6 +2392,13 @@ export type Database = {
       validate_comment_content: { Args: { content: string }; Returns: boolean }
     }
     Enums: {
+      alert_severity: "warning" | "error" | "critical"
+      alert_status:
+        | "pending"
+        | "acknowledged"
+        | "investigating"
+        | "resolved"
+        | "false_positive"
       documentation_completeness:
         | "incomplete"
         | "partial"
@@ -2410,6 +2542,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      alert_severity: ["warning", "error", "critical"],
+      alert_status: [
+        "pending",
+        "acknowledged",
+        "investigating",
+        "resolved",
+        "false_positive",
+      ],
       documentation_completeness: [
         "incomplete",
         "partial",

@@ -12,6 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Settings, Download, FileJson, FileSpreadsheet } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { WebhookSettings } from './WebhookSettings';
+import { AlertManagementPanel } from './AlertManagementPanel';
+import { EmailReportSettings } from './EmailReportSettings';
 import { 
   Clock, 
   Play, 
@@ -252,123 +254,20 @@ export function CronMonitoringDashboard() {
         </div>
       </div>
 
-      {/* Settings Tabs */}
-      <Tabs defaultValue="thresholds" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="thresholds">Threshold Settings</TabsTrigger>
-          <TabsTrigger value="webhooks">Webhook Notifications</TabsTrigger>
+      {/* Main Tabs */}
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="alerts">Alerts</TabsTrigger>
+          <TabsTrigger value="thresholds">Thresholds</TabsTrigger>
+          <TabsTrigger value="webhooks">Webhooks</TabsTrigger>
+          <TabsTrigger value="email-reports">Email Reports</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="thresholds">
-          {/* Anomaly Threshold Settings */}
-          <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="w-5 h-5" />
-            Anomaly Detection Settings
-          </CardTitle>
-          <CardDescription>
-            Configure alert thresholds for automated monitoring
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Success Rate Threshold */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="success-rate">Success Rate Threshold</Label>
-                  <span className="text-sm font-medium">{thresholds.successRateThreshold}%</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Alert when success rate drops below this percentage
-                </p>
-              </div>
-              <Slider
-                id="success-rate"
-                min={50}
-                max={95}
-                step={5}
-                value={[thresholds.successRateThreshold]}
-                onValueChange={(value) => 
-                  setThresholds(prev => ({ ...prev, successRateThreshold: value[0] }))
-                }
-                className="w-full"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>50%</span>
-                <span>95%</span>
-              </div>
-            </div>
-
-            {/* Execution Time Spike Multiplier */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="exec-time">Execution Time Spike Multiplier</Label>
-                  <span className="text-sm font-medium">{thresholds.executionTimeSpikeMultiplier.toFixed(1)}x</span>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Alert when execution time exceeds this multiple of average
-                </p>
-              </div>
-              <Slider
-                id="exec-time"
-                min={1.5}
-                max={5}
-                step={0.5}
-                value={[thresholds.executionTimeSpikeMultiplier]}
-                onValueChange={(value) => 
-                  setThresholds(prev => ({ ...prev, executionTimeSpikeMultiplier: value[0] }))
-                }
-                className="w-full"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>1.5x</span>
-                <span>5.0x</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-lg bg-muted p-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-muted-foreground mt-0.5" />
-              <div>
-                <p className="text-sm font-medium">How Detection Works</p>
-                <ul className="text-xs text-muted-foreground mt-2 space-y-1">
-                  <li>• Success rate is monitored across the last 10 scraping attempts</li>
-                  <li>• Execution time spikes are detected per source against historical average</li>
-                  <li>• Settings are saved automatically and persist across sessions</li>
-                  <li>• Alerts appear as toast notifications when thresholds are breached</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setThresholds({
-                successRateThreshold: 70,
-                executionTimeSpikeMultiplier: 2.5,
-              });
-            }}
-          >
-            Reset to Defaults
-          </Button>
-        </CardContent>
-      </Card>
-        </TabsContent>
-
-        <TabsContent value="webhooks">
-          <WebhookSettings />
-        </TabsContent>
-      </Tabs>
-
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <TabsContent value="overview" className="space-y-6 mt-6">
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               Success Rate
@@ -656,8 +555,41 @@ export function CronMonitoringDashboard() {
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
-        </Card>
-      </div>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="alerts">
+          <AlertManagementPanel />
+        </TabsContent>
+
+        <TabsContent value="thresholds">
+          <Card>
+            <CardHeader>
+              <CardTitle>Anomaly Detection Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Success Rate: {thresholds.successRateThreshold}%</Label>
+                <Slider min={50} max={95} step={5} value={[thresholds.successRateThreshold]} onValueChange={(v) => setThresholds(p => ({ ...p, successRateThreshold: v[0] }))} />
+              </div>
+              <div className="space-y-2">
+                <Label>Execution Spike: {thresholds.executionTimeSpikeMultiplier.toFixed(1)}x</Label>
+                <Slider min={1.5} max={5} step={0.5} value={[thresholds.executionTimeSpikeMultiplier]} onValueChange={(v) => setThresholds(p => ({ ...p, executionTimeSpikeMultiplier: v[0] }))} />
+              </div>
+              <Button variant="outline" onClick={() => setThresholds({ successRateThreshold: 70, executionTimeSpikeMultiplier: 2.5 })}>Reset</Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="webhooks">
+          <WebhookSettings />
+        </TabsContent>
+
+        <TabsContent value="email-reports">
+          <EmailReportSettings />
+        </TabsContent>
+      </Tabs>
 
       {/* Source Performance Comparison */}
       <Card>

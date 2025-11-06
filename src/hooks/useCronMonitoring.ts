@@ -197,6 +197,12 @@ export function useCronMonitoring(thresholds?: AnomalyThresholds) {
           // Check for anomalies in new log entry
           const newLog = payload.new as ScrapingLog;
           
+          // Get current user for alert creation
+          const getUserId = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            return user?.id;
+          };
+          
           // Calculate recent success rate (last 10 scrapes)
           if (logs && logs.length > 0) {
             const recentLogs = [newLog, ...logs].slice(0, 10);
@@ -208,6 +214,19 @@ export function useCronMonitoring(thresholds?: AnomalyThresholds) {
                 `⚠️ Low success rate detected: ${recentSuccessRate.toFixed(1)}%`,
                 { description: 'Recent scraping attempts are failing more than usual' }
               );
+              
+              // Create alert in database
+              supabase.from('scraping_alerts').insert({
+                alert_type: 'low_success_rate',
+                severity: recentSuccessRate < 50 ? 'critical' : 'error',
+                message: `Low Success Rate: ${recentSuccessRate.toFixed(1)}%`,
+                details: {
+                  successRate: recentSuccessRate,
+                  threshold: SUCCESS_RATE_THRESHOLD,
+                  recentLogs: recentLogs.length,
+                },
+                status: 'pending',
+              }).then(() => console.log('Alert created in database'));
               
               // Send webhook alert
               supabase.functions.invoke('send-webhook-alert', {
@@ -237,6 +256,20 @@ export function useCronMonitoring(thresholds?: AnomalyThresholds) {
                     description: `${(newLog.execution_time_ms / 1000).toFixed(1)}s (avg: ${(avgTime / 1000).toFixed(1)}s)` 
                   }
                 );
+                
+                // Create alert in database
+                supabase.from('scraping_alerts').insert({
+                  alert_type: 'execution_spike',
+                  severity: 'warning',
+                  message: `Execution Time Spike: ${newLog.source_name}`,
+                  details: {
+                    executionTime: (newLog.execution_time_ms / 1000).toFixed(1),
+                    averageTime: (avgTime / 1000).toFixed(1),
+                    source: newLog.source_name,
+                    multiplier: EXECUTION_TIME_SPIKE_MULTIPLIER,
+                  },
+                  status: 'pending',
+                }).then(() => console.log('Alert created in database'));
                 
                 // Send webhook alert
                 supabase.functions.invoke('send-webhook-alert', {
@@ -269,6 +302,19 @@ export function useCronMonitoring(thresholds?: AnomalyThresholds) {
               const allErrors = lastThree.every(l => l.status === 'error');
               
               if (allSameSource && allErrors) {
+                // Create alert in database
+                supabase.from('scraping_alerts').insert({
+                  alert_type: 'consecutive_failures',
+                  severity: 'critical',
+                  message: `3 Consecutive Failures: ${newLog.source_name}`,
+                  details: {
+                    source: newLog.source_name,
+                    consecutiveFailures: 3,
+                    lastError: newLog.error_message,
+                  },
+                  status: 'pending',
+                }).then(() => console.log('Alert created in database'));
+                
                 // Send webhook alert for consecutive failures
                 supabase.functions.invoke('send-webhook-alert', {
                   body: {

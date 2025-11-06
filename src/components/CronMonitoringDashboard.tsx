@@ -13,15 +13,37 @@ import {
   CheckCircle2,
   Activity,
   RefreshCw,
-  Calendar
+  Calendar,
+  BarChart3,
+  Timer
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
+
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export function CronMonitoringDashboard() {
   const { 
     cronJobs, 
     sources, 
     stats, 
+    logs,
+    chartData,
+    sourcePerformance,
     isLoading, 
     toggleCronJob, 
     triggerManualScrape 
@@ -277,6 +299,186 @@ export function CronMonitoringDashboard() {
         </CardContent>
       </Card>
 
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Article Volume Trend */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" />
+              Article Volume Over Time
+            </CardTitle>
+            <CardDescription>
+              New articles scraped per day (last 14 days)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Line 
+                  type="monotone" 
+                  dataKey="articles" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
+                  name="Articles"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Scraping Success Rate */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5" />
+              Scraping Success Rate
+            </CardTitle>
+            <CardDescription>
+              Success vs. error rate over time
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                />
+                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="success" fill="#10b981" name="Successful" />
+                <Bar dataKey="errors" fill="#ef4444" name="Errors" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Source Performance Comparison */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="w-5 h-5" />
+            Source Performance Comparison
+          </CardTitle>
+          <CardDescription>
+            Articles scraped and success rates by source
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={sourcePerformance} layout="vertical">
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                <YAxis 
+                  type="category" 
+                  dataKey="name" 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  width={100}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Bar dataKey="articles" fill="hsl(var(--primary))" name="Articles Scraped" />
+              </BarChart>
+            </ResponsiveContainer>
+
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={sourcePerformance}
+                  dataKey="articles"
+                  nameKey="name"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={100}
+                  label={(entry) => `${entry.name}: ${entry.articles}`}
+                >
+                  {sourcePerformance.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Performance Table */}
+          <div className="mt-6 space-y-3">
+            <h4 className="text-sm font-medium">Detailed Metrics</h4>
+            {sourcePerformance.map((perf, index) => (
+              <div 
+                key={perf.name}
+                className="flex items-center justify-between p-3 rounded-lg border"
+              >
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  />
+                  <div>
+                    <p className="text-sm font-medium">{perf.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {perf.total} scrapes • {perf.articles} articles
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{perf.successRate.toFixed(1)}%</p>
+                    <p className="text-xs text-muted-foreground">Success Rate</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium flex items-center gap-1">
+                      <Timer className="w-3 h-3" />
+                      {perf.avgTime}s
+                    </p>
+                    <p className="text-xs text-muted-foreground">Avg Time</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Recent Activity */}
       <Card>
         <CardHeader>
@@ -287,27 +489,35 @@ export function CronMonitoringDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {sources
-              .filter(s => s.last_scraped_at)
-              .slice(0, 5)
-              .map(source => (
-                <div 
-                  key={source.id}
-                  className="flex items-center gap-4 p-3 rounded-lg border"
-                >
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium">{source.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      Scraped {formatDistanceToNow(new Date(source.last_scraped_at!), { addSuffix: true })}
-                    </p>
-                  </div>
-                  <Badge variant="outline" className="text-green-600 border-green-600">
-                    <CheckCircle2 className="w-3 h-3 mr-1" />
-                    Success
-                  </Badge>
+            {logs.slice(0, 10).map(log => (
+              <div 
+                key={log.id}
+                className="flex items-center gap-4 p-3 rounded-lg border"
+              >
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium">{log.source_name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatDistanceToNow(new Date(log.created_at), { addSuffix: true })} • 
+                    {log.new_articles} new articles • {(log.execution_time_ms / 1000).toFixed(1)}s
+                  </p>
                 </div>
-              ))}
+                <Badge 
+                  variant="outline" 
+                  className={
+                    log.status === 'success' 
+                      ? 'text-green-600 border-green-600'
+                      : log.status === 'error'
+                      ? 'text-red-600 border-red-600'
+                      : 'text-orange-600 border-orange-600'
+                  }
+                >
+                  {log.status === 'success' && <CheckCircle2 className="w-3 h-3 mr-1" />}
+                  {log.status === 'error' && <AlertCircle className="w-3 h-3 mr-1" />}
+                  {log.status}
+                </Badge>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>

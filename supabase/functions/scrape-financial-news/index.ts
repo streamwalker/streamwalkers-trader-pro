@@ -56,6 +56,7 @@ Deno.serve(async (req) => {
 
     // Process each source
     for (const source of sources) {
+      const startTime = Date.now();
       // Check if we should scrape based on interval
       if (!requestData.forceRefresh && source.last_scraped_at) {
         const lastScraped = new Date(source.last_scraped_at);
@@ -155,6 +156,26 @@ Deno.serve(async (req) => {
         .from('news_sources')
         .update({ last_scraped_at: new Date().toISOString() })
         .eq('id', source.id);
+
+      // Log scraping attempt
+      const executionTime = Date.now() - startTime;
+      const sourceResults = {
+        articlesFound: results.articlesScraped,
+        newArticles: results.newArticles,
+        duplicates: results.duplicates,
+      };
+
+      await supabase.from('scraping_logs').insert({
+        source_id: source.id,
+        source_name: source.name,
+        status: results.errors.length > 0 ? 'partial' : 'success',
+        articles_found: sourceResults.articlesFound,
+        new_articles: sourceResults.newArticles,
+        duplicates: sourceResults.duplicates,
+        error_message: results.errors.length > 0 ? results.errors.join('; ') : null,
+        execution_time_ms: executionTime,
+        triggered_by: requestData.forceRefresh ? 'manual' : 'automatic',
+      });
     }
 
     console.log('Scrape complete:', results);

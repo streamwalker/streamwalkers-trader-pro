@@ -1634,6 +1634,56 @@ export type Database = {
           },
         ]
       }
+      scraping_logs: {
+        Row: {
+          articles_found: number | null
+          created_at: string | null
+          duplicates: number | null
+          error_message: string | null
+          execution_time_ms: number | null
+          id: string
+          new_articles: number | null
+          source_id: string | null
+          source_name: string
+          status: string
+          triggered_by: string | null
+        }
+        Insert: {
+          articles_found?: number | null
+          created_at?: string | null
+          duplicates?: number | null
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          new_articles?: number | null
+          source_id?: string | null
+          source_name: string
+          status: string
+          triggered_by?: string | null
+        }
+        Update: {
+          articles_found?: number | null
+          created_at?: string | null
+          duplicates?: number | null
+          error_message?: string | null
+          execution_time_ms?: number | null
+          id?: string
+          new_articles?: number | null
+          source_id?: string | null
+          source_name?: string
+          status?: string
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scraping_logs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "news_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sector_impacts: {
         Row: {
           confidence: number | null

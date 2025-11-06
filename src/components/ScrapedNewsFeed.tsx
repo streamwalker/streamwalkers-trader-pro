@@ -71,7 +71,7 @@ export function ScrapedNewsFeed() {
           </p>
         </div>
         <Button
-          onClick={() => triggerScrape.mutate()}
+          onClick={() => triggerScrape.mutate(undefined)}
           disabled={triggerScrape.isPending}
           variant="outline"
         >

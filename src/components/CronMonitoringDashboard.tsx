@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Settings } from 'lucide-react';
+import { Settings, Download, FileJson, FileSpreadsheet } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { 
   Clock, 
@@ -24,6 +24,12 @@ import {
   Timer,
   AlertTriangle
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { formatDistanceToNow, format } from 'date-fns';
 import {
   LineChart,
@@ -82,6 +88,77 @@ export function CronMonitoringDashboard() {
 
   const mainCronJob = cronJobs.find(job => job.jobname === 'scrape-news-every-4-hours');
 
+  // Export functions
+  const exportToJSON = (data: any, filename: string) => {
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${filename}_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const exportToCSV = (data: any[], filename: string) => {
+    if (data.length === 0) return;
+    
+    // Get headers from first object
+    const headers = Object.keys(data[0]);
+    const csvRows = [headers.join(',')];
+    
+    // Add data rows
+    for (const row of data) {
+      const values = headers.map(header => {
+        const value = row[header];
+        // Handle nested objects/arrays
+        if (typeof value === 'object' && value !== null) {
+          return `"${JSON.stringify(value).replace(/"/g, '""')}"`;
+        }
+        // Escape quotes in strings
+        return `"${String(value).replace(/"/g, '""')}"`;
+      });
+      csvRows.push(values.join(','));
+    }
+    
+    const csv = csvRows.join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${filename}_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportLogs = (format: 'csv' | 'json') => {
+    if (format === 'csv') {
+      exportToCSV(logs, 'scraping_logs');
+    } else {
+      exportToJSON(logs, 'scraping_logs');
+    }
+  };
+
+  const handleExportPerformance = (format: 'csv' | 'json') => {
+    if (format === 'csv') {
+      exportToCSV(sourcePerformance, 'source_performance');
+    } else {
+      exportToJSON(sourcePerformance, 'source_performance');
+    }
+  };
+
+  const handleExportChartData = (format: 'csv' | 'json') => {
+    if (format === 'csv') {
+      exportToCSV(chartData, 'scraping_trends');
+    } else {
+      exportToJSON(chartData, 'scraping_trends');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -127,6 +204,40 @@ export function CronMonitoringDashboard() {
           </p>
         </div>
         <div className="flex gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="lg">
+                <Download className="w-4 h-4 mr-2" />
+                Export Data
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onClick={() => handleExportLogs('csv')}>
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Export Logs (CSV)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExportLogs('json')}>
+                <FileJson className="w-4 h-4 mr-2" />
+                Export Logs (JSON)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExportPerformance('csv')}>
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Export Performance (CSV)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExportPerformance('json')}>
+                <FileJson className="w-4 h-4 mr-2" />
+                Export Performance (JSON)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExportChartData('csv')}>
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Export Trends (CSV)
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExportChartData('json')}>
+                <FileJson className="w-4 h-4 mr-2" />
+                Export Trends (JSON)
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Button
             onClick={() => triggerManualScrape.mutate()}
             disabled={triggerManualScrape.isPending}

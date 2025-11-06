@@ -8,8 +8,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Settings, Download, FileJson, FileSpreadsheet } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { WebhookSettings } from './WebhookSettings';
 import { 
   Clock, 
   Play, 
@@ -250,8 +252,16 @@ export function CronMonitoringDashboard() {
         </div>
       </div>
 
-      {/* Anomaly Threshold Settings */}
-      <Card>
+      {/* Settings Tabs */}
+      <Tabs defaultValue="thresholds" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="thresholds">Threshold Settings</TabsTrigger>
+          <TabsTrigger value="webhooks">Webhook Notifications</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="thresholds">
+          {/* Anomaly Threshold Settings */}
+          <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="w-5 h-5" />
@@ -349,6 +359,12 @@ export function CronMonitoringDashboard() {
           </Button>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="webhooks">
+          <WebhookSettings />
+        </TabsContent>
+      </Tabs>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

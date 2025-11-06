@@ -2079,6 +2079,45 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_configs: {
+        Row: {
+          alert_on_consecutive_failures: boolean | null
+          alert_on_execution_spike: boolean | null
+          alert_on_low_success_rate: boolean | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          service_type: string
+          updated_at: string | null
+          webhook_url: string
+        }
+        Insert: {
+          alert_on_consecutive_failures?: boolean | null
+          alert_on_execution_spike?: boolean | null
+          alert_on_low_success_rate?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          service_type: string
+          updated_at?: string | null
+          webhook_url: string
+        }
+        Update: {
+          alert_on_consecutive_failures?: boolean | null
+          alert_on_execution_spike?: boolean | null
+          alert_on_low_success_rate?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          service_type?: string
+          updated_at?: string | null
+          webhook_url?: string
+        }
+        Relationships: []
+      }
       zones: {
         Row: {
           created_at: string

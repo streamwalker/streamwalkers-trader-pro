@@ -208,6 +208,19 @@ export function useCronMonitoring(thresholds?: AnomalyThresholds) {
                 `⚠️ Low success rate detected: ${recentSuccessRate.toFixed(1)}%`,
                 { description: 'Recent scraping attempts are failing more than usual' }
               );
+              
+              // Send webhook alert
+              supabase.functions.invoke('send-webhook-alert', {
+                body: {
+                  type: 'low_success_rate',
+                  message: `Low Success Rate: ${recentSuccessRate.toFixed(1)}%`,
+                  details: {
+                    successRate: recentSuccessRate,
+                    threshold: SUCCESS_RATE_THRESHOLD,
+                  },
+                  timestamp: new Date().toISOString(),
+                },
+              }).catch(err => console.error('Failed to send webhook:', err));
             }
           }
           
@@ -224,16 +237,52 @@ export function useCronMonitoring(thresholds?: AnomalyThresholds) {
                     description: `${(newLog.execution_time_ms / 1000).toFixed(1)}s (avg: ${(avgTime / 1000).toFixed(1)}s)` 
                   }
                 );
+                
+                // Send webhook alert
+                supabase.functions.invoke('send-webhook-alert', {
+                  body: {
+                    type: 'execution_spike',
+                    message: `Execution Time Spike: ${newLog.source_name}`,
+                    details: {
+                      executionTime: (newLog.execution_time_ms / 1000).toFixed(1),
+                      averageTime: (avgTime / 1000).toFixed(1),
+                      source: newLog.source_name,
+                    },
+                    timestamp: new Date().toISOString(),
+                  },
+                }).catch(err => console.error('Failed to send webhook:', err));
               }
             }
           }
           
-          // Alert on errors
+          // Alert on errors and check for consecutive failures
           if (newLog.status === 'error') {
             toast.error(
               `Scraping failed: ${newLog.source_name}`,
               { description: newLog.error_message || 'Unknown error' }
             );
+            
+            // Check for 3 consecutive failures
+            if (logs && logs.length >= 2) {
+              const lastThree = [newLog, ...logs.slice(0, 2)];
+              const allSameSource = lastThree.every(l => l.source_id === newLog.source_id);
+              const allErrors = lastThree.every(l => l.status === 'error');
+              
+              if (allSameSource && allErrors) {
+                // Send webhook alert for consecutive failures
+                supabase.functions.invoke('send-webhook-alert', {
+                  body: {
+                    type: 'consecutive_failures',
+                    message: `3 Consecutive Failures: ${newLog.source_name}`,
+                    details: {
+                      source: newLog.source_name,
+                      consecutiveFailures: 3,
+                    },
+                    timestamp: new Date().toISOString(),
+                  },
+                }).catch(err => console.error('Failed to send webhook:', err));
+              }
+            }
           }
         }
       )

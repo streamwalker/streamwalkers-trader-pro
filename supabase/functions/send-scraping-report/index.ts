@@ -180,7 +180,45 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { email, frequency, isTest } = await req.json();
+    const { email, frequency, isTest, automated } = await req.json();
+
+    // If automated, fetch all active configs for this frequency
+    if (automated) {
+      const { data: configs } = await supabase
+        .from('email_report_configs')
+        .select('*')
+        .eq('frequency', frequency)
+        .eq('is_active', true);
+
+      if (!configs || configs.length === 0) {
+        return new Response(JSON.stringify({ success: true, message: 'No active configs found' }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+
+      const reportData = await fetchReportData(supabase, frequency);
+      const htmlContent = generateHtmlEmail(reportData);
+      
+      let successCount = 0;
+      let failureCount = 0;
+
+      for (const config of configs) {
+        try {
+          await resend.emails.send({
+            from: 'Scraping Monitor <onboarding@resend.dev>',
+            to: [config.email],
+            subject: `Scraping Report - ${reportData.period}`,
+            html: htmlContent,
+          });
+          
+          await supabase.from('email_report_configs').update({ last_sent_at: new Date().toISOString() }).eq('id', config.id);
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to send to ${config.email}:`, error);
+          failureCount++;
+        }
+      }
+
+      return new Response(JSON.stringify({ success: true, successCount, failureCount }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
 
     console.log(`Generating ${frequency} scraping report for ${email}${isTest ? ' (test)' : ''}`);
 

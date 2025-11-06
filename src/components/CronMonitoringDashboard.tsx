@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import { WebhookSettings } from './WebhookSettings';
 import { AlertManagementPanel } from './AlertManagementPanel';
 import { EmailReportSettings } from './EmailReportSettings';
+import { AlertAnalyticsDashboard } from './AlertAnalyticsDashboard';
 import { 
   Clock, 
   Play, 

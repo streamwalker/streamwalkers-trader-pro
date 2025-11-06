@@ -16,6 +16,10 @@ export interface ScrapingAlert {
   resolved_at?: string;
   resolved_by?: string;
   resolution_notes?: string;
+  assigned_to?: string;
+  assigned_at?: string;
+  assigned_by?: string;
+  assignee_name?: string;
   created_at: string;
   updated_at: string;
 }
@@ -26,6 +30,8 @@ export interface AlertFilters {
   severity?: string;
   startDate?: string;
   endDate?: string;
+  assignedTo?: string;
+  assignedToMe?: boolean;
 }
 
 export const useAlertManagement = (filters?: AlertFilters) => {
@@ -35,9 +41,14 @@ export const useAlertManagement = (filters?: AlertFilters) => {
   const { data: alerts = [], isLoading } = useQuery({
     queryKey: ['scraping-alerts', filters],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       let query = supabase
         .from('scraping_alerts')
-        .select('*')
+        .select(`
+          *,
+          assignee:assigned_to(display_name, email)
+        `)
         .order('detected_at', { ascending: false });
 
       if (filters?.status) {
@@ -55,10 +66,21 @@ export const useAlertManagement = (filters?: AlertFilters) => {
       if (filters?.endDate) {
         query = query.lte('detected_at', filters.endDate);
       }
+      if (filters?.assignedTo) {
+        query = query.eq('assigned_to', filters.assignedTo);
+      }
+      if (filters?.assignedToMe && user) {
+        query = query.eq('assigned_to', user.id);
+      }
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as ScrapingAlert[];
+      
+      // Map assignee info
+      return (data || []).map((alert: any) => ({
+        ...alert,
+        assignee_name: alert.assignee?.display_name || alert.assignee?.email || null,
+      })) as ScrapingAlert[];
     },
     refetchInterval: 30000, // Refetch every 30 seconds
   });
@@ -67,9 +89,10 @@ export const useAlertManagement = (filters?: AlertFilters) => {
   const { data: stats } = useQuery({
     queryKey: ['alert-stats'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
       const { data: allAlerts, error } = await supabase
         .from('scraping_alerts')
-        .select('status, severity');
+        .select('status, severity, assigned_to');
       
       if (error) throw error;
 
@@ -78,8 +101,10 @@ export const useAlertManagement = (filters?: AlertFilters) => {
       const investigating = allAlerts.filter(a => a.status === 'investigating').length;
       const resolved = allAlerts.filter(a => a.status === 'resolved').length;
       const critical = allAlerts.filter(a => a.severity === 'critical').length;
+      const assignedToMe = user ? allAlerts.filter(a => a.assigned_to === user.id).length : 0;
+      const unassigned = allAlerts.filter(a => !a.assigned_to).length;
 
-      return { pending, acknowledged, investigating, resolved, critical, total: allAlerts.length };
+      return { pending, acknowledged, investigating, resolved, critical, assignedToMe, unassigned, total: allAlerts.length };
     },
     refetchInterval: 30000,
   });
@@ -230,12 +255,106 @@ export const useAlertManagement = (filters?: AlertFilters) => {
     }
   });
 
+  // Assign alert mutation
+  const assignAlert = useMutation({
+    mutationFn: async ({
+      alertId,
+      assignedTo,
+      userId
+    }: {
+      alertId: string;
+      assignedTo: string;
+      userId: string;
+    }) => {
+      const { data: alert } = await supabase
+        .from('scraping_alerts')
+        .select('assigned_to')
+        .eq('id', alertId)
+        .single();
+
+      const { error } = await supabase
+        .from('scraping_alerts')
+        .update({
+          assigned_to: assignedTo,
+          assigned_at: new Date().toISOString(),
+          assigned_by: userId
+        })
+        .eq('id', alertId);
+
+      if (error) throw error;
+
+      // Record history
+      await supabase
+        .from('alert_status_history')
+        .insert({
+          alert_id: alertId,
+          user_id: userId,
+          old_status: 'pending',
+          new_status: 'pending',
+          notes: `Assigned to user ${assignedTo}`
+        });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scraping-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['alert-stats'] });
+      toast.success("Alert assigned successfully");
+    },
+    onError: (error) => {
+      console.error("Error assigning alert:", error);
+      toast.error("Failed to assign alert");
+    }
+  });
+
+  // Unassign alert mutation
+  const unassignAlert = useMutation({
+    mutationFn: async ({
+      alertId,
+      userId
+    }: {
+      alertId: string;
+      userId: string;
+    }) => {
+      const { error } = await supabase
+        .from('scraping_alerts')
+        .update({
+          assigned_to: null,
+          assigned_at: null,
+          assigned_by: null
+        })
+        .eq('id', alertId);
+
+      if (error) throw error;
+
+      // Record history
+      await supabase
+        .from('alert_status_history')
+        .insert({
+          alert_id: alertId,
+          user_id: userId,
+          old_status: 'pending',
+          new_status: 'pending',
+          notes: 'Alert unassigned'
+        });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['scraping-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['alert-stats'] });
+      toast.success("Alert unassigned");
+    },
+    onError: (error) => {
+      console.error("Error unassigning alert:", error);
+      toast.error("Failed to unassign alert");
+    }
+  });
+
   return {
     alerts,
     stats,
     isLoading,
     acknowledgeAlert,
     updateAlertStatus,
-    resolveAlert
+    resolveAlert,
+    assignAlert,
+    unassignAlert
   };
 };

@@ -3,8 +3,9 @@ import { MarketOracleDashboard } from "@/components/MarketOracleDashboard";
 import { AnalysisEnginePanel } from "@/components/AnalysisEnginePanel";
 import { OracleWatchlist } from "@/components/OracleWatchlist";
 import { ScrapedNewsFeed } from "@/components/ScrapedNewsFeed";
+import { CronMonitoringDashboard } from "@/components/CronMonitoringDashboard";
 import { useMarketOracle } from "@/hooks/useMarketOracle";
-import { Brain, Network, Activity, TrendingUp, Newspaper } from "lucide-react";
+import { Brain, Network, Activity, TrendingUp, Newspaper, Clock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -81,14 +82,14 @@ export default function MarketOracle() {
 
         {/* Main Content */}
         <Tabs defaultValue="dashboard" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="dashboard" className="text-base">
               <Brain className="w-4 h-4 mr-2" />
-              Oracle Dashboard
+              Dashboard
             </TabsTrigger>
             <TabsTrigger value="engine" className="text-base">
               <Network className="w-4 h-4 mr-2" />
-              Analysis Engine
+              Analysis
             </TabsTrigger>
             <TabsTrigger value="watchlist" className="text-base">
               <TrendingUp className="w-4 h-4 mr-2" />
@@ -97,6 +98,10 @@ export default function MarketOracle() {
             <TabsTrigger value="news" className="text-base">
               <Newspaper className="w-4 h-4 mr-2" />
               News Feed
+            </TabsTrigger>
+            <TabsTrigger value="monitor" className="text-base">
+              <Clock className="w-4 h-4 mr-2" />
+              Monitor
             </TabsTrigger>
             <TabsTrigger value="examples" className="text-base">
               <Activity className="w-4 h-4 mr-2" />
@@ -118,6 +123,10 @@ export default function MarketOracle() {
 
           <TabsContent value="news">
             <ScrapedNewsFeed />
+          </TabsContent>
+
+          <TabsContent value="monitor">
+            <CronMonitoringDashboard />
           </TabsContent>
 
           <TabsContent value="examples" className="space-y-6">

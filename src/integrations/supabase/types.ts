@@ -2154,12 +2154,26 @@ export type Database = {
         }
         Returns: boolean
       }
+      get_cron_jobs: {
+        Args: never
+        Returns: {
+          active: boolean
+          command: string
+          jobid: number
+          jobname: string
+          schedule: string
+        }[]
+      }
       obfuscate_coordinates: {
         Args: { lat: number; lng: number }
         Returns: {
           obfuscated_lat: number
           obfuscated_lng: number
         }[]
+      }
+      toggle_cron_job: {
+        Args: { is_active: boolean; job_id: number }
+        Returns: undefined
       }
       validate_comment_content: { Args: { content: string }; Returns: boolean }
     }

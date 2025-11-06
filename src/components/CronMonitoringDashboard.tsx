@@ -1,10 +1,15 @@
-import { useCronMonitoring } from '@/hooks/useCronMonitoring';
+import { useCronMonitoring, AnomalyThresholds } from '@/hooks/useCronMonitoring';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import { Settings } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { 
   Clock, 
   Play, 
@@ -38,7 +43,30 @@ import {
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
+const STORAGE_KEY = 'cronMonitoring_thresholds';
+
 export function CronMonitoringDashboard() {
+  // Load thresholds from localStorage or use defaults
+  const [thresholds, setThresholds] = useState<AnomalyThresholds>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.error('Failed to parse stored thresholds:', e);
+      }
+    }
+    return {
+      successRateThreshold: 70,
+      executionTimeSpikeMultiplier: 2.5,
+    };
+  });
+
+  // Persist thresholds to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(thresholds));
+  }, [thresholds]);
+
   const { 
     cronJobs, 
     sources, 
@@ -50,7 +78,7 @@ export function CronMonitoringDashboard() {
     isLoading, 
     toggleCronJob, 
     triggerManualScrape 
-  } = useCronMonitoring();
+  } = useCronMonitoring(thresholds);
 
   const mainCronJob = cronJobs.find(job => job.jobname === 'scrape-news-every-4-hours');
 
@@ -98,16 +126,118 @@ export function CronMonitoringDashboard() {
             Automated news scraping status and history
           </p>
         </div>
-        <Button
-          onClick={() => triggerManualScrape.mutate()}
-          disabled={triggerManualScrape.isPending}
-          variant="outline"
-          size="lg"
-        >
-          <Play className={`w-4 h-4 mr-2 ${triggerManualScrape.isPending ? 'animate-spin' : ''}`} />
-          Run Manual Scrape
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => triggerManualScrape.mutate()}
+            disabled={triggerManualScrape.isPending}
+            variant="outline"
+            size="lg"
+          >
+            <Play className={`w-4 h-4 mr-2 ${triggerManualScrape.isPending ? 'animate-spin' : ''}`} />
+            Run Manual Scrape
+          </Button>
+        </div>
       </div>
+
+      {/* Anomaly Threshold Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="w-5 h-5" />
+            Anomaly Detection Settings
+          </CardTitle>
+          <CardDescription>
+            Configure alert thresholds for automated monitoring
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Success Rate Threshold */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="success-rate">Success Rate Threshold</Label>
+                  <span className="text-sm font-medium">{thresholds.successRateThreshold}%</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Alert when success rate drops below this percentage
+                </p>
+              </div>
+              <Slider
+                id="success-rate"
+                min={50}
+                max={95}
+                step={5}
+                value={[thresholds.successRateThreshold]}
+                onValueChange={(value) => 
+                  setThresholds(prev => ({ ...prev, successRateThreshold: value[0] }))
+                }
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>50%</span>
+                <span>95%</span>
+              </div>
+            </div>
+
+            {/* Execution Time Spike Multiplier */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="exec-time">Execution Time Spike Multiplier</Label>
+                  <span className="text-sm font-medium">{thresholds.executionTimeSpikeMultiplier.toFixed(1)}x</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Alert when execution time exceeds this multiple of average
+                </p>
+              </div>
+              <Slider
+                id="exec-time"
+                min={1.5}
+                max={5}
+                step={0.5}
+                value={[thresholds.executionTimeSpikeMultiplier]}
+                onValueChange={(value) => 
+                  setThresholds(prev => ({ ...prev, executionTimeSpikeMultiplier: value[0] }))
+                }
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>1.5x</span>
+                <span>5.0x</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg bg-muted p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="text-sm font-medium">How Detection Works</p>
+                <ul className="text-xs text-muted-foreground mt-2 space-y-1">
+                  <li>• Success rate is monitored across the last 10 scraping attempts</li>
+                  <li>• Execution time spikes are detected per source against historical average</li>
+                  <li>• Settings are saved automatically and persist across sessions</li>
+                  <li>• Alerts appear as toast notifications when thresholds are breached</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setThresholds({
+                successRateThreshold: 70,
+                executionTimeSpikeMultiplier: 2.5,
+              });
+            }}
+          >
+            Reset to Defaults
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -115,7 +245,7 @@ export function CronMonitoringDashboard() {
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               Success Rate
-              {anomalies?.successRate !== undefined && anomalies.successRate < 70 && (
+              {anomalies?.successRate !== undefined && anomalies.successRate < thresholds.successRateThreshold && (
                 <Badge variant="destructive" className="text-xs">Low</Badge>
               )}
             </CardTitle>
@@ -487,7 +617,7 @@ export function CronMonitoringDashboard() {
                   <div className="text-right">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium">{perf.successRate.toFixed(1)}%</p>
-                      {perf.successRate < 70 && (
+                      {perf.successRate < thresholds.successRateThreshold && (
                         <AlertTriangle className="h-3 w-3 text-destructive" />
                       )}
                     </div>

@@ -43,8 +43,17 @@ export interface ChartDataPoint {
   errors: number;
 }
 
-export function useCronMonitoring() {
+export interface AnomalyThresholds {
+  successRateThreshold: number;
+  executionTimeSpikeMultiplier: number;
+}
+
+export function useCronMonitoring(thresholds?: AnomalyThresholds) {
   const queryClient = useQueryClient();
+  
+  // Use provided thresholds or defaults
+  const SUCCESS_RATE_THRESHOLD = thresholds?.successRateThreshold ?? 70;
+  const EXECUTION_TIME_SPIKE_MULTIPLIER = thresholds?.executionTimeSpikeMultiplier ?? 2.5;
 
   // Fetch cron job status
   const { data: cronJobs, isLoading: cronLoading } = useQuery({
@@ -169,10 +178,6 @@ export function useCronMonitoring() {
     },
     refetchInterval: 60000,
   });
-
-  // Anomaly detection thresholds
-  const SUCCESS_RATE_THRESHOLD = 70; // Alert if below 70%
-  const EXECUTION_TIME_SPIKE_MULTIPLIER = 2.5; // Alert if 2.5x average
 
   // Subscribe to realtime updates for logs with anomaly detection
   useEffect(() => {
@@ -313,7 +318,7 @@ export function useCronMonitoring() {
 
   // Detect anomalies in overall stats
   const anomalies = useQuery({
-    queryKey: ['anomalies', logs],
+    queryKey: ['anomalies', logs, SUCCESS_RATE_THRESHOLD, EXECUTION_TIME_SPIKE_MULTIPLIER],
     queryFn: () => {
       if (!logs || logs.length < 5) return { hasAnomalies: false, issues: [] };
       

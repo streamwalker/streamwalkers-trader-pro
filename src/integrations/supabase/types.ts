@@ -504,6 +504,57 @@ export type Database = {
         }
         Relationships: []
       }
+      economic_news: {
+        Row: {
+          ai_processed: boolean | null
+          content: string | null
+          created_at: string | null
+          id: string
+          keywords: string[] | null
+          published_at: string | null
+          scraped_at: string | null
+          sentiment: string | null
+          source: string
+          summary: string | null
+          symbols: string[] | null
+          title: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          ai_processed?: boolean | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          keywords?: string[] | null
+          published_at?: string | null
+          scraped_at?: string | null
+          sentiment?: string | null
+          source: string
+          summary?: string | null
+          symbols?: string[] | null
+          title: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          ai_processed?: boolean | null
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          keywords?: string[] | null
+          published_at?: string | null
+          scraped_at?: string | null
+          sentiment?: string | null
+          source?: string
+          summary?: string | null
+          symbols?: string[] | null
+          title?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       efficiency_metrics: {
         Row: {
           average_wait_time_minutes: number | null
@@ -942,6 +993,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      news_sources: {
+        Row: {
+          base_url: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          last_scraped_at: string | null
+          name: string
+          scrape_interval_minutes: number | null
+          scrape_strategy: Json | null
+          scrape_urls: string[]
+          updated_at: string | null
+        }
+        Insert: {
+          base_url: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_scraped_at?: string | null
+          name: string
+          scrape_interval_minutes?: number | null
+          scrape_strategy?: Json | null
+          scrape_urls: string[]
+          updated_at?: string | null
+        }
+        Update: {
+          base_url?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_scraped_at?: string | null
+          name?: string
+          scrape_interval_minutes?: number | null
+          scrape_strategy?: Json | null
+          scrape_urls?: string[]
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       order_items: {
         Row: {

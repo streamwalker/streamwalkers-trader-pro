@@ -61,3 +61,12 @@ verify_jwt = false
 
 [functions.analyze-economic-cycle]
 verify_jwt = false
+
+[functions.scrape-financial-news]
+verify_jwt = false
+
+[functions.scrape-article-content]
+verify_jwt = false
+
+[functions.scrape-news-cron]
+verify_jwt = false

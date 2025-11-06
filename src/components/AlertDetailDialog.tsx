@@ -4,15 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrapingAlert } from "@/hooks/useAlertManagement";
+import { useTeamMembers } from "@/hooks/useTeamMembers";
 import { format } from "date-fns";
-import { AlertCircle, CheckCircle, Clock, AlertTriangle } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock, AlertTriangle, User, UserPlus } from "lucide-react";
 import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface AlertDetailDialogProps {
   alert: ScrapingAlert | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdateStatus: (alertId: string, status: any, notes?: string, userId?: string) => void;
+  onAssignAlert: (alertId: string, assignedTo: string, userId: string) => void;
+  onUnassignAlert: (alertId: string, userId: string) => void;
   userId?: string;
 }
 
@@ -21,10 +25,14 @@ export const AlertDetailDialog = ({
   open, 
   onOpenChange, 
   onUpdateStatus,
+  onAssignAlert,
+  onUnassignAlert,
   userId 
 }: AlertDetailDialogProps) => {
   const [newStatus, setNewStatus] = useState<string>('');
   const [notes, setNotes] = useState('');
+  const [selectedAssignee, setSelectedAssignee] = useState<string>('');
+  const { teamMembers, isLoading: loadingTeam } = useTeamMembers();
 
   if (!alert) return null;
 
@@ -68,6 +76,24 @@ export const AlertDetailDialog = ({
     setNewStatus('');
     onOpenChange(false);
   };
+
+  const handleAssignAlert = () => {
+    if (!selectedAssignee || !userId) return;
+    onAssignAlert(alert.id, selectedAssignee, userId);
+    setSelectedAssignee('');
+  };
+
+  const handleAssignToMe = () => {
+    if (!userId) return;
+    onAssignAlert(alert.id, userId, userId);
+  };
+
+  const handleUnassign = () => {
+    if (!userId) return;
+    onUnassignAlert(alert.id, userId);
+  };
+
+  const assignedUser = teamMembers.find(m => m.id === alert.assigned_to);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -124,6 +150,79 @@ export const AlertDetailDialog = ({
             </div>
           )}
 
+          {/* Assignment Section */}
+          <div className="pt-4 border-t space-y-3">
+            <h4 className="text-sm font-medium flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Assignment
+            </h4>
+            
+            {alert.assigned_to ? (
+              <div className="flex items-center justify-between bg-muted p-3 rounded-md">
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={assignedUser?.avatar_url || undefined} />
+                    <AvatarFallback>
+                      {assignedUser?.display_name?.[0]?.toUpperCase() || assignedUser?.email?.[0]?.toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-sm font-medium">
+                      {assignedUser?.display_name || assignedUser?.email || 'Unknown User'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Assigned {alert.assigned_at ? format(new Date(alert.assigned_at), 'PPp') : ''}
+                    </p>
+                  </div>
+                </div>
+                {userId && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleUnassign}
+                  >
+                    Unassign
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Badge variant="secondary">Unassigned</Badge>
+                {userId && (
+                  <div className="flex gap-2">
+                    <Select value={selectedAssignee} onValueChange={setSelectedAssignee}>
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Select team member" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {teamMembers.map((member) => (
+                          <SelectItem key={member.id} value={member.id}>
+                            {member.display_name || member.email}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button 
+                      onClick={handleAssignAlert}
+                      disabled={!selectedAssignee || loadingTeam}
+                      size="sm"
+                    >
+                      <UserPlus className="h-4 w-4 mr-1" />
+                      Assign
+                    </Button>
+                    <Button 
+                      onClick={handleAssignToMe}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      Assign to Me
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Timeline */}
           <div>
             <h4 className="text-sm font-medium mb-2">Timeline</h4>
@@ -132,6 +231,12 @@ export const AlertDetailDialog = ({
                 <span className="text-muted-foreground">Detected:</span>
                 <span>{format(new Date(alert.detected_at), 'PPpp')}</span>
               </div>
+              {alert.assigned_at && (
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Assigned:</span>
+                  <span>{format(new Date(alert.assigned_at), 'PPpp')}</span>
+                </div>
+              )}
               {alert.acknowledged_at && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Acknowledged:</span>

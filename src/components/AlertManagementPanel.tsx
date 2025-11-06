@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, CheckCircle, Clock, XCircle, Eye, UserPlus } from "lucide-react";
+import { AlertTriangle, CheckCircle, Clock, XCircle, Eye, UserPlus, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { AlertDetailDialog } from "./AlertDetailDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,8 +24,10 @@ export const AlertManagementPanel = () => {
   const [selectedAlert, setSelectedAlert] = useState<ScrapingAlert | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [userId, setUserId] = useState<string>("");
+  const [selectedAlerts, setSelectedAlerts] = useState<Set<string>>(new Set());
+  const [bulkAssignee, setBulkAssignee] = useState<string>('');
 
-  const { alerts, stats, isLoading, acknowledgeAlert, updateAlertStatus, assignAlert } = useAlertManagement(filters);
+  const { alerts, stats, isLoading, acknowledgeAlert, updateAlertStatus, assignAlert, unassignAlert, bulkAssignAlerts } = useAlertManagement(filters);
   const { teamMembers } = useTeamMembers();
 
   useEffect(() => {
@@ -56,6 +59,35 @@ export const AlertManagementPanel = () => {
       case 'resolved': return <CheckCircle className="h-4 w-4" />;
       case 'investigating': return <Clock className="h-4 w-4" />;
       default: return <AlertTriangle className="h-4 w-4" />;
+    }
+  };
+
+  const handleBulkAssign = async () => {
+    if (!bulkAssignee || !userId || selectedAlerts.size === 0) return;
+    await bulkAssignAlerts.mutateAsync({
+      alertIds: Array.from(selectedAlerts),
+      assignedTo: bulkAssignee,
+      userId
+    });
+    setSelectedAlerts(new Set());
+    setBulkAssignee('');
+  };
+
+  const toggleAlertSelection = (alertId: string) => {
+    const newSelection = new Set(selectedAlerts);
+    if (newSelection.has(alertId)) {
+      newSelection.delete(alertId);
+    } else {
+      newSelection.add(alertId);
+    }
+    setSelectedAlerts(newSelection);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedAlerts.size === alerts.length) {
+      setSelectedAlerts(new Set());
+    } else {
+      setSelectedAlerts(new Set(alerts.map(a => a.id)));
     }
   };
 
@@ -126,12 +158,56 @@ export const AlertManagementPanel = () => {
         </CardContent>
       </Card>
 
+      {selectedAlerts.size > 0 && (
+        <Card className="p-4 bg-primary/5 border-primary/20">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium">
+              {selectedAlerts.size} alert{selectedAlerts.size > 1 ? 's' : ''} selected
+            </span>
+            <Select value={bulkAssignee} onValueChange={setBulkAssignee}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Assign to..." />
+              </SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    {member.display_name || member.email}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button 
+              onClick={handleBulkAssign}
+              disabled={!bulkAssignee || bulkAssignAlerts.isPending}
+              size="sm"
+            >
+              <UserPlus className="h-4 w-4 mr-1" />
+              Assign
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setSelectedAlerts(new Set())}
+            >
+              <X className="h-4 w-4 mr-1" />
+              Clear
+            </Button>
+          </div>
+        </Card>
+      )}
+
       <Card>
         <CardHeader><CardTitle>Alerts</CardTitle></CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[40px]">
+                  <Checkbox
+                    checked={alerts.length > 0 && selectedAlerts.size === alerts.length}
+                    onCheckedChange={toggleSelectAll}
+                  />
+                </TableHead>
                 <TableHead>Severity</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Message</TableHead>
@@ -143,7 +219,13 @@ export const AlertManagementPanel = () => {
             </TableHeader>
             <TableBody>
               {alerts.map((alert) => (
-                <TableRow key={alert.id}>
+                <TableRow key={alert.id} className={selectedAlerts.has(alert.id) ? 'bg-primary/5' : ''}>
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedAlerts.has(alert.id)}
+                      onCheckedChange={() => toggleAlertSelection(alert.id)}
+                    />
+                  </TableCell>
                   <TableCell><Badge variant={getSeverityColor(alert.severity)}>{alert.severity}</Badge></TableCell>
                   <TableCell><Badge variant="outline">{alert.alert_type}</Badge></TableCell>
                   <TableCell className="max-w-md truncate">{alert.message}</TableCell>
@@ -163,7 +245,15 @@ export const AlertManagementPanel = () => {
         </CardContent>
       </Card>
 
-      <AlertDetailDialog alert={selectedAlert} open={detailDialogOpen} onOpenChange={setDetailDialogOpen} onUpdateStatus={(alertId, status, notes) => userId && updateAlertStatus.mutate({ alertId, status, notes, userId })} userId={userId} />
+      <AlertDetailDialog 
+        alert={selectedAlert} 
+        open={detailDialogOpen} 
+        onOpenChange={setDetailDialogOpen} 
+        onUpdateStatus={(alertId, status, notes) => userId && updateAlertStatus.mutate({ alertId, status, notes, userId })}
+        onAssignAlert={(alertId, assignedTo) => assignAlert.mutate({ alertId, assignedTo, userId })}
+        onUnassignAlert={(alertId) => unassignAlert.mutate({ alertId, userId })}
+        userId={userId} 
+      />
     </div>
   );
 };

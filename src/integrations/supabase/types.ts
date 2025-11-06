@@ -52,6 +52,86 @@ export type Database = {
           },
         ]
       }
+      alert_escalation_rules: {
+        Row: {
+          created_at: string | null
+          escalation_time_minutes: number
+          id: string
+          is_active: boolean | null
+          notify_email: string[] | null
+          reassign_to_role: string | null
+          severity: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          escalation_time_minutes?: number
+          id?: string
+          is_active?: boolean | null
+          notify_email?: string[] | null
+          reassign_to_role?: string | null
+          severity: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          escalation_time_minutes?: number
+          id?: string
+          is_active?: boolean | null
+          notify_email?: string[] | null
+          reassign_to_role?: string | null
+          severity?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      alert_notifications_log: {
+        Row: {
+          alert_id: string | null
+          created_at: string | null
+          delivery_status: string | null
+          error_message: string | null
+          id: string
+          notification_type: string
+          recipient_email: string
+          recipient_user_id: string | null
+          resend_message_id: string | null
+          sent_at: string | null
+        }
+        Insert: {
+          alert_id?: string | null
+          created_at?: string | null
+          delivery_status?: string | null
+          error_message?: string | null
+          id?: string
+          notification_type: string
+          recipient_email: string
+          recipient_user_id?: string | null
+          resend_message_id?: string | null
+          sent_at?: string | null
+        }
+        Update: {
+          alert_id?: string | null
+          created_at?: string | null
+          delivery_status?: string | null
+          error_message?: string | null
+          id?: string
+          notification_type?: string
+          recipient_email?: string
+          recipient_user_id?: string | null
+          resend_message_id?: string | null
+          sent_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_notifications_log_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "scraping_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       alert_status_history: {
         Row: {
           alert_id: string
@@ -1719,7 +1799,11 @@ export type Database = {
           created_at: string
           details: Json | null
           detected_at: string
+          escalated: boolean | null
+          escalated_to: string | null
+          escalation_count: number | null
           id: string
+          last_escalated_at: string | null
           message: string
           resolution_notes: string | null
           resolved_at: string | null
@@ -1738,7 +1822,11 @@ export type Database = {
           created_at?: string
           details?: Json | null
           detected_at?: string
+          escalated?: boolean | null
+          escalated_to?: string | null
+          escalation_count?: number | null
           id?: string
+          last_escalated_at?: string | null
           message: string
           resolution_notes?: string | null
           resolved_at?: string | null
@@ -1757,7 +1845,11 @@ export type Database = {
           created_at?: string
           details?: Json | null
           detected_at?: string
+          escalated?: boolean | null
+          escalated_to?: string | null
+          escalation_count?: number | null
           id?: string
+          last_escalated_at?: string | null
           message?: string
           resolution_notes?: string | null
           resolved_at?: string | null

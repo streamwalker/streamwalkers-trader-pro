@@ -294,7 +294,21 @@ export const useAlertManagement = (filters?: AlertFilters) => {
           notes: `Assigned to user ${assignedTo}`
         });
     },
-    onSuccess: () => {
+    onSuccess: async (_, variables) => {
+      // Trigger email notification
+      try {
+        await supabase.functions.invoke('send-alert-assignment-email', {
+          body: {
+            alertId: variables.alertId,
+            assignedToUserId: variables.assignedTo,
+            assignedByUserId: variables.userId,
+            isBulk: false
+          }
+        });
+      } catch (error) {
+        console.error("Error sending assignment email:", error);
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['scraping-alerts'] });
       queryClient.invalidateQueries({ queryKey: ['alert-stats'] });
       toast.success("Alert assigned successfully");
@@ -347,6 +361,80 @@ export const useAlertManagement = (filters?: AlertFilters) => {
     }
   });
 
+  // Bulk assign alerts mutation
+  const bulkAssignAlerts = useMutation({
+    mutationFn: async ({
+      alertIds,
+      assignedTo,
+      userId
+    }: {
+      alertIds: string[];
+      assignedTo: string;
+      userId: string;
+    }) => {
+      const results = await Promise.allSettled(
+        alertIds.map(async (alertId) => {
+          const { error } = await supabase
+            .from('scraping_alerts')
+            .update({
+              assigned_to: assignedTo,
+              assigned_at: new Date().toISOString(),
+              assigned_by: userId
+            })
+            .eq('id', alertId);
+          
+          if (error) throw error;
+          
+          // Record history
+          await supabase
+            .from('alert_status_history')
+            .insert({
+              alert_id: alertId,
+              user_id: userId,
+              old_status: 'pending',
+              new_status: 'pending',
+              notes: `Bulk assigned to user`
+            });
+        })
+      );
+      
+      const successful = results.filter(r => r.status === 'fulfilled').length;
+      const failed = results.filter(r => r.status === 'rejected').length;
+      
+      // Trigger bulk email notification
+      if (successful > 0) {
+        try {
+          await supabase.functions.invoke('send-alert-assignment-email', {
+            body: {
+              assignedToUserId: assignedTo,
+              assignedByUserId: userId,
+              isBulk: true,
+              bulkAlertIds: alertIds
+            }
+          });
+        } catch (error) {
+          console.error("Error sending bulk assignment email:", error);
+        }
+      }
+      
+      return { successful, failed, total: alertIds.length };
+    },
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['scraping-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['alert-stats'] });
+      
+      if (result.failed > 0) {
+        toast.warning(`Assigned ${result.successful} alerts, ${result.failed} failed`);
+      } else {
+        toast.success(`Successfully assigned ${result.successful} alerts`);
+      }
+    },
+    onError: (error) => {
+      console.error("Error bulk assigning alerts:", error);
+      toast.error("Failed to bulk assign alerts");
+    }
+  });
+
   return {
     alerts,
     stats,
@@ -355,6 +443,7 @@ export const useAlertManagement = (filters?: AlertFilters) => {
     updateAlertStatus,
     resolveAlert,
     assignAlert,
-    unassignAlert
+    unassignAlert,
+    bulkAssignAlerts
   };
 };

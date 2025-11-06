@@ -170,7 +170,11 @@ export function useCronMonitoring() {
     refetchInterval: 60000,
   });
 
-  // Subscribe to realtime updates for logs
+  // Anomaly detection thresholds
+  const SUCCESS_RATE_THRESHOLD = 70; // Alert if below 70%
+  const EXECUTION_TIME_SPIKE_MULTIPLIER = 2.5; // Alert if 2.5x average
+
+  // Subscribe to realtime updates for logs with anomaly detection
   useEffect(() => {
     const channel = supabase
       .channel('scraping-logs-changes')
@@ -181,9 +185,51 @@ export function useCronMonitoring() {
           schema: 'public',
           table: 'scraping_logs'
         },
-        () => {
+        (payload) => {
           queryClient.invalidateQueries({ queryKey: ['scraping-logs'] });
           queryClient.invalidateQueries({ queryKey: ['scraping-stats'] });
+          
+          // Check for anomalies in new log entry
+          const newLog = payload.new as ScrapingLog;
+          
+          // Calculate recent success rate (last 10 scrapes)
+          if (logs && logs.length > 0) {
+            const recentLogs = [newLog, ...logs].slice(0, 10);
+            const recentSuccesses = recentLogs.filter(l => l.status === 'success').length;
+            const recentSuccessRate = (recentSuccesses / recentLogs.length) * 100;
+            
+            if (recentSuccessRate < SUCCESS_RATE_THRESHOLD) {
+              toast.error(
+                `⚠️ Low success rate detected: ${recentSuccessRate.toFixed(1)}%`,
+                { description: 'Recent scraping attempts are failing more than usual' }
+              );
+            }
+          }
+          
+          // Check for execution time spike
+          if (logs && logs.length > 0) {
+            const sameSourcLogs = logs.filter(l => l.source_id === newLog.source_id);
+            if (sameSourcLogs.length >= 3) {
+              const avgTime = sameSourcLogs.reduce((sum, l) => sum + l.execution_time_ms, 0) / sameSourcLogs.length;
+              
+              if (newLog.execution_time_ms > avgTime * EXECUTION_TIME_SPIKE_MULTIPLIER) {
+                toast.warning(
+                  `⚠️ Execution time spike: ${newLog.source_name}`,
+                  { 
+                    description: `${(newLog.execution_time_ms / 1000).toFixed(1)}s (avg: ${(avgTime / 1000).toFixed(1)}s)` 
+                  }
+                );
+              }
+            }
+          }
+          
+          // Alert on errors
+          if (newLog.status === 'error') {
+            toast.error(
+              `Scraping failed: ${newLog.source_name}`,
+              { description: newLog.error_message || 'Unknown error' }
+            );
+          }
         }
       )
       .subscribe();
@@ -191,7 +237,7 @@ export function useCronMonitoring() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, logs]);
 
   // Process logs into chart data
   const chartData = useQuery({
@@ -265,6 +311,46 @@ export function useCronMonitoring() {
     enabled: !!logs,
   });
 
+  // Detect anomalies in overall stats
+  const anomalies = useQuery({
+    queryKey: ['anomalies', logs],
+    queryFn: () => {
+      if (!logs || logs.length < 5) return { hasAnomalies: false, issues: [] };
+      
+      const issues: string[] = [];
+      const recentLogs = logs.slice(0, 20);
+      
+      // Check success rate
+      const successCount = recentLogs.filter(l => l.status === 'success').length;
+      const successRate = (successCount / recentLogs.length) * 100;
+      
+      if (successRate < SUCCESS_RATE_THRESHOLD) {
+        issues.push(`Low success rate: ${successRate.toFixed(1)}%`);
+      }
+      
+      // Check for repeated failures
+      const consecutiveFailures = recentLogs.slice(0, 3).filter(l => l.status === 'error').length;
+      if (consecutiveFailures === 3) {
+        issues.push('3 consecutive failures detected');
+      }
+      
+      // Check execution times
+      const avgExecutionTime = recentLogs.reduce((sum, l) => sum + l.execution_time_ms, 0) / recentLogs.length;
+      const recentAvg = recentLogs.slice(0, 5).reduce((sum, l) => sum + l.execution_time_ms, 0) / 5;
+      
+      if (recentAvg > avgExecutionTime * EXECUTION_TIME_SPIKE_MULTIPLIER) {
+        issues.push(`Execution time spike: ${(recentAvg / 1000).toFixed(1)}s vs ${(avgExecutionTime / 1000).toFixed(1)}s avg`);
+      }
+      
+      return {
+        hasAnomalies: issues.length > 0,
+        issues,
+        successRate,
+      };
+    },
+    enabled: !!logs && logs.length > 0,
+  });
+
   return {
     cronJobs: cronJobs || [],
     sources: sources || [],
@@ -272,6 +358,7 @@ export function useCronMonitoring() {
     logs: logs || [],
     chartData: chartData.data || [],
     sourcePerformance: sourcePerformance.data || [],
+    anomalies: anomalies.data,
     isLoading: cronLoading || sourcesLoading,
     toggleCronJob,
     triggerManualScrape,

@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { 
   Clock, 
   Play, 
@@ -15,7 +16,8 @@ import {
   RefreshCw,
   Calendar,
   BarChart3,
-  Timer
+  Timer,
+  AlertTriangle
 } from 'lucide-react';
 import { formatDistanceToNow, format } from 'date-fns';
 import {
@@ -44,6 +46,7 @@ export function CronMonitoringDashboard() {
     logs,
     chartData,
     sourcePerformance,
+    anomalies,
     isLoading, 
     toggleCronJob, 
     triggerManualScrape 
@@ -72,6 +75,21 @@ export function CronMonitoringDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Anomaly Alerts */}
+      {anomalies?.hasAnomalies && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Anomalies Detected</AlertTitle>
+          <AlertDescription>
+            <ul className="list-disc list-inside space-y-1 mt-2">
+              {anomalies.issues.map((issue, idx) => (
+                <li key={idx}>{issue}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -95,7 +113,12 @@ export function CronMonitoringDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Success Rate</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              Success Rate
+              {anomalies?.successRate !== undefined && anomalies.successRate < 70 && (
+                <Badge variant="destructive" className="text-xs">Low</Badge>
+              )}
+            </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -462,14 +485,22 @@ export function CronMonitoringDashboard() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <p className="text-sm font-medium">{perf.successRate.toFixed(1)}%</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium">{perf.successRate.toFixed(1)}%</p>
+                      {perf.successRate < 70 && (
+                        <AlertTriangle className="h-3 w-3 text-destructive" />
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">Success Rate</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium flex items-center gap-1">
+                    <div className="flex items-center gap-1">
                       <Timer className="w-3 h-3" />
-                      {perf.avgTime}s
-                    </p>
+                      <p className="text-sm font-medium">{perf.avgTime}s</p>
+                      {perf.avgTime > 15 && (
+                        <AlertCircle className="h-3 w-3 text-orange-500" />
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">Avg Time</p>
                   </div>
                 </div>

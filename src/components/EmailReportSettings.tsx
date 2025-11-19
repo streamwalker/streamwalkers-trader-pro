@@ -110,19 +110,34 @@ export const EmailReportSettings = () => {
   });
 
   const testEmail = useMutation({
-    mutationFn: async (email: string) => {
-      const { error } = await supabase.functions.invoke('send-scraping-report', {
-        body: { 
-          email, 
-          frequency: 'daily', 
-          isTest: true 
-        }
-      });
-
-      if (error) throw error;
+    mutationFn: async ({ email, reportTypes }: { email: string; reportTypes: string[] }) => {
+      // If config includes dip_analysis, send dip analysis report
+      if (reportTypes.includes('dip_analysis')) {
+        const { error } = await supabase.functions.invoke('send-dip-analysis-report', {
+          body: { 
+            email, 
+            isTest: true,
+            includeDetailed: true
+          }
+        });
+        if (error) throw error;
+      }
+      
+      // If config includes scraping reports (summary, anomalies, performance)
+      const scrapingTypes = reportTypes.filter(t => ['summary', 'anomalies', 'performance'].includes(t));
+      if (scrapingTypes.length > 0) {
+        const { error } = await supabase.functions.invoke('send-scraping-report', {
+          body: { 
+            email, 
+            frequency: 'daily', 
+            isTest: true 
+          }
+        });
+        if (error) throw error;
+      }
     },
     onSuccess: () => {
-      toast.success('Test email sent! Check your inbox.');
+      toast.success('Test email(s) sent! Check your inbox.');
     },
     onError: () => {
       toast.error('Failed to send test email');
@@ -149,7 +164,7 @@ export const EmailReportSettings = () => {
                 Email Report Settings
               </CardTitle>
               <CardDescription>
-                Configure automated email reports for scraping summaries
+                Configure automated email reports for scraping summaries and dip analysis
               </CardDescription>
             </div>
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -229,6 +244,16 @@ export const EmailReportSettings = () => {
                         />
                         <Label htmlFor="performance" className="font-normal">Source Performance</Label>
                       </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="dip_analysis"
+                          checked={newConfig.report_types.includes('dip_analysis')}
+                          onCheckedChange={(checked) => 
+                            handleReportTypeToggle('dip_analysis', checked as boolean)
+                          }
+                        />
+                        <Label htmlFor="dip_analysis" className="font-normal">Daily Dip Analysis (7 AM CST)</Label>
+                      </div>
                     </div>
                   </div>
 
@@ -291,7 +316,10 @@ export const EmailReportSettings = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => testEmail.mutate(config.email)}
+                          onClick={() => testEmail.mutate({ 
+                            email: config.email, 
+                            reportTypes: config.report_types 
+                          })}
                         >
                           <Send className="h-4 w-4" />
                         </Button>

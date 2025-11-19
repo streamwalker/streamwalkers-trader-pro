@@ -12,6 +12,8 @@ import MarketDataService from "@/services/MarketDataService";
 import { CustomAnalysisDialog } from "@/components/CustomAnalysisDialog";
 import { QuickAlertsSheet } from "@/components/QuickAlertsSheet";
 import { CandlestickChart } from "@/components/CandlestickChart";
+import { DipAnalysisDashboard } from "@/components/DipAnalysisDashboard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const MarketAnalysis = () => {
   const { data: futuresData, isLoading: futuresLoading, refetch: refetchFutures } = useFuturesData();
@@ -65,15 +67,22 @@ const MarketAnalysis = () => {
         </div>
       </div>
 
-      {/* Candlestick Chart Section */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Live Charts</h2>
-        <CandlestickChart 
-          symbol="ES" 
-          supportLevels={esLevels?.support || []} 
-          resistanceLevels={esLevels?.resistance || []} 
-        />
-      </div>
+      <Tabs defaultValue="overview" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="overview">Market Overview</TabsTrigger>
+          <TabsTrigger value="dip-analysis">Dip Analysis</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-6">
+          {/* Candlestick Chart Section */}
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Live Charts</h2>
+            <CandlestickChart 
+              symbol="ES" 
+              supportLevels={esLevels?.support || []} 
+              resistanceLevels={esLevels?.resistance || []} 
+            />
+          </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {conditionsLoading ? (
@@ -384,6 +393,12 @@ const MarketAnalysis = () => {
           </CardContent>
         </Card>
       </div>
+        </TabsContent>
+
+        <TabsContent value="dip-analysis">
+          <DipAnalysisDashboard />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

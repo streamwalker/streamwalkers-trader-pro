@@ -500,6 +500,165 @@ export type Database = {
         }
         Relationships: []
       }
+      dip_analysis_history: {
+        Row: {
+          analysis_date: string
+          created_at: string | null
+          dip_quality_score: number | null
+          id: string
+          price: number | null
+          recommendation: string | null
+          symbol: string
+        }
+        Insert: {
+          analysis_date: string
+          created_at?: string | null
+          dip_quality_score?: number | null
+          id?: string
+          price?: number | null
+          recommendation?: string | null
+          symbol: string
+        }
+        Update: {
+          analysis_date?: string
+          created_at?: string | null
+          dip_quality_score?: number | null
+          id?: string
+          price?: number | null
+          recommendation?: string | null
+          symbol?: string
+        }
+        Relationships: []
+      }
+      dip_analysis_results: {
+        Row: {
+          analysis_date: string
+          analysis_summary: string | null
+          catalyst_data: Json | null
+          catalyst_score: number | null
+          confidence_level: number | null
+          created_at: string | null
+          current_price: number | null
+          dip_quality_score: number
+          dip_type: string
+          id: string
+          insider_data: Json | null
+          insider_score: number | null
+          key_opportunities: string[] | null
+          key_risks: string[] | null
+          market_cap: number | null
+          options_data: Json | null
+          options_flow_score: number | null
+          price_change_percent: number | null
+          recommendation: string
+          rsi_score: number | null
+          sector: string | null
+          support_score: number | null
+          symbol: string
+          technical_data: Json | null
+          trend_data: Json | null
+          trend_score: number | null
+          updated_at: string | null
+          volume: number | null
+          volume_data: Json | null
+          volume_score: number | null
+        }
+        Insert: {
+          analysis_date?: string
+          analysis_summary?: string | null
+          catalyst_data?: Json | null
+          catalyst_score?: number | null
+          confidence_level?: number | null
+          created_at?: string | null
+          current_price?: number | null
+          dip_quality_score: number
+          dip_type: string
+          id?: string
+          insider_data?: Json | null
+          insider_score?: number | null
+          key_opportunities?: string[] | null
+          key_risks?: string[] | null
+          market_cap?: number | null
+          options_data?: Json | null
+          options_flow_score?: number | null
+          price_change_percent?: number | null
+          recommendation: string
+          rsi_score?: number | null
+          sector?: string | null
+          support_score?: number | null
+          symbol: string
+          technical_data?: Json | null
+          trend_data?: Json | null
+          trend_score?: number | null
+          updated_at?: string | null
+          volume?: number | null
+          volume_data?: Json | null
+          volume_score?: number | null
+        }
+        Update: {
+          analysis_date?: string
+          analysis_summary?: string | null
+          catalyst_data?: Json | null
+          catalyst_score?: number | null
+          confidence_level?: number | null
+          created_at?: string | null
+          current_price?: number | null
+          dip_quality_score?: number
+          dip_type?: string
+          id?: string
+          insider_data?: Json | null
+          insider_score?: number | null
+          key_opportunities?: string[] | null
+          key_risks?: string[] | null
+          market_cap?: number | null
+          options_data?: Json | null
+          options_flow_score?: number | null
+          price_change_percent?: number | null
+          recommendation?: string
+          rsi_score?: number | null
+          sector?: string | null
+          support_score?: number | null
+          symbol?: string
+          technical_data?: Json | null
+          trend_data?: Json | null
+          trend_score?: number | null
+          updated_at?: string | null
+          volume?: number | null
+          volume_data?: Json | null
+          volume_score?: number | null
+        }
+        Relationships: []
+      }
+      dip_watchlist: {
+        Row: {
+          alert_frequency: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          symbol: string
+          target_dip_score: number | null
+          user_id: string | null
+        }
+        Insert: {
+          alert_frequency?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          symbol: string
+          target_dip_score?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          alert_frequency?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          symbol?: string
+          target_dip_score?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       documentation_quality_metrics: {
         Row: {
           completeness_score: number | null

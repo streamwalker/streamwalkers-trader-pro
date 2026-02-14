@@ -70,3 +70,6 @@ verify_jwt = false
 
 [functions.scrape-news-cron]
 verify_jwt = false
+
+[functions.fetch-news-api]
+verify_jwt = false

@@ -2,13 +2,24 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 interface ScrapeRequest {
   sourceId?: string;
-  url?: string;
   forceRefresh?: boolean;
+  method?: 'newsdata' | 'rss' | 'all';
+}
+
+interface ArticleData {
+  title: string;
+  url: string;
+  source: string;
+  summary?: string;
+  published_at?: string;
+  sentiment?: string;
+  keywords?: string[];
+  symbols?: string[];
 }
 
 Deno.serve(async (req) => {
@@ -19,163 +30,107 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const firecrawlKey = Deno.env.get('FIRECRAWL_API_KEY');
-    
-    if (!firecrawlKey) {
-      throw new Error('FIRECRAWL_API_KEY not configured');
-    }
-
+    const newsDataKey = Deno.env.get('NEWSDATA_API_KEY');
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const requestData: ScrapeRequest = await req.json();
-    
-    console.log('Starting scrape with params:', requestData);
 
-    // Fetch news source configuration
-    let query = supabase.from('news_sources').select('*').eq('is_active', true);
-    
-    if (requestData.sourceId) {
-      query = query.eq('id', requestData.sourceId);
-    }
-    
-    const { data: sources, error: sourcesError } = await query;
-    
-    if (sourcesError) throw sourcesError;
-    if (!sources || sources.length === 0) {
-      return new Response(
-        JSON.stringify({ error: 'No active news sources found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    const requestData: ScrapeRequest = await req.json().catch(() => ({}));
+    const method = requestData.method || 'all';
+
+    console.log('Starting news scrape:', { method, sourceId: requestData.sourceId });
 
     const results = {
       articlesScraped: 0,
       newArticles: 0,
       duplicates: 0,
       errors: [] as string[],
+      sources: [] as string[],
     };
 
-    // Process each source
-    for (const source of sources) {
-      const startTime = Date.now();
-      // Check if we should scrape based on interval
-      if (!requestData.forceRefresh && source.last_scraped_at) {
-        const lastScraped = new Date(source.last_scraped_at);
-        const now = new Date();
-        const minutesSinceLastScrape = (now.getTime() - lastScraped.getTime()) / 1000 / 60;
+    // ===== TIER 1: NewsData.io API =====
+    if ((method === 'all' || method === 'newsdata') && newsDataKey) {
+      try {
+        console.log('Fetching from NewsData.io...');
+        const newsDataArticles = await fetchFromNewsDataAPI(newsDataKey);
+        results.sources.push('NewsData.io');
         
-        if (minutesSinceLastScrape < source.scrape_interval_minutes) {
-          console.log(`Skipping ${source.name}, scraped ${Math.floor(minutesSinceLastScrape)} minutes ago`);
-          continue;
-        }
-      }
-
-      console.log(`Scraping ${source.name}...`);
-
-      // Process each URL for this source
-      for (const url of source.scrape_urls) {
-        try {
-          // Rate limiting: wait 2 seconds between requests
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          
-          // Scrape with Firecrawl
-          const scrapeResponse = await fetch('https://api.firecrawl.dev/v0/scrape', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${firecrawlKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              url: url,
-              formats: ['markdown', 'html'],
-              onlyMainContent: true,
-              waitFor: 3000,
-            }),
-          });
-
-          if (!scrapeResponse.ok) {
-            const errorText = await scrapeResponse.text();
-            throw new Error(`Firecrawl error (${scrapeResponse.status}): ${errorText}`);
-          }
-
-          const scrapeData = await scrapeResponse.json();
+        for (const article of newsDataArticles) {
+          const inserted = await upsertArticle(supabase, article);
+          if (inserted === 'new') results.newArticles++;
+          else if (inserted === 'duplicate') results.duplicates++;
           results.articlesScraped++;
-
-          // Extract article links from markdown
-          const markdown = scrapeData.data?.markdown || '';
-          const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
-          let match;
-          const articles = [];
-
-          while ((match = linkPattern.exec(markdown)) !== null) {
-            const [, title, articleUrl] = match;
-            
-            // Filter for actual article URLs (not navigation links)
-            if (isArticleUrl(articleUrl, source.name)) {
-              articles.push({
-                title: cleanTitle(title),
-                url: normalizeUrl(articleUrl, source.base_url),
-                source: source.name,
-              });
-            }
-          }
-
-          // Insert articles into database (dedup by URL)
-          for (const article of articles) {
-            const { error: insertError } = await supabase
-              .from('economic_news')
-              .insert({
-                title: article.title,
-                url: article.url,
-                source: article.source,
-                published_at: new Date().toISOString(),
-              })
-              .select()
-              .single();
-
-            if (insertError) {
-              if (insertError.code === '23505') {
-                // Duplicate URL
-                results.duplicates++;
-              } else {
-                console.error('Insert error:', insertError);
-                results.errors.push(`Failed to insert ${article.url}: ${insertError.message}`);
-              }
-            } else {
-              results.newArticles++;
-            }
-          }
-
-        } catch (error) {
-          console.error(`Error scraping ${url}:`, error);
-          results.errors.push(`${url}: ${error.message}`);
         }
+        console.log(`NewsData.io: ${newsDataArticles.length} articles fetched`);
+      } catch (error) {
+        console.error('NewsData.io failed:', error.message);
+        results.errors.push(`NewsData.io: ${error.message}`);
       }
+    }
 
-      // Update last_scraped_at timestamp
+    // ===== TIER 2: RSS Feeds =====
+    if (method === 'all' || method === 'rss') {
+      try {
+        console.log('Fetching from RSS feeds...');
+
+        // Get RSS URLs from news_sources table
+        let rssQuery = supabase
+          .from('news_sources')
+          .select('*')
+          .eq('is_active', true)
+          .not('rss_url', 'is', null);
+
+        if (requestData.sourceId) {
+          rssQuery = rssQuery.eq('id', requestData.sourceId);
+        }
+
+        const { data: rssSources } = await rssQuery;
+
+        // Also try hardcoded RSS feeds as fallback
+        const defaultFeeds = [
+          { name: 'CNBC', url: 'https://www.cnbc.com/id/100003114/device/rss/rss.html' },
+          { name: 'MarketWatch', url: 'https://feeds.marketwatch.com/marketwatch/topstories/' },
+          { name: 'Yahoo Finance', url: 'https://finance.yahoo.com/news/rssindex' },
+        ];
+
+        const feedsToProcess = rssSources?.length
+          ? rssSources.map(s => ({ name: s.name, url: s.rss_url! }))
+          : defaultFeeds;
+
+        for (const feed of feedsToProcess) {
+          try {
+            const rssArticles = await fetchFromRSSFeed(feed.url, feed.name);
+            results.sources.push(`RSS:${feed.name}`);
+
+            for (const article of rssArticles) {
+              const inserted = await upsertArticle(supabase, article);
+              if (inserted === 'new') results.newArticles++;
+              else if (inserted === 'duplicate') results.duplicates++;
+              results.articlesScraped++;
+            }
+            console.log(`RSS ${feed.name}: ${rssArticles.length} articles`);
+          } catch (error) {
+            console.error(`RSS ${feed.name} failed:`, error.message);
+            results.errors.push(`RSS ${feed.name}: ${error.message}`);
+          }
+          // Small delay between feeds
+          await new Promise(r => setTimeout(r, 500));
+        }
+      } catch (error) {
+        console.error('RSS feeds failed:', error.message);
+        results.errors.push(`RSS: ${error.message}`);
+      }
+    }
+
+    // Update last_scraped_at for processed sources
+    if (requestData.sourceId) {
       await supabase
         .from('news_sources')
         .update({ last_scraped_at: new Date().toISOString() })
-        .eq('id', source.id);
-
-      // Log scraping attempt
-      const executionTime = Date.now() - startTime;
-      const sourceResults = {
-        articlesFound: results.articlesScraped,
-        newArticles: results.newArticles,
-        duplicates: results.duplicates,
-      };
-
-      await supabase.from('scraping_logs').insert({
-        source_id: source.id,
-        source_name: source.name,
-        status: results.errors.length > 0 ? 'partial' : 'success',
-        articles_found: sourceResults.articlesFound,
-        new_articles: sourceResults.newArticles,
-        duplicates: sourceResults.duplicates,
-        error_message: results.errors.length > 0 ? results.errors.join('; ') : null,
-        execution_time_ms: executionTime,
-        triggered_by: requestData.forceRefresh ? 'manual' : 'automatic',
-      });
+        .eq('id', requestData.sourceId);
+    } else {
+      await supabase
+        .from('news_sources')
+        .update({ last_scraped_at: new Date().toISOString() })
+        .eq('is_active', true);
     }
 
     console.log('Scrape complete:', results);
@@ -184,7 +139,6 @@ Deno.serve(async (req) => {
       JSON.stringify(results),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
   } catch (error) {
     console.error('Error in scrape-financial-news:', error);
     return new Response(
@@ -194,47 +148,184 @@ Deno.serve(async (req) => {
   }
 });
 
-// Helper functions
-function isArticleUrl(url: string, source: string): boolean {
-  // Filter out navigation, footer, and external links
-  const excludePatterns = [
-    '/about', '/contact', '/privacy', '/terms',
-    'facebook.com', 'twitter.com', 'linkedin.com',
-    '/newsletter', '/subscribe', 'mailto:',
-    '#', 'javascript:'
+// ===== NewsData.io Integration =====
+async function fetchFromNewsDataAPI(apiKey: string): Promise<ArticleData[]> {
+  const categories = ['business', 'technology'];
+  const articles: ArticleData[] = [];
+
+  for (const category of categories) {
+    const url = `https://newsdata.io/api/1/latest?apikey=${apiKey}&category=${category}&language=en&size=10`;
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`NewsData.io ${response.status}: ${text}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.results) {
+      for (const item of data.results) {
+        if (!item.title || !item.link) continue;
+
+        articles.push({
+          title: item.title.substring(0, 300),
+          url: item.link,
+          source: item.source_name || item.source_id || 'NewsData.io',
+          summary: item.description?.substring(0, 500) || null,
+          published_at: item.pubDate || new Date().toISOString(),
+          sentiment: mapNewsDataSentiment(item.sentiment),
+          keywords: item.keywords || [],
+          symbols: extractSymbolsFromText(item.title + ' ' + (item.description || '')),
+        });
+      }
+    }
+
+    // Respect rate limits
+    await new Promise(r => setTimeout(r, 1000));
+  }
+
+  return articles;
+}
+
+function mapNewsDataSentiment(sentiment: string | null): string | undefined {
+  if (!sentiment) return undefined;
+  const lower = sentiment.toLowerCase();
+  if (lower === 'positive' || lower === 'bullish') return 'positive';
+  if (lower === 'negative' || lower === 'bearish') return 'negative';
+  return 'neutral';
+}
+
+// ===== RSS Feed Parsing =====
+async function fetchFromRSSFeed(feedUrl: string, sourceName: string): Promise<ArticleData[]> {
+  const response = await fetch(feedUrl, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; NewsAggregator/1.0)',
+      'Accept': 'application/rss+xml, application/xml, text/xml',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`RSS fetch failed: ${response.status}`);
+  }
+
+  const xml = await response.text();
+  return parseRSSXML(xml, sourceName);
+}
+
+function parseRSSXML(xml: string, sourceName: string): ArticleData[] {
+  const articles: ArticleData[] = [];
+  
+  // Extract items from RSS XML using regex (no XML parser in Deno edge functions)
+  const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
+  let itemMatch;
+
+  while ((itemMatch = itemRegex.exec(xml)) !== null) {
+    const itemXml = itemMatch[1];
+    
+    const title = extractXMLTag(itemXml, 'title');
+    const link = extractXMLTag(itemXml, 'link');
+    const description = extractXMLTag(itemXml, 'description');
+    const pubDate = extractXMLTag(itemXml, 'pubDate');
+
+    if (!title || !link) continue;
+
+    articles.push({
+      title: cleanHTMLEntities(title).substring(0, 300),
+      url: link.trim(),
+      source: sourceName,
+      summary: description ? cleanHTMLEntities(stripHTML(description)).substring(0, 500) : undefined,
+      published_at: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
+      symbols: extractSymbolsFromText(title + ' ' + (description || '')),
+    });
+  }
+
+  return articles;
+}
+
+function extractXMLTag(xml: string, tag: string): string | null {
+  // Handle CDATA sections
+  const cdataRegex = new RegExp(`<${tag}[^>]*>\\s*<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>\\s*</${tag}>`, 'i');
+  const cdataMatch = xml.match(cdataRegex);
+  if (cdataMatch) return cdataMatch[1].trim();
+
+  const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, 'i');
+  const match = xml.match(regex);
+  return match ? match[1].trim() : null;
+}
+
+function stripHTML(html: string): string {
+  return html.replace(/<[^>]*>/g, '').trim();
+}
+
+function cleanHTMLEntities(text: string): string {
+  return text
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'");
+}
+
+// ===== Common Helpers =====
+function extractSymbolsFromText(text: string): string[] {
+  const knownSymbols = [
+    'AAPL', 'MSFT', 'GOOGL', 'GOOG', 'AMZN', 'META', 'TSLA', 'NVDA', 
+    'NFLX', 'AMD', 'INTC', 'PLTR', 'QBTS', 'RGTI', 'QUBT', 'QTUM',
+    'JPM', 'BAC', 'GS', 'WMT', 'DIS', 'PYPL', 'SQ', 'COIN',
+    'BTC', 'ETH', 'SPY', 'QQQ', 'IWM', 'VIX',
   ];
   
-  const lowerUrl = url.toLowerCase();
+  const found: string[] = [];
+  const upperText = text.toUpperCase();
   
-  if (excludePatterns.some(pattern => lowerUrl.includes(pattern))) {
-    return false;
+  for (const symbol of knownSymbols) {
+    if (upperText.includes(symbol)) {
+      found.push(symbol);
+    }
   }
   
-  // Must contain typical article indicators
-  const articleIndicators = [
-    '/article/', '/story/', '/news/', '/market',
-    '/business/', '/economy/', '/finance/',
-    '-', 'html'
-  ];
-  
-  return articleIndicators.some(indicator => lowerUrl.includes(indicator));
+  return [...new Set(found)];
 }
 
-function cleanTitle(title: string): string {
-  return title
-    .trim()
-    .replace(/\s+/g, ' ')
-    .substring(0, 300);
-}
-
-function normalizeUrl(url: string, baseUrl: string): string {
+async function upsertArticle(
+  supabase: any, 
+  article: ArticleData
+): Promise<'new' | 'duplicate' | 'error'> {
   try {
-    // If relative URL, make it absolute
-    if (url.startsWith('/')) {
-      return new URL(url, baseUrl).href;
+    // Check for existing article by URL
+    const { data: existing } = await supabase
+      .from('economic_news')
+      .select('id')
+      .eq('url', article.url)
+      .maybeSingle();
+
+    if (existing) return 'duplicate';
+
+    const { error } = await supabase
+      .from('economic_news')
+      .insert({
+        title: article.title,
+        url: article.url,
+        source: article.source,
+        summary: article.summary || null,
+        published_at: article.published_at || new Date().toISOString(),
+        sentiment: article.sentiment || null,
+        keywords: article.keywords || [],
+        symbols: article.symbols || [],
+        scraped_at: new Date().toISOString(),
+      });
+
+    if (error) {
+      if (error.code === '23505') return 'duplicate';
+      console.error('Insert error:', error);
+      return 'error';
     }
-    return url;
-  } catch {
-    return url;
+
+    return 'new';
+  } catch (error) {
+    console.error('Upsert error:', error);
+    return 'error';
   }
 }

@@ -5,12 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RefreshCw, ExternalLink, Brain, Search, Filter } from 'lucide-react';
+import { RefreshCw, ExternalLink, Brain, Search, Filter, Newspaper, Rss, AlertCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function ScrapedNewsFeed() {
-  const { news, sources, isLoading, triggerScrape, scrapeArticleContent } = useNewsFeed();
+  const { news, sources, isLoading, triggerScrape, fetchFromNewsAPI, scrapeArticleContent } = useNewsFeed();
   const [selectedSource, setSelectedSource] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState<string>('all');
@@ -22,7 +22,6 @@ export function ScrapedNewsFeed() {
       article.summary?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSymbol = selectedSymbol === 'all' || 
       article.symbols?.includes(selectedSymbol);
-    
     return matchesSource && matchesSearch && matchesSymbol;
   });
 
@@ -47,12 +46,8 @@ export function ScrapedNewsFeed() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map(i => (
             <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-6 w-full" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-20 w-full" />
-              </CardContent>
+              <CardHeader><Skeleton className="h-6 w-full" /></CardHeader>
+              <CardContent><Skeleton className="h-20 w-full" /></CardContent>
             </Card>
           ))}
         </div>
@@ -62,7 +57,7 @@ export function ScrapedNewsFeed() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with status */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h2 className="text-2xl font-bold">Financial News Feed</h2>
@@ -70,15 +65,36 @@ export function ScrapedNewsFeed() {
             {filteredNews?.length || 0} articles from {sources?.length || 0} sources
           </p>
         </div>
-        <Button
-          onClick={() => triggerScrape.mutate(undefined)}
-          disabled={triggerScrape.isPending}
-          variant="outline"
-        >
-          <RefreshCw className={`w-4 h-4 mr-2 ${triggerScrape.isPending ? 'animate-spin' : ''}`} />
-          Refresh News
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => fetchFromNewsAPI.mutate({ category: 'business' })}
+            disabled={fetchFromNewsAPI.isPending}
+            variant="outline"
+            size="sm"
+          >
+            <Newspaper className={`w-4 h-4 mr-2 ${fetchFromNewsAPI.isPending ? 'animate-pulse' : ''}`} />
+            NewsData.io
+          </Button>
+          <Button
+            onClick={() => triggerScrape.mutate(undefined)}
+            disabled={triggerScrape.isPending}
+            variant="outline"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${triggerScrape.isPending ? 'animate-spin' : ''}`} />
+            Refresh All
+          </Button>
+        </div>
       </div>
+
+      {/* Status indicator */}
+      {(triggerScrape.isError || fetchFromNewsAPI.isError) && (
+        <Card className="border-destructive">
+          <CardContent className="py-3 flex items-center gap-2 text-sm text-destructive">
+            <AlertCircle className="w-4 h-4" />
+            Some sources may be unavailable. Showing cached articles.
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filters */}
       <Card>
@@ -102,7 +118,7 @@ export function ScrapedNewsFeed() {
                 <SelectItem value="all">All Sources</SelectItem>
                 {sources?.map(source => (
                   <SelectItem key={source.id} value={source.name}>
-                    {source.name}
+                    {source.name} {source.rss_url && <Rss className="w-3 h-3 inline ml-1" />}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -114,9 +130,7 @@ export function ScrapedNewsFeed() {
               <SelectContent>
                 <SelectItem value="all">All Symbols</SelectItem>
                 {uniqueSymbols.map(symbol => (
-                  <SelectItem key={symbol} value={symbol}>
-                    ${symbol}
-                  </SelectItem>
+                  <SelectItem key={symbol} value={symbol}>${symbol}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -137,46 +151,31 @@ export function ScrapedNewsFeed() {
                 <CardTitle className="text-base line-clamp-2 group-hover:text-primary transition-colors">
                   {article.title}
                 </CardTitle>
-                <Badge variant="outline" className="shrink-0">
-                  {article.source}
-                </Badge>
+                <Badge variant="outline" className="shrink-0">{article.source}</Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {article.summary && (
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  {article.summary}
-                </p>
+                <p className="text-sm text-muted-foreground line-clamp-3">{article.summary}</p>
               )}
-              
               <div className="flex items-center gap-2 flex-wrap">
                 {article.sentiment && (
-                  <Badge variant={getSentimentVariant(article.sentiment)}>
-                    {article.sentiment}
-                  </Badge>
+                  <Badge variant={getSentimentVariant(article.sentiment)}>{article.sentiment}</Badge>
                 )}
                 {article.symbols?.slice(0, 3).map(symbol => (
-                  <Badge key={symbol} variant="secondary">
-                    ${symbol}
-                  </Badge>
+                  <Badge key={symbol} variant="secondary">${symbol}</Badge>
                 ))}
                 {article.symbols && article.symbols.length > 3 && (
-                  <Badge variant="secondary">
-                    +{article.symbols.length - 3} more
-                  </Badge>
+                  <Badge variant="secondary">+{article.symbols.length - 3} more</Badge>
                 )}
               </div>
-
               {article.keywords && article.keywords.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {article.keywords.slice(0, 4).map(keyword => (
-                    <Badge key={keyword} variant="outline" className="text-xs">
-                      {keyword}
-                    </Badge>
+                    <Badge key={keyword} variant="outline" className="text-xs">{keyword}</Badge>
                   ))}
                 </div>
               )}
-
               <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t">
                 <span>
                   {article.published_at 
@@ -186,8 +185,7 @@ export function ScrapedNewsFeed() {
                 <div className="flex items-center gap-2">
                   {article.ai_processed && (
                     <Badge variant="outline" className="text-xs">
-                      <Brain className="w-3 h-3 mr-1" />
-                      AI
+                      <Brain className="w-3 h-3 mr-1" />AI
                     </Badge>
                   )}
                   {!article.content && (

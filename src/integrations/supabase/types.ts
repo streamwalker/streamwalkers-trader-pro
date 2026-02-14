@@ -1315,6 +1315,7 @@ export type Database = {
           is_active: boolean | null
           last_scraped_at: string | null
           name: string
+          rss_url: string | null
           scrape_interval_minutes: number | null
           scrape_strategy: Json | null
           scrape_urls: string[]
@@ -1327,6 +1328,7 @@ export type Database = {
           is_active?: boolean | null
           last_scraped_at?: string | null
           name: string
+          rss_url?: string | null
           scrape_interval_minutes?: number | null
           scrape_strategy?: Json | null
           scrape_urls: string[]
@@ -1339,6 +1341,7 @@ export type Database = {
           is_active?: boolean | null
           last_scraped_at?: string | null
           name?: string
+          rss_url?: string | null
           scrape_interval_minutes?: number | null
           scrape_strategy?: Json | null
           scrape_urls?: string[]

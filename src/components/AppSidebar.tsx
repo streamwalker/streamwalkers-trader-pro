@@ -128,6 +128,12 @@ const supportItems = [
     badge: "Beta"
   },
   { 
+    title: "Finance Reference", 
+    url: "/education/finance-reference", 
+    icon: BookOpen,
+    badge: "New"
+  },
+  { 
     title: "Help & Support", 
     url: "/support", 
     icon: HelpCircle,

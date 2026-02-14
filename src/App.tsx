@@ -32,6 +32,7 @@ import PEAnalyzer from "./pages/PEAnalyzer";
 import MarketOracle from "./pages/MarketOracle";
 import QuantEngine from "./pages/QuantEngine";
 import QuantEngineGuide from "./pages/QuantEngineGuide";
+import FinanceReference from "./pages/FinanceReference";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="/tools/market-oracle" element={<MarketOracle />} />
             <Route path="/tools/quant-engine" element={<QuantEngine />} />
             <Route path="/tools/quant-engine/guide" element={<QuantEngineGuide />} />
+            <Route path="/education/finance-reference" element={<FinanceReference />} />
             <Route path="/screener" element={<Screener />} />
             <Route path="/support" element={<Support />} />
             <Route path="/faq" element={<FAQ />} />

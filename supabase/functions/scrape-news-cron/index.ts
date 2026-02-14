@@ -2,7 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
 Deno.serve(async (req) => {
@@ -17,66 +17,63 @@ Deno.serve(async (req) => {
 
     console.log('Starting automated news scraping...');
 
-    // Fetch all active news sources that need scraping
-    const { data: sources, error: sourcesError } = await supabase
-      .from('news_sources')
-      .select('*')
-      .eq('is_active', true);
-
-    if (sourcesError) throw sourcesError;
-
-    const sourcesToScrape = sources.filter(source => {
-      if (!source.last_scraped_at) return true;
-      
-      const lastScraped = new Date(source.last_scraped_at);
-      const now = new Date();
-      const minutesSinceLastScrape = (now.getTime() - lastScraped.getTime()) / 1000 / 60;
-      
-      return minutesSinceLastScrape >= source.scrape_interval_minutes;
-    });
-
-    console.log(`Found ${sourcesToScrape.length} sources to scrape`);
-
     const results = {
       sourcesProcessed: 0,
       totalArticles: 0,
+      methods: [] as string[],
       errors: [] as string[],
     };
 
-    // Call scrape-financial-news for each source
-    for (const source of sourcesToScrape) {
-      try {
-        const scrapeResponse = await supabase.functions.invoke('scrape-financial-news', {
-          body: { sourceId: source.id }
-        });
+    // Step 1: Call the main scrape function (NewsData.io + RSS)
+    try {
+      const scrapeResponse = await supabase.functions.invoke('scrape-financial-news', {
+        body: { method: 'all', forceRefresh: true }
+      });
 
-        if (scrapeResponse.error) {
-          throw scrapeResponse.error;
-        }
-
-        results.sourcesProcessed++;
-        results.totalArticles += scrapeResponse.data?.newArticles || 0;
-        
-        console.log(`Scraped ${source.name}: ${scrapeResponse.data?.newArticles || 0} new articles`);
-      } catch (error) {
-        console.error(`Error scraping ${source.name}:`, error);
-        results.errors.push(`${source.name}: ${error.message}`);
+      if (scrapeResponse.error) {
+        throw scrapeResponse.error;
       }
 
-      // Rate limiting between sources
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      const data = scrapeResponse.data;
+      results.totalArticles += data?.newArticles || 0;
+      results.methods.push(...(data?.sources || []));
+      results.sourcesProcessed++;
+      console.log(`Main scrape: ${data?.newArticles || 0} new, ${data?.duplicates || 0} dupes`);
+    } catch (error) {
+      console.error('Main scrape failed:', error.message || error);
+      results.errors.push(`scrape-financial-news: ${error.message || 'Unknown error'}`);
     }
 
-    console.log('Automated scraping complete:', results);
+    // Step 2: Try dedicated NewsData.io as backup if main scrape had errors
+    if (results.errors.length > 0) {
+      try {
+        const newsResponse = await supabase.functions.invoke('fetch-news-api', {
+          body: { category: 'business', size: 20 }
+        });
+
+        if (!newsResponse.error && newsResponse.data) {
+          results.totalArticles += newsResponse.data.newArticles || 0;
+          results.methods.push('fetch-news-api-backup');
+          console.log(`Backup NewsData.io: ${newsResponse.data.newArticles || 0} new`);
+        }
+      } catch (error) {
+        console.error('Backup news fetch failed:', error.message || error);
+        results.errors.push(`fetch-news-api: ${error.message || 'Unknown error'}`);
+      }
+    }
+
+    // Log overall health
+    const isHealthy = results.totalArticles > 0 || results.errors.length === 0;
+    console.log(`Automated scraping complete. Healthy: ${isHealthy}`, results);
+
+    if (!isHealthy && results.errors.length > 0) {
+      console.error('ALL scraping methods failed:', results.errors);
+    }
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        ...results,
-      }),
+      JSON.stringify({ success: true, ...results }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
   } catch (error) {
     console.error('Error in scrape-news-cron:', error);
     return new Response(

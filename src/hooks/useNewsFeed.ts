@@ -24,6 +24,7 @@ export interface NewsSource {
   name: string;
   base_url: string;
   scrape_urls: string[];
+  rss_url: string | null;
   is_active: boolean;
   scrape_interval_minutes: number;
   last_scraped_at: string | null;
@@ -47,7 +48,7 @@ export function useNewsFeed() {
       if (error) throw error;
       return data as NewsArticle[];
     },
-    refetchInterval: 300000, // Refetch every 5 minutes
+    refetchInterval: 300000,
   });
 
   const { data: sources } = useQuery({
@@ -67,18 +68,34 @@ export function useNewsFeed() {
   const triggerScrape = useMutation({
     mutationFn: async (sourceId?: string) => {
       const { data, error } = await supabase.functions.invoke('scrape-financial-news', {
-        body: { sourceId, forceRefresh: true }
+        body: { sourceId, forceRefresh: true, method: 'all' }
       });
-      
       if (error) throw error;
       return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['economic_news'] });
-      toast.success(`Scraped ${data.newArticles} new articles (${data.duplicates} duplicates)`);
+      toast.success(`Fetched ${data.newArticles} new articles (${data.duplicates} duplicates) from ${data.sources?.join(', ') || 'multiple sources'}`);
     },
     onError: (error: Error) => {
       toast.error(`Scraping failed: ${error.message}`);
+    }
+  });
+
+  const fetchFromNewsAPI = useMutation({
+    mutationFn: async (params?: { category?: string; query?: string; symbols?: string[] }) => {
+      const { data, error } = await supabase.functions.invoke('fetch-news-api', {
+        body: params || { category: 'business' }
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['economic_news'] });
+      toast.success(`NewsData.io: ${data.newArticles} new articles`);
+    },
+    onError: (error: Error) => {
+      toast.error(`NewsData.io fetch failed: ${error.message}`);
     }
   });
 
@@ -87,7 +104,6 @@ export function useNewsFeed() {
       const { data, error } = await supabase.functions.invoke('scrape-article-content', {
         body: params
       });
-      
       if (error) throw error;
       return data;
     },
@@ -105,6 +121,7 @@ export function useNewsFeed() {
     sources,
     isLoading: newsLoading,
     triggerScrape,
+    fetchFromNewsAPI,
     scrapeArticleContent,
   };
 }

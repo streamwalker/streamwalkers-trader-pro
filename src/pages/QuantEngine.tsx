@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Cpu, Settings2, BarChart3, Activity, Shield } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Cpu, Settings2, BarChart3, Activity, Shield, BookOpen } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import QuantStrategyBuilder from '@/components/QuantStrategyBuilder';
 import QuantBacktestResults from '@/components/QuantBacktestResults';
 import QuantPaperTrading from '@/components/QuantPaperTrading';
@@ -18,7 +20,15 @@ export default function QuantEngine() {
           <h1 className="text-2xl font-bold">Quant Engine</h1>
           <p className="text-sm text-muted-foreground">Strategy backtesting, paper trading & risk monitoring</p>
         </div>
-        <Badge variant="secondary" className="ml-auto">Paper Trading</Badge>
+        <div className="ml-auto flex items-center gap-2">
+          <Link to="/tools/quant-engine/guide">
+            <Button variant="outline" size="sm" className="gap-2">
+              <BookOpen className="h-4 w-4" />
+              User Guide
+            </Button>
+          </Link>
+          <Badge variant="secondary">Paper Trading</Badge>
+        </div>
       </div>
 
       <Tabs defaultValue="builder" className="w-full">

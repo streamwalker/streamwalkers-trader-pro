@@ -15,7 +15,8 @@ import {
   ChevronRight,
   Search,
   Building2,
-  Brain
+  Brain,
+  Cpu
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
@@ -89,6 +90,12 @@ const tradingToolsItems = [
     url: "/tools/market-oracle", 
     icon: Brain,
     badge: "AI"
+  },
+  { 
+    title: "Quant Engine", 
+    url: "/tools/quant-engine", 
+    icon: Cpu,
+    badge: "Quant"
   },
 ]
 

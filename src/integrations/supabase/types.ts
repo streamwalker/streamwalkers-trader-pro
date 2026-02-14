@@ -1827,6 +1827,322 @@ export type Database = {
         }
         Relationships: []
       }
+      quant_backtests: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          drawdown_curve: Json | null
+          equity_curve: Json | null
+          id: string
+          metrics: Json | null
+          run_config: Json
+          started_at: string | null
+          status: string
+          strategy_id: string
+          trades: Json | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          drawdown_curve?: Json | null
+          equity_curve?: Json | null
+          id?: string
+          metrics?: Json | null
+          run_config?: Json
+          started_at?: string | null
+          status?: string
+          strategy_id: string
+          trades?: Json | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          drawdown_curve?: Json | null
+          equity_curve?: Json | null
+          id?: string
+          metrics?: Json | null
+          run_config?: Json
+          started_at?: string | null
+          status?: string
+          strategy_id?: string
+          trades?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quant_backtests_strategy_id_fkey"
+            columns: ["strategy_id"]
+            isOneToOne: false
+            referencedRelation: "quant_strategies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quant_paper_account: {
+        Row: {
+          cash_balance: number
+          current_equity: number
+          daily_pnl: number
+          id: string
+          is_active: boolean
+          kill_switch_triggered: boolean
+          last_updated: string
+          max_drawdown_pct: number
+          starting_capital: number
+          strategy_id: string
+          total_pnl: number
+          user_id: string
+        }
+        Insert: {
+          cash_balance?: number
+          current_equity?: number
+          daily_pnl?: number
+          id?: string
+          is_active?: boolean
+          kill_switch_triggered?: boolean
+          last_updated?: string
+          max_drawdown_pct?: number
+          starting_capital?: number
+          strategy_id: string
+          total_pnl?: number
+          user_id: string
+        }
+        Update: {
+          cash_balance?: number
+          current_equity?: number
+          daily_pnl?: number
+          id?: string
+          is_active?: boolean
+          kill_switch_triggered?: boolean
+          last_updated?: string
+          max_drawdown_pct?: number
+          starting_capital?: number
+          strategy_id?: string
+          total_pnl?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quant_paper_account_strategy_id_fkey"
+            columns: ["strategy_id"]
+            isOneToOne: false
+            referencedRelation: "quant_strategies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quant_paper_orders: {
+        Row: {
+          commission_cents: number | null
+          created_at: string
+          filled_at: string | null
+          filled_price: number | null
+          id: string
+          order_type: string
+          price: number | null
+          quantity: number
+          side: string
+          slippage: number | null
+          status: string
+          strategy_id: string
+          symbol: string
+          user_id: string
+        }
+        Insert: {
+          commission_cents?: number | null
+          created_at?: string
+          filled_at?: string | null
+          filled_price?: number | null
+          id?: string
+          order_type?: string
+          price?: number | null
+          quantity: number
+          side: string
+          slippage?: number | null
+          status?: string
+          strategy_id: string
+          symbol: string
+          user_id: string
+        }
+        Update: {
+          commission_cents?: number | null
+          created_at?: string
+          filled_at?: string | null
+          filled_price?: number | null
+          id?: string
+          order_type?: string
+          price?: number | null
+          quantity?: number
+          side?: string
+          slippage?: number | null
+          status?: string
+          strategy_id?: string
+          symbol?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quant_paper_orders_strategy_id_fkey"
+            columns: ["strategy_id"]
+            isOneToOne: false
+            referencedRelation: "quant_strategies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quant_paper_positions: {
+        Row: {
+          avg_entry_price: number
+          closed_at: string | null
+          current_price: number | null
+          id: string
+          opened_at: string
+          quantity: number
+          realized_pnl: number | null
+          status: string
+          strategy_id: string
+          symbol: string
+          unrealized_pnl: number | null
+          user_id: string
+        }
+        Insert: {
+          avg_entry_price?: number
+          closed_at?: string | null
+          current_price?: number | null
+          id?: string
+          opened_at?: string
+          quantity?: number
+          realized_pnl?: number | null
+          status?: string
+          strategy_id: string
+          symbol: string
+          unrealized_pnl?: number | null
+          user_id: string
+        }
+        Update: {
+          avg_entry_price?: number
+          closed_at?: string | null
+          current_price?: number | null
+          id?: string
+          opened_at?: string
+          quantity?: number
+          realized_pnl?: number | null
+          status?: string
+          strategy_id?: string
+          symbol?: string
+          unrealized_pnl?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quant_paper_positions_strategy_id_fkey"
+            columns: ["strategy_id"]
+            isOneToOne: false
+            referencedRelation: "quant_strategies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quant_signals: {
+        Row: {
+          confidence: number | null
+          entry_price: number | null
+          expires_at: string | null
+          generated_at: string
+          id: string
+          reasoning: string | null
+          risk_reward: number | null
+          signal_type: string
+          status: string
+          stop_loss: number | null
+          strategy_id: string
+          symbol: string
+          target_price: number | null
+          user_id: string
+        }
+        Insert: {
+          confidence?: number | null
+          entry_price?: number | null
+          expires_at?: string | null
+          generated_at?: string
+          id?: string
+          reasoning?: string | null
+          risk_reward?: number | null
+          signal_type?: string
+          status?: string
+          stop_loss?: number | null
+          strategy_id: string
+          symbol: string
+          target_price?: number | null
+          user_id: string
+        }
+        Update: {
+          confidence?: number | null
+          entry_price?: number | null
+          expires_at?: string | null
+          generated_at?: string
+          id?: string
+          reasoning?: string | null
+          risk_reward?: number | null
+          signal_type?: string
+          status?: string
+          stop_loss?: number | null
+          strategy_id?: string
+          symbol?: string
+          target_price?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quant_signals_strategy_id_fkey"
+            columns: ["strategy_id"]
+            isOneToOne: false
+            referencedRelation: "quant_strategies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quant_strategies: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          parameters: Json
+          risk_controls: Json
+          strategy_type: string
+          universe: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          parameters?: Json
+          risk_controls?: Json
+          strategy_type?: string
+          universe?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          parameters?: Json
+          risk_controls?: Json
+          strategy_type?: string
+          universe?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       readmission_tracking: {
         Row: {
           created_at: string

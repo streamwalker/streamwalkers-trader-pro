@@ -73,3 +73,12 @@ verify_jwt = false
 
 [functions.fetch-news-api]
 verify_jwt = false
+
+[functions.quant-backtest]
+verify_jwt = false
+
+[functions.quant-signals]
+verify_jwt = false
+
+[functions.quant-paper-trade]
+verify_jwt = false

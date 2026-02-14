@@ -7,6 +7,9 @@ import { CapitalGrowthDashboard } from '@/components/CapitalGrowthDashboard';
 import { KellyCriterionCalculator } from '@/components/KellyCriterionCalculator';
 import { CompoundGrowthCalculator } from '@/components/CompoundGrowthCalculator';
 import { HighGrowthStrategies } from '@/components/HighGrowthStrategies';
+import { FinancialRatiosCalculator } from '@/components/FinancialRatiosCalculator';
+import { BreakEvenAnalyzer } from '@/components/BreakEvenAnalyzer';
+import { InvestmentValuationCalc } from '@/components/InvestmentValuationCalc';
 
 const Performance = () => {
   const performanceMetrics = [
@@ -52,12 +55,15 @@ const Performance = () => {
       </div>
 
       <Tabs defaultValue="growth" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
           <TabsTrigger value="growth">Capital Growth</TabsTrigger>
-          <TabsTrigger value="strategies">High-Growth Strategies</TabsTrigger>
+          <TabsTrigger value="strategies">Strategies</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
-          <TabsTrigger value="calculator">Growth Calculator</TabsTrigger>
+          <TabsTrigger value="calculator">Growth Calc</TabsTrigger>
           <TabsTrigger value="kelly">Position Sizing</TabsTrigger>
+          <TabsTrigger value="fundamentals">Fundamentals</TabsTrigger>
+          <TabsTrigger value="valuation">Valuation</TabsTrigger>
+          <TabsTrigger value="breakeven">Break-Even</TabsTrigger>
         </TabsList>
 
         <TabsContent value="growth" className="space-y-6">
@@ -66,6 +72,18 @@ const Performance = () => {
 
         <TabsContent value="strategies" className="space-y-6">
           <HighGrowthStrategies />
+        </TabsContent>
+
+        <TabsContent value="fundamentals" className="space-y-6">
+          <FinancialRatiosCalculator />
+        </TabsContent>
+
+        <TabsContent value="valuation" className="space-y-6">
+          <InvestmentValuationCalc />
+        </TabsContent>
+
+        <TabsContent value="breakeven" className="space-y-6">
+          <BreakEvenAnalyzer />
         </TabsContent>
 
         <TabsContent value="calculator" className="space-y-6">

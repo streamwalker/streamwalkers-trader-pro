@@ -3,6 +3,9 @@ import { TechnicalIndicators } from '@/components/TechnicalIndicators';
 import { EnhancedEchelonChat } from '@/components/EnhancedEchelonChat';
 import { OpportunityScanner } from '@/components/OpportunityScanner';
 import { AdvancedRiskManager } from '@/components/AdvancedRiskManager';
+import { SupplyDemandSimulator } from '@/components/SupplyDemandSimulator';
+import { ProbabilityExpectedValue } from '@/components/ProbabilityExpectedValue';
+import { ROIResidualIncome } from '@/components/ROIResidualIncome';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Analytics = () => {
@@ -16,11 +19,14 @@ const Analytics = () => {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7">
           <TabsTrigger value="overview">Market Overview</TabsTrigger>
           <TabsTrigger value="jarvis">Enhanced Echelon</TabsTrigger>
           <TabsTrigger value="opportunities">Live Scanner</TabsTrigger>
           <TabsTrigger value="risk">Risk Management</TabsTrigger>
+          <TabsTrigger value="economics">Economics</TabsTrigger>
+          <TabsTrigger value="probability">Probability & EV</TabsTrigger>
+          <TabsTrigger value="roi">ROI Analysis</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -46,6 +52,19 @@ const Analytics = () => {
 
         <TabsContent value="risk" className="space-y-6">
           <AdvancedRiskManager />
+          <ProbabilityExpectedValue />
+        </TabsContent>
+
+        <TabsContent value="economics" className="space-y-6">
+          <SupplyDemandSimulator />
+        </TabsContent>
+
+        <TabsContent value="probability" className="space-y-6">
+          <ProbabilityExpectedValue />
+        </TabsContent>
+
+        <TabsContent value="roi" className="space-y-6">
+          <ROIResidualIncome />
         </TabsContent>
       </Tabs>
     </div>

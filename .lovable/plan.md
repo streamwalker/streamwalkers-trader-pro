@@ -1,197 +1,200 @@
 
 
-## Comprehensive Fix Plan for Newsfeed Edge Functions
+# Quant Engine Implementation Plan
 
-### **Phase 1: Replace Firecrawl with Free Alternatives in `scrape-financial-news`**
+## What We're Building
 
-**Problem:** The function depends entirely on Firecrawl API which has exhausted credits.
+A quantitative trading engine integrated directly into your Equiforge platform. It provides strategy backtesting, paper trading simulation, portfolio optimization, and risk controls -- all running through Supabase edge functions and rendered in your existing React UI.
 
-**Solution:** Implement a multi-tier approach using FREE data sources:
+## Architecture Overview
 
-#### 1.1 Primary Method: NewsData.io API Integration
-- You already have `NEWSDATA_API_KEY` configured
-- NewsData.io provides free tier with 200 requests/day
-- Fetch articles by category (business, finance, economy)
-- Direct API response with title, description, URL, sentiment
+The Quant Engine has three layers:
 
-#### 1.2 Secondary Method: RSS Feed Parsing
-Add RSS feeds (completely free, no API limits):
+1. **Computation Layer** -- Supabase edge functions that run backtests, generate signals, and simulate paper trades
+2. **Storage Layer** -- New database tables for strategies, backtests, signals, orders, and positions
+3. **Presentation Layer** -- A new `/tools/quant-engine` page with tabs for Strategy Builder, Backtest Results, Paper Trading, and Monitoring
+
+---
+
+## Phase 1: Database Schema
+
+Create these tables via migration:
+
+**`quant_strategies`** -- Strategy templates and user configurations
+- id, user_id, name, strategy_type (trend_follow, mean_reversion, custom), parameters (jsonb -- MA lengths, vol cap, rebalance freq, etc.), risk_controls (jsonb -- max position %, max daily loss, max drawdown, kill switch), universe (text[] -- ticker list), is_active, created_at, updated_at
+
+**`quant_backtests`** -- Backtest run results
+- id, strategy_id, run_config (jsonb -- date range, slippage, costs), status (pending, running, completed, failed), metrics (jsonb -- CAGR, Sharpe, Sortino, max drawdown, win rate, profit factor, turnover, exposure), equity_curve (jsonb -- array of {date, value}), drawdown_curve (jsonb), trades (jsonb -- array of trade objects), started_at, completed_at, created_at
+
+**`quant_signals`** -- Generated trading signals
+- id, strategy_id, symbol, signal_type (buy, sell, hold), confidence, entry_price, target_price, stop_loss, risk_reward, reasoning, generated_at, expires_at, status (active, executed, expired, cancelled)
+
+**`quant_paper_orders`** -- Paper trading orders
+- id, strategy_id, symbol, side (buy, sell), order_type (market, limit, stop), quantity, price, filled_price, slippage, commission_cents, status (pending, filled, cancelled, rejected), created_at, filled_at
+
+**`quant_paper_positions`** -- Current paper positions
+- id, strategy_id, symbol, quantity, avg_entry_price, current_price, unrealized_pnl, realized_pnl, opened_at, closed_at, status (open, closed)
+
+**`quant_paper_account`** -- Paper trading account state
+- id, strategy_id, starting_capital, current_equity, cash_balance, total_pnl, max_drawdown_pct, daily_pnl, is_active, kill_switch_triggered, last_updated
+
+RLS policies: all tables scoped to user_id via auth.uid().
+
+---
+
+## Phase 2: Core Edge Functions
+
+### 2.1 `quant-backtest` Edge Function
+
+Receives strategy config + universe + date range. Performs:
+
+1. **Data pull** -- Fetch historical OHLCV from FinnHub/Alpha Vantage (already have keys)
+2. **Feature calculation** -- SMAs (20/50/100/200), ATR, realized volatility, z-scores, RSI
+3. **Signal generation** -- Based on strategy type:
+   - **Strategy A (Trend + Vol Filter):** 20/100 MA crossover, skip when ATR > 2x normal, volatility-target position sizing
+   - **Strategy B (Mean Reversion):** Z-score of returns vs 20-day rolling mean, regime filter (skip in strong trends), tight stop losses
+4. **Trade simulation** -- Walk through signals with realistic fill assumptions:
+   - Transaction costs baked in (configurable, default 0.1%)
+   - Slippage model (configurable, default 0.05%)
+   - Position sizing per risk controls
+5. **Metrics calculation** -- CAGR, Sharpe, Sortino, max drawdown, win rate, profit factor, turnover, tail risk
+6. **Store results** in quant_backtests table
+
+### 2.2 `quant-paper-trade` Edge Function
+
+Runs on schedule (or on-demand) to simulate live trading:
+
+1. Fetch latest prices for strategy universe
+2. Generate signals from active strategy
+3. Apply risk checks (max position %, max daily loss, max drawdown kill switch)
+4. Create paper orders with simulated fills (price + slippage)
+5. Update positions and account state
+6. Log everything
+
+### 2.3 `quant-signals` Edge Function
+
+On-demand signal generation for any strategy + universe:
+
+1. Pull latest market data
+2. Calculate features (SMAs, ATR, z-scores)
+3. Generate buy/sell/hold signals with confidence scores
+4. Store in quant_signals table
+5. Return results
+
+---
+
+## Phase 3: Frontend -- Quant Engine Page
+
+New page at `/tools/quant-engine` with 4 tabs:
+
+### Tab 1: Strategy Builder
+- Dropdown to select strategy template (Trend Follow, Mean Reversion, Custom)
+- Parameter sliders: MA lengths (fast/slow), volatility cap, rebalance frequency
+- Risk controls panel: max position %, max daily loss %, max drawdown %, kill switch toggle
+- Universe selector: pick from watchlist or enter custom tickers
+- "Save Strategy" and "Run Backtest" buttons
+
+### Tab 2: Backtest Results
+- Equity curve chart (using recharts, already installed)
+- Drawdown curve chart
+- Metrics panel: CAGR, Sharpe, Sortino, max drawdown, win rate, profit factor, turnover, exposure
+- Trades table with entry/exit, P&L, holding period
+- Stress test toggles: 2x slippage, 2x costs, delayed fills
+- Compare multiple backtest runs side-by-side
+
+### Tab 3: Paper Trading
+- Account summary: equity, cash, P&L, drawdown
+- Active positions table with live P&L
+- Order history table
+- Signal feed (latest signals with confidence)
+- Start/Stop paper trading controls
+- Kill switch button (emergency stop)
+
+### Tab 4: Monitor & Risk
+- Real-time risk dashboard: current exposure, sector concentration, daily P&L limit usage
+- Strategy health metrics
+- Signal accuracy tracking over time
+- Alert rules for risk breaches
+
+### New Components:
+- `src/components/QuantStrategyBuilder.tsx`
+- `src/components/QuantBacktestResults.tsx`
+- `src/components/QuantPaperTrading.tsx`
+- `src/components/QuantRiskMonitor.tsx`
+- `src/hooks/useQuantEngine.ts`
+- `src/pages/QuantEngine.tsx`
+
+### Navigation:
+- Add "Quant Engine" to sidebar under Trading Tools with "Quant" badge
+
+---
+
+## Phase 4: Strategy Implementations
+
+### Strategy A: Trend + Volatility Filter
 ```
-- Bloomberg: https://feeds.bloomberg.com/markets/news.rss
-- Reuters: https://www.reutersagency.com/feed/
-- CNBC: https://www.cnbc.com/id/100003114/device/rss/rss.html
-- MarketWatch: https://feeds.marketwatch.com/marketwatch/topstories/
+Signal: 20-period SMA crosses above 100-period SMA = BUY
+        20-period SMA crosses below 100-period SMA = SELL
+Filter: Skip trade if ATR(14) > 2x its 50-day average
+Sizing: Volatility targeting -- allocate inversely to realized vol
+Risk:   Max 10% per position, max 3% daily loss, 15% drawdown kill switch
 ```
 
-#### 1.3 Tertiary Method: Direct Fetch Fallback
-- Use browser-like User-Agent headers
-- Basic HTML parsing for article extraction
-- Only used if other methods fail
-
-**Updated `scrape-financial-news/index.ts` structure:**
-```typescript
-// 1. Try NewsData.io API first (has sentiment analysis built-in)
-// 2. Try RSS feeds for additional sources
-// 3. Fallback to direct fetch with proper headers
-// 4. Store results in economic_news table
+### Strategy B: Mean Reversion on Large Caps
+```
+Signal: Z-score of 5-day returns vs 20-day rolling mean
+        Z < -2.0 = BUY (oversold)
+        Z > +2.0 = SELL (overbought)
+Filter: Only trade when ADX < 25 (avoid trending markets)
+Sizing: Equal weight, max 5% per position
+Risk:   Tight stops at 1.5x ATR, max 2% daily loss
 ```
 
 ---
 
-### **Phase 2: Fix `scrape-article-content` with Fallback Scraping**
+## Phase 5: Paper Trading Automation
 
-**Problem:** Can't fetch full article content when Firecrawl fails.
+Set up a cron job to run the paper trading engine:
+- **Every 30 minutes during market hours** (9:30 AM - 4:00 PM ET, Mon-Fri)
+- Generates signals, places paper orders, updates positions
+- Logs all activity for review
 
-**Solution:** Implement graceful degradation:
-
-#### 2.1 Primary Method: Direct Fetch with Browser Headers
-```typescript
-const headers = {
-  'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)',
-  'Accept': 'text/html,application/xhtml+xml',
-};
-```
-
-#### 2.2 HTML Content Extraction
-- Parse HTML using regex patterns for article content
-- Extract `<article>`, `<main>`, or `<div class="article-body">`
-- Extract meta tags for description and published date
-
-#### 2.3 Optional Firecrawl (Only if API Key Has Credits)
-- Check Firecrawl first but don't fail if it errors
-- Log warning and continue with fallback
-
-**Updated flow:**
-```
-1. Try Firecrawl (if available) → If fails (402/429), continue
-2. Direct fetch with proper headers
-3. Parse HTML for main content
-4. AI analysis with Lovable API (unchanged)
-5. Store in database
-```
+Gate for live trading (future): require 30 trading days of paper trading with max drawdown under user-defined threshold before enabling live.
 
 ---
 
-### **Phase 3: Create New Edge Function `fetch-news-api`**
+## Technical Details
 
-**Purpose:** Dedicated function for NewsData.io that can be called directly or as fallback.
+### Files to Create:
+| File | Purpose |
+|------|---------|
+| `supabase/migrations/[timestamp]_quant_engine.sql` | All 6 tables + indexes + RLS |
+| `supabase/functions/quant-backtest/index.ts` | Backtest engine |
+| `supabase/functions/quant-paper-trade/index.ts` | Paper trading engine |
+| `supabase/functions/quant-signals/index.ts` | Signal generation |
+| `src/pages/QuantEngine.tsx` | Main page with tabs |
+| `src/components/QuantStrategyBuilder.tsx` | Strategy config UI |
+| `src/components/QuantBacktestResults.tsx` | Backtest visualization |
+| `src/components/QuantPaperTrading.tsx` | Paper trading dashboard |
+| `src/components/QuantRiskMonitor.tsx` | Risk monitoring |
+| `src/hooks/useQuantEngine.ts` | React Query hooks |
 
-**Features:**
-- Fetch by category: business, technology, politics, economy
-- Fetch by keyword/symbol: Search for specific stocks
-- Built-in sentiment from NewsData.io
-- Rate limiting awareness (200 req/day on free tier)
+### Files to Modify:
+| File | Change |
+|------|--------|
+| `src/App.tsx` | Add `/tools/quant-engine` route |
+| `src/components/AppSidebar.tsx` | Add Quant Engine nav item |
+| `supabase/config.toml` | Add function configs with verify_jwt = false |
 
----
+### Existing Infrastructure Reused:
+- `LiveMarketDataService` / `FinnhubProvider` for real-time data
+- `MarketDataService` for quotes and historical data
+- FinnHub + Alpha Vantage API keys (already configured as secrets)
+- recharts for equity/drawdown charts
+- Existing UI component library (cards, tabs, tables, badges, sliders)
 
-### **Phase 4: Update `news_sources` Table with RSS URLs**
-
-Add `rss_url` column to support RSS parsing:
-
-```sql
-ALTER TABLE news_sources ADD COLUMN rss_url text;
-
-UPDATE news_sources SET rss_url = 'https://feeds.bloomberg.com/markets/news.rss' WHERE name = 'Bloomberg';
-UPDATE news_sources SET rss_url = 'https://www.reutersagency.com/feed/' WHERE name = 'Reuters';
-UPDATE news_sources SET rss_url = 'https://www.cnbc.com/id/100003114/device/rss/rss.html' WHERE name = 'CNBC';
-UPDATE news_sources SET rss_url = 'https://feeds.marketwatch.com/marketwatch/topstories/' WHERE name = 'MarketWatch';
-```
-
----
-
-### **Phase 5: Update `scrape-news-cron` for Better Resilience**
-
-**Improvements:**
-- Add health check before calling scrape functions
-- Better error aggregation and reporting
-- Don't stop entire cron if one source fails
-- Send notification if all sources fail
-
----
-
-### **Phase 6: Frontend Updates**
-
-**Update `ScrapedNewsFeed.tsx`:**
-- Show scraping status/health indicator
-- Display data source (RSS, NewsData.io, Cached)
-- Better error messaging when scraping fails
-- Manual "Refresh from NewsData.io" button
-
----
-
-## Implementation Details
-
-### **File Changes:**
-
-| File | Action | Description |
-|------|--------|-------------|
-| `supabase/functions/scrape-financial-news/index.ts` | **Rewrite** | Replace Firecrawl with NewsData.io + RSS |
-| `supabase/functions/scrape-article-content/index.ts` | **Update** | Add fallback scraping, make Firecrawl optional |
-| `supabase/functions/fetch-news-api/index.ts` | **Create** | New dedicated NewsData.io function |
-| `supabase/functions/scrape-news-cron/index.ts` | **Update** | Better error handling, use new methods |
-| `supabase/config.toml` | **Update** | Add new function configuration |
-| `src/hooks/useNewsFeed.ts` | **Update** | Add fetchFromNewsAPI option |
-| `src/components/ScrapedNewsFeed.tsx` | **Update** | Add status indicator, NewsData.io button |
-| Database migration | **Create** | Add `rss_url` column to `news_sources` |
-
-### **Key Code Changes:**
-
-**New `scrape-financial-news/index.ts` (simplified):**
-```typescript
-// Step 1: Fetch from NewsData.io API
-const newsDataArticles = await fetchFromNewsDataAPI(newsDataKey);
-
-// Step 2: Fetch from RSS feeds
-const rssArticles = await fetchFromRSSFeeds(sources);
-
-// Step 3: Merge and deduplicate
-const allArticles = deduplicateByUrl([...newsDataArticles, ...rssArticles]);
-
-// Step 4: Store in database (upsert by URL)
-for (const article of allArticles) {
-  await supabase.from('economic_news').upsert(article, { onConflict: 'url' });
-}
-```
-
-**New `scrape-article-content/index.ts` (fallback logic):**
-```typescript
-let content = null;
-
-// Try Firecrawl first (if key exists and has credits)
-if (firecrawlKey) {
-  try {
-    content = await scrapeWithFirecrawl(articleUrl, firecrawlKey);
-  } catch (error) {
-    console.warn('Firecrawl failed, using fallback:', error.message);
-  }
-}
-
-// Fallback: Direct fetch with HTML parsing
-if (!content) {
-  content = await scrapeWithDirectFetch(articleUrl);
-}
-
-// Continue with AI analysis...
-```
-
----
-
-## Benefits of This Approach
-
-1. **Zero Cost** - NewsData.io free tier + RSS feeds = completely free
-2. **Reliability** - Multiple fallback methods ensure news keeps flowing
-3. **Better Data** - NewsData.io includes sentiment analysis built-in
-4. **No Breaking Changes** - Same database schema, same frontend API
-5. **Future-Proof** - Easy to add premium APIs later if needed
-
----
-
-## Estimated Timeline
-
-- Phase 1-2: 1-2 hours (core functionality)
-- Phase 3-4: 30 minutes (new function + migration)
-- Phase 5-6: 30 minutes (cron + frontend updates)
-- Testing: 30 minutes
-
-**Total: ~3 hours**
+### No External Dependencies Needed:
+- SMA, ATR, RSI, z-score calculations done in TypeScript within edge functions
+- No Python/FastAPI required -- everything runs in Deno edge functions
+- No broker adapter yet (paper trading only for MVP)
 

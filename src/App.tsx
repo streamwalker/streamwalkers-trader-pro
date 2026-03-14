@@ -33,6 +33,8 @@ import MarketOracle from "./pages/MarketOracle";
 import QuantEngine from "./pages/QuantEngine";
 import QuantEngineGuide from "./pages/QuantEngineGuide";
 import FinanceReference from "./pages/FinanceReference";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCanceled from "./pages/PaymentCanceled";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +73,8 @@ const App = () => (
             <Route path="/screener" element={<Screener />} />
             <Route path="/support" element={<Support />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-canceled" element={<PaymentCanceled />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

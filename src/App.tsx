@@ -33,6 +33,8 @@ import MarketOracle from "./pages/MarketOracle";
 import QuantEngine from "./pages/QuantEngine";
 import QuantEngineGuide from "./pages/QuantEngineGuide";
 import FinanceReference from "./pages/FinanceReference";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCanceled from "./pages/PaymentCanceled";
 
 const queryClient = new QueryClient();
 

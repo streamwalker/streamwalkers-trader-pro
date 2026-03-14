@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_events: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          page_path: string | null
+          slot_id: string
+          sponsor_name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          page_path?: string | null
+          slot_id: string
+          sponsor_name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          page_path?: string | null
+          slot_id?: string
+          sponsor_name?: string | null
+        }
+        Relationships: []
+      }
+      ad_placements: {
+        Row: {
+          click_url: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          priority: number | null
+          slot_id: string
+          sponsor_name: string
+        }
+        Insert: {
+          click_url: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          priority?: number | null
+          slot_id: string
+          sponsor_name: string
+        }
+        Update: {
+          click_url?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          priority?: number | null
+          slot_id?: string
+          sponsor_name?: string
+        }
+        Relationships: []
+      }
       ai_conversations: {
         Row: {
           context_data: Json | null
@@ -417,6 +477,27 @@ export type Database = {
           indicator_values?: Json | null
           phase_start_date?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      daily_briefings: {
+        Row: {
+          briefing_data: Json | null
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          briefing_data?: Json | null
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          briefing_data?: Json | null
+          created_at?: string
+          id?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1307,6 +1388,117 @@ export type Database = {
           },
         ]
       }
+      news_agent_runs: {
+        Row: {
+          articles_found: number
+          articles_stored: number
+          category: string
+          completed_at: string | null
+          error_message: string | null
+          id: string
+          run_type: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          articles_found?: number
+          articles_stored?: number
+          category: string
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          run_type?: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          articles_found?: number
+          articles_stored?: number
+          category?: string
+          completed_at?: string | null
+          error_message?: string | null
+          id?: string
+          run_type?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      news_articles: {
+        Row: {
+          category: string
+          content_preview: string | null
+          created_at: string
+          description: string | null
+          fetched_at: string
+          full_content: string | null
+          id: string
+          image_url: string | null
+          is_breaking: boolean
+          is_hero: boolean
+          is_sponsored: boolean | null
+          position_order: number
+          published_at: string | null
+          slug: string | null
+          source: string
+          sponsor_logo_url: string | null
+          sponsor_name: string | null
+          sponsor_url: string | null
+          title: string
+          updated_at: string
+          urgency: string
+          url: string
+        }
+        Insert: {
+          category: string
+          content_preview?: string | null
+          created_at?: string
+          description?: string | null
+          fetched_at?: string
+          full_content?: string | null
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean
+          is_hero?: boolean
+          is_sponsored?: boolean | null
+          position_order?: number
+          published_at?: string | null
+          slug?: string | null
+          source: string
+          sponsor_logo_url?: string | null
+          sponsor_name?: string | null
+          sponsor_url?: string | null
+          title: string
+          updated_at?: string
+          urgency?: string
+          url: string
+        }
+        Update: {
+          category?: string
+          content_preview?: string | null
+          created_at?: string
+          description?: string | null
+          fetched_at?: string
+          full_content?: string | null
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean
+          is_hero?: boolean
+          is_sponsored?: boolean | null
+          position_order?: number
+          published_at?: string | null
+          slug?: string | null
+          source?: string
+          sponsor_logo_url?: string | null
+          sponsor_name?: string | null
+          sponsor_url?: string | null
+          title?: string
+          updated_at?: string
+          urgency?: string
+          url?: string
+        }
+        Relationships: []
+      }
       news_sources: {
         Row: {
           base_url: string
@@ -1346,6 +1538,451 @@ export type Database = {
           scrape_strategy?: Json | null
           scrape_urls?: string[]
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      newsletter_subscribers: {
+        Row: {
+          email: string
+          id: string
+          source: string | null
+          subscribed_at: string | null
+        }
+        Insert: {
+          email: string
+          id?: string
+          source?: string | null
+          subscribed_at?: string | null
+        }
+        Update: {
+          email?: string
+          id?: string
+          source?: string | null
+          subscribed_at?: string | null
+        }
+        Relationships: []
+      }
+      newsroom_article_updates: {
+        Row: {
+          actor: string | null
+          article_id: string
+          changed_fields: Json | null
+          created_at: string
+          id: string
+          update_note: string | null
+        }
+        Insert: {
+          actor?: string | null
+          article_id: string
+          changed_fields?: Json | null
+          created_at?: string
+          id?: string
+          update_note?: string | null
+        }
+        Update: {
+          actor?: string | null
+          article_id?: string
+          changed_fields?: Json | null
+          created_at?: string
+          id?: string
+          update_note?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsroom_article_updates_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "newsroom_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsroom_articles: {
+        Row: {
+          approved_by: string | null
+          auto_published: boolean
+          body: string | null
+          canonical_url: string | null
+          category: string | null
+          cluster_id: string | null
+          created_at: string
+          created_by: string | null
+          dek: string | null
+          headline: string
+          id: string
+          og_image_url: string | null
+          published_at: string | null
+          scheduled_at: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string | null
+          status: string
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          approved_by?: string | null
+          auto_published?: boolean
+          body?: string | null
+          canonical_url?: string | null
+          category?: string | null
+          cluster_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          dek?: string | null
+          headline: string
+          id?: string
+          og_image_url?: string | null
+          published_at?: string | null
+          scheduled_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          approved_by?: string | null
+          auto_published?: boolean
+          body?: string | null
+          canonical_url?: string | null
+          category?: string | null
+          cluster_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          dek?: string | null
+          headline?: string
+          id?: string
+          og_image_url?: string | null
+          published_at?: string | null
+          scheduled_at?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsroom_articles_cluster_id_fkey"
+            columns: ["cluster_id"]
+            isOneToOne: false
+            referencedRelation: "newsroom_clusters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsroom_audit_logs: {
+        Row: {
+          action_type: string
+          actor: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          notes: string | null
+          object_id: string
+          object_type: string
+          source_reference: string | null
+        }
+        Insert: {
+          action_type: string
+          actor?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          object_id: string
+          object_type: string
+          source_reference?: string | null
+        }
+        Update: {
+          action_type?: string
+          actor?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          object_id?: string
+          object_type?: string
+          source_reference?: string | null
+        }
+        Relationships: []
+      }
+      newsroom_cluster_signals: {
+        Row: {
+          added_at: string
+          cluster_id: string
+          id: string
+          signal_id: string
+        }
+        Insert: {
+          added_at?: string
+          cluster_id: string
+          id?: string
+          signal_id: string
+        }
+        Update: {
+          added_at?: string
+          cluster_id?: string
+          id?: string
+          signal_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsroom_cluster_signals_cluster_id_fkey"
+            columns: ["cluster_id"]
+            isOneToOne: false
+            referencedRelation: "newsroom_clusters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "newsroom_cluster_signals_signal_id_fkey"
+            columns: ["signal_id"]
+            isOneToOne: false
+            referencedRelation: "newsroom_signals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsroom_clusters: {
+        Row: {
+          category: string | null
+          confidence_score: number
+          created_at: string
+          first_seen_at: string
+          id: string
+          last_updated_at: string
+          official_source_count: number
+          risk_score: number
+          source_count: number
+          status: string
+          working_summary: string | null
+          working_title: string
+        }
+        Insert: {
+          category?: string | null
+          confidence_score?: number
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          last_updated_at?: string
+          official_source_count?: number
+          risk_score?: number
+          source_count?: number
+          status?: string
+          working_summary?: string | null
+          working_title: string
+        }
+        Update: {
+          category?: string | null
+          confidence_score?: number
+          created_at?: string
+          first_seen_at?: string
+          id?: string
+          last_updated_at?: string
+          official_source_count?: number
+          risk_score?: number
+          source_count?: number
+          status?: string
+          working_summary?: string | null
+          working_title?: string
+        }
+        Relationships: []
+      }
+      newsroom_publish_rules: {
+        Row: {
+          auto_publish_enabled: boolean
+          category: string
+          created_at: string
+          id: string
+          max_risk: number
+          min_confidence: number
+          min_official_sources: number
+          min_sources: number
+          updated_at: string
+        }
+        Insert: {
+          auto_publish_enabled?: boolean
+          category: string
+          created_at?: string
+          id?: string
+          max_risk?: number
+          min_confidence?: number
+          min_official_sources?: number
+          min_sources?: number
+          updated_at?: string
+        }
+        Update: {
+          auto_publish_enabled?: boolean
+          category?: string
+          created_at?: string
+          id?: string
+          max_risk?: number
+          min_confidence?: number
+          min_official_sources?: number
+          min_sources?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      newsroom_signals: {
+        Row: {
+          category: string | null
+          cluster_id: string | null
+          created_at: string
+          entities_json: Json | null
+          geography: string | null
+          id: string
+          ingested_at: string
+          locations_json: Json | null
+          normalized_text: string | null
+          novelty_score: number | null
+          processed: boolean
+          published_at: string | null
+          raw_body: string | null
+          raw_title: string
+          raw_url: string | null
+          source_id: string | null
+          urgency_score: number | null
+        }
+        Insert: {
+          category?: string | null
+          cluster_id?: string | null
+          created_at?: string
+          entities_json?: Json | null
+          geography?: string | null
+          id?: string
+          ingested_at?: string
+          locations_json?: Json | null
+          normalized_text?: string | null
+          novelty_score?: number | null
+          processed?: boolean
+          published_at?: string | null
+          raw_body?: string | null
+          raw_title: string
+          raw_url?: string | null
+          source_id?: string | null
+          urgency_score?: number | null
+        }
+        Update: {
+          category?: string | null
+          cluster_id?: string | null
+          created_at?: string
+          entities_json?: Json | null
+          geography?: string | null
+          id?: string
+          ingested_at?: string
+          locations_json?: Json | null
+          normalized_text?: string | null
+          novelty_score?: number | null
+          processed?: boolean
+          published_at?: string | null
+          raw_body?: string | null
+          raw_title?: string
+          raw_url?: string | null
+          source_id?: string | null
+          urgency_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_signal_cluster"
+            columns: ["cluster_id"]
+            isOneToOne: false
+            referencedRelation: "newsroom_clusters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "newsroom_signals_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "newsroom_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsroom_sources: {
+        Row: {
+          active: boolean
+          api_config: Json | null
+          created_at: string
+          credibility_weight: number
+          feed_url: string | null
+          id: string
+          last_fetched_at: string | null
+          name: string
+          region: string | null
+          topic_scope: string[] | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          api_config?: Json | null
+          created_at?: string
+          credibility_weight?: number
+          feed_url?: string | null
+          id?: string
+          last_fetched_at?: string | null
+          name: string
+          region?: string | null
+          topic_scope?: string[] | null
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          api_config?: Json | null
+          created_at?: string
+          credibility_weight?: number
+          feed_url?: string | null
+          id?: string
+          last_fetched_at?: string | null
+          name?: string
+          region?: string | null
+          topic_scope?: string[] | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      newsroom_watchlists: {
+        Row: {
+          active: boolean
+          category: string | null
+          created_at: string
+          entities: string[] | null
+          geography: string | null
+          id: string
+          keywords: string[] | null
+          label: string
+          priority: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string | null
+          created_at?: string
+          entities?: string[] | null
+          geography?: string | null
+          id?: string
+          keywords?: string[] | null
+          label: string
+          priority?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string | null
+          created_at?: string
+          entities?: string[] | null
+          geography?: string | null
+          id?: string
+          keywords?: string[] | null
+          label?: string
+          priority?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2735,6 +3372,42 @@ export type Database = {
           },
         ]
       }
+      tool_directory: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_featured: boolean | null
+          listing_tier: string | null
+          logo_url: string | null
+          name: string
+          url: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          listing_tier?: string | null
+          logo_url?: string | null
+          name: string
+          url: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          listing_tier?: string | null
+          logo_url?: string | null
+          name?: string
+          url?: string
+        }
+        Relationships: []
+      }
       walker_profiles: {
         Row: {
           average_rating: number | null
@@ -2942,7 +3615,7 @@ export type Database = {
         Args: {
           action_type: string
           max_actions?: number
-          time_window?: unknown
+          time_window?: string
           user_id: string
         }
         Returns: boolean

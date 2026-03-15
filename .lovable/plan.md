@@ -1,84 +1,142 @@
 
 
-# Platform Diagnostic Report & Fix Plan
+# Integrate Business School Finance & Economics into the Platform
 
-## LINK AUDIT — All Navigation, Footer & Landing Page Links
+## Overview
 
-### Navigation Links (Navigation.tsx)
-| Link | Target | Status |
-|------|--------|--------|
-| How It Works | `#how-it-works` | OK — anchor exists in HowItWorks.tsx |
-| Challenges | `#pricing` | OK — anchor exists in PricingSection.tsx |
-| Instant Funding | `#instant-funding` | OK — anchor exists in InstantFundingSection.tsx |
-| Business Plan | `/business-plan` | OK — route registered |
-| About | `/about` | OK — route registered |
-| Login button | `/auth` | **BROKEN** — no `/auth` route in App.tsx |
-| Get Funded button | `/auth` | **BROKEN** — same missing route |
+Enrich the Equiforge platform with calculators, analysis tools, and educational content drawn from the uploaded business school notes. This adds **6 new interactive calculators** and a **comprehensive financial reference guide** that strengthen the existing Performance, Analytics, and Education sections.
 
-### Footer Links (Footer.tsx)
-| Link | Target | Status |
-|------|--------|--------|
-| Evaluation Process | `/trading-rules#evaluation` | OK |
-| Trading Rules | `/trading-rules#rules` | OK |
-| Funded Accounts | `/trading-rules#funded-accounts` | OK |
-| Profit Splits | `/trading-rules#profit-splits` | OK |
-| Withdrawals | `/trading-rules#withdrawals` | OK |
-| Trading Tools | `/screener` | OK |
-| NinjaTrader Setup | `/resources` | OK |
-| Tradovate Integration | `/resources` | OK |
-| Video Tutorials | `/resources` | OK |
-| Trading Community | `/support` | OK |
-| Help Center | `/support` | OK |
-| Contact Support | `/support` | OK |
-| Live Chat | `/support` | OK |
-| FAQ | `/faq` | OK |
-| Status Page | `/support` | OK |
-| Privacy Policy | `/privacy-policy` | OK |
-| Terms of Service | `/terms-of-service` | OK |
-| Risk Disclosure | `/#risk-disclosure` | **ISSUE** — section is placed AFTER Footer in Index.tsx, so the footer link works but the UX is odd (risk section is below footer) |
+## What Gets Built
 
-### Layout Header (Layout.tsx)
-| Link | Target | Status |
-|------|--------|--------|
-| Login button | No onClick handler | **BROKEN** — button does nothing |
-| Get Funded button | No onClick handler | **BROKEN** — button does nothing |
+### 1. Financial Ratios Calculator (New Component)
 
-### Sidebar Links (AppSidebar.tsx)
-All sidebar routes map to registered App.tsx routes — OK.
+A comprehensive interactive calculator for all the financial ratios from the notes:
 
----
+- **Liquidity Ratios**: Current Ratio, Acid-Test (Quick) Ratio
+- **Activity Ratios**: Accounts Receivable Turnover, Inventory Turnover, Average Collection Period, Average Sale Period, Operating Cycle, Total Asset Turnover
+- **Profitability Ratios**: EPS, P/E Ratio, Return on Equity (DuPont decomposition: Margin x Turnover x Leverage), Return on Assets, Net Profit Margin
+- **Investor Ratios**: Dividend Payout Ratio, Dividend Yield, Book Value Per Share
+- **Leverage**: Debt-to-Equity, Times Interest Earned
 
-## CRITICAL BUGS FOUND
+Users input financial statement data and get all ratios computed with color-coded health indicators (green/yellow/red) and explanatory tooltips.
 
-### 1. Missing `/auth` Route (HIGH)
-`AuthPage` component exists at `src/components/AuthPage.tsx` but is never imported or routed in `App.tsx`. Navigation and ProtectedRoute both redirect to `/auth`, which hits the 404 catch-all.
+### 2. Break-Even & Contribution Margin Analyzer (New Component)
 
-**Fix:** Import AuthPage in App.tsx, add `<Route path="/auth" element={<AuthPage />} />`.
+From the cost accounting notes:
+- Input: Selling Price, Variable Cost per Unit, Fixed Expenses
+- Computes: Contribution Margin per unit, CM Ratio, Break-Even Units, Break-Even Sales Dollars
+- Target Income calculator: units needed to achieve a target profit
+- Interactive chart showing cost/revenue intersection
 
-### 2. Layout Header Buttons Non-Functional (MEDIUM)
-The Login and Get Funded buttons in `Layout.tsx` (lines 36-41) have no `onClick` handlers — they're dead buttons.
+### 3. Investment Valuation Calculator (New Component)
 
-**Fix:** Wire them to navigate to `/auth` using `useNavigate`.
+From the finance/interest notes -- extends the existing Compound Growth Calculator:
+- **Simple Interest**: A = P + Prt
+- **Compound Interest**: A = P(1 + r/m)^(mt)
+- **Continuous Compounding**: A = Pe^(rt)
+- **APY Calculator**: APY = (1 + r/m)^m - 1
+- **Rule of 72**: Quick doubling time estimate
+- **Future Value of Annuity**: FV = PMT x [(1+i)^n - 1] / i
+- **Present Value of Annuity**: PV = PMT x [1 - (1+i)^(-n)] / i
+- **NPV Calculator**: Given cash flows and discount rate
+- **IRR Calculator**: Internal Rate of Return via bisection method
+- **Payback Period**: Simple payback calculation
 
-### 3. Risk Disclosure Below Footer (LOW)
-In `Index.tsx`, the risk-disclosure section (line 27) is rendered AFTER `<Footer />` (line 24). This means content appears below the footer, which is unconventional.
+### 4. Supply & Demand Simulator (New Component)
 
-**Fix:** Move the risk-disclosure section above `<Footer />`.
+Interactive economics visualization:
+- Draggable supply/demand curves on a chart
+- Determinant selectors (consumer expectations, resource prices, technology, taxes, number of suppliers/buyers)
+- Shows equilibrium price and quantity shifts
+- Surplus/shortage visualization
+- Elasticity calculator using midpoint and averages formulas
+- Cross-price elasticity and income elasticity computations
 
-### 4. Finnhub WebSocket Infinite Reconnect Loop (MEDIUM)
-Console shows continuous connect/disconnect/error every 5 seconds. The `onclose` handler unconditionally reconnects with `setTimeout(() => this.connectWebSocket(), 5000)` — with no max retry limit or backoff. Using a `demo` API key means the connection will always fail, creating an infinite error loop.
+### 5. Probability & Expected Value Calculator (New Component)
 
-**Fix:** Add max retry count (e.g., 5 attempts) with exponential backoff, and stop reconnecting after limit is reached.
+Applied to trading scenarios:
+- Define outcomes and probabilities (probability distribution table)
+- Compute Expected Value: E(X) = Sum of x * p(x)
+- Apply to trade setups: given win probability, win amount, loss amount -- compute EV
+- Integrates with existing Kelly Criterion calculator as a feeder
+- Random variable distributions visualization
 
----
+### 6. ROI & Residual Income Dashboard (New Component)
 
-## Implementation Plan
+From the management accounting notes:
+- **ROI Calculator**: NOI / Average Operating Assets
+- **DuPont Decomposition**: ROI = Margin (NOI/Sales) x Turnover (Sales/AOA)
+- **Residual Income**: NOI - (AOA x Minimum Required Return)
+- Compare multiple investment centers (A, B, C) side by side
+- Manufacturing Cycle Efficiency: MCE = Process Time / Throughput Time
+- Delivery Cycle Time breakdown visualization
 
-### Files to modify:
-1. **`src/App.tsx`** — Import AuthPage, add `/auth` route
-2. **`src/components/Layout.tsx`** — Add `useNavigate`, wire Login/Get Funded buttons to `/auth`
-3. **`src/pages/Index.tsx`** — Move risk-disclosure section above Footer
-4. **`src/services/FinnhubProvider.ts`** — Add max retry count and exponential backoff to WebSocket reconnection
+### 7. Financial Concepts Reference Guide (New Page)
 
-### Estimated scope: 4 small edits across 4 files
+A searchable glossary and formula reference page at `/education/finance-reference` covering all concepts from the documents, organized by topic:
+- Accounting & Financial Statements
+- Economics (Supply/Demand, Elasticity, Market Structures)
+- Finance (Time Value of Money, Interest, Valuation)
+- Risk & Probability
+- Management Accounting (Cost Analysis, Break-Even, ROI)
+
+Each entry includes the formula, a plain-English explanation, and a "Try it" link to the relevant calculator.
+
+## Integration Points
+
+The new tools integrate into existing platform sections:
+
+| Tool | Location |
+|------|----------|
+| Financial Ratios Calculator | Performance page, new "Fundamentals" tab |
+| Break-Even Analyzer | Performance page, "Strategies" tab (alongside HighGrowthStrategies) |
+| Investment Valuation Calculator | Performance page, new "Valuation" tab (extends existing Compound Growth) |
+| Supply & Demand Simulator | Analytics page, new "Economics" tab |
+| Probability & Expected Value | Analytics page, "Risk" tab (alongside AdvancedRiskManager) |
+| ROI & Residual Income Dashboard | Analytics page, new "ROI Analysis" tab |
+| Finance Reference Guide | Education section, new route |
+
+## Technical Details
+
+### Files to Create
+
+| File | Purpose |
+|------|---------|
+| `src/components/FinancialRatiosCalculator.tsx` | All financial ratios with DuPont decomposition |
+| `src/components/BreakEvenAnalyzer.tsx` | Break-even, CM, target income with chart |
+| `src/components/InvestmentValuationCalc.tsx` | TVM calculators (simple/compound/annuity/NPV/IRR) |
+| `src/components/SupplyDemandSimulator.tsx` | Interactive S&D curves with elasticity |
+| `src/components/ProbabilityExpectedValue.tsx` | Probability distributions and EV for trades |
+| `src/components/ROIResidualIncome.tsx` | ROI, DuPont, Residual Income, MCE |
+| `src/pages/FinanceReference.tsx` | Searchable formula reference guide |
+
+### Files to Modify
+
+| File | Change |
+|------|--------|
+| `src/pages/Performance.tsx` | Add "Fundamentals" and "Valuation" tabs |
+| `src/pages/Analytics.tsx` | Add "Economics" and "ROI Analysis" tabs |
+| `src/App.tsx` | Add `/education/finance-reference` route |
+| `src/components/AppSidebar.tsx` | Add Finance Reference link under Education |
+
+### No New Dependencies
+
+All calculators use existing libraries:
+- recharts for charts (already installed)
+- Existing UI components (Card, Tabs, Input, Slider, Badge)
+- Math calculations in pure TypeScript
+
+### Key Formulas Implemented
+
+From the notes, these exact formulas will be coded:
+
+**Ratios**: Current Ratio = Current Assets / Current Liabilities, ROE = (NI/Sales) x (Sales/Total Assets) x (Total Assets/Equity), P/E = Market Price / EPS
+
+**Break-Even**: Units = Fixed Expenses / CM per Unit, Sales$ = Fixed Expenses / CM Ratio
+
+**Time Value of Money**: A = P(1+r/m)^(mt), FV = PMT[(1+i)^n - 1]/i, PV = PMT[1-(1+i)^(-n)]/i, NPV = Sum of CF/(1+r)^t - Initial Investment
+
+**Economics**: Elasticity (midpoint) = (%Change Q) / (%Change P), Consumer Surplus = Value to Buyers - Amount Paid
+
+**Probability**: E(X) = Sum of xi * P(xi), applied to Kelly: f = (bp - q) / b
 

@@ -2,12 +2,14 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Button } from "@/components/ui/button"
 import { TrendingUp, Menu } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 interface LayoutProps {
   children: React.ReactNode
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const navigate = useNavigate();
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">
@@ -33,10 +35,10 @@ export default function Layout({ children }: LayoutProps) {
 
               {/* Auth buttons */}
               <div className="flex items-center gap-4">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
                   Login
                 </Button>
-                <Button variant="default" size="sm" className="bg-primary hover:bg-primary/90">
+                <Button variant="default" size="sm" className="bg-primary hover:bg-primary/90" onClick={() => navigate('/auth')}>
                   Get Funded
                 </Button>
               </div>

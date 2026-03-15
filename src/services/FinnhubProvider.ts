@@ -35,6 +35,7 @@ export class FinnhubProvider implements LiveDataProvider {
       
       this.ws.onopen = () => {
         console.log('Finnhub WebSocket connected');
+        this.reconnectAttempts = 0;
         resolve();
       };
       

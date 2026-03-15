@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import { Button } from "@/components/ui/button"
 import { TrendingUp, Menu } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 interface LayoutProps {
   children: React.ReactNode

@@ -57,8 +57,14 @@ export class FinnhubProvider implements LiveDataProvider {
       
       this.ws.onclose = () => {
         console.log('Finnhub WebSocket disconnected');
-        // Reconnect after 5 seconds
-        setTimeout(() => this.connectWebSocket(), 5000);
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+          this.reconnectAttempts++;
+          const delay = Math.min(5000 * Math.pow(2, this.reconnectAttempts - 1), 60000);
+          console.log(`Reconnecting in ${delay / 1000}s (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+          setTimeout(() => this.connectWebSocket(), delay);
+        } else {
+          console.warn('Max WebSocket reconnect attempts reached. Stopping.');
+        }
       };
     });
   }

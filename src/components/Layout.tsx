@@ -35,10 +35,10 @@ export default function Layout({ children }: LayoutProps) {
 
               {/* Auth buttons */}
               <div className="flex items-center gap-4">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => navigate('/auth')}>
                   Login
                 </Button>
-                <Button variant="default" size="sm" className="bg-primary hover:bg-primary/90">
+                <Button variant="default" size="sm" className="bg-primary hover:bg-primary/90" onClick={() => navigate('/auth')}>
                   Get Funded
                 </Button>
               </div>

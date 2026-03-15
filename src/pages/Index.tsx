@@ -24,7 +24,7 @@ const Index = () => {
       <Footer />
       
       {/* Risk Disclosure Section */}
-      <section className="bg-muted/50 border-t border-border">
+      <section id="risk-disclosure" className="bg-muted/50 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="space-y-8 text-xs text-muted-foreground">
             <div>

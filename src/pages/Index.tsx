@@ -21,7 +21,6 @@ const Index = () => {
       <ScalePlan />
       <AIMembershipSection />
       <TradingTools />
-      <Footer />
       
       {/* Risk Disclosure Section */}
       <section id="risk-disclosure" className="bg-muted/50 border-t border-border">

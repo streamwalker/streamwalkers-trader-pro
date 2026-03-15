@@ -8,6 +8,8 @@ export class FinnhubProvider implements LiveDataProvider {
   private wsUrl = 'wss://ws.finnhub.io';
   private ws: WebSocket | null = null;
   private subscriptions = new Map<string, ((data: QuoteData) => void)[]>();
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;

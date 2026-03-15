@@ -35,6 +35,10 @@ import QuantEngineGuide from "./pages/QuantEngineGuide";
 import FinanceReference from "./pages/FinanceReference";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCanceled from "./pages/PaymentCanceled";
+import About from "./pages/About";
+import TradingRules from "./pages/TradingRules";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 
 const queryClient = new QueryClient();
 

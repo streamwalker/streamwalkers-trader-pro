@@ -9,6 +9,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const navigate = useNavigate();
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full bg-background">

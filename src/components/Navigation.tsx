@@ -23,17 +23,17 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-foreground hover:text-primary transition-colors">
-              Trading Tools
+            <a href="#how-it-works" className="text-foreground hover:text-primary transition-colors">
+              How It Works
             </a>
             <a href="#pricing" className="text-foreground hover:text-primary transition-colors">
-              Pricing
+              Challenges
+            </a>
+            <a href="#instant-funding" className="text-foreground hover:text-primary transition-colors">
+              Instant Funding
             </a>
             <a href="/business-plan" className="text-foreground hover:text-primary transition-colors">
               Business Plan
-            </a>
-            <a href="#education" className="text-foreground hover:text-primary transition-colors">
-              Education
             </a>
             <a href="#about" className="text-foreground hover:text-primary transition-colors">
               About
@@ -58,7 +58,7 @@ const Navigation = () => {
                   Login
                 </Button>
                 <Button variant="hero" size="sm" onClick={() => navigate('/auth')}>
-                  Get Started
+                  Get Funded
                 </Button>
               </>
             )}
@@ -77,17 +77,17 @@ const Navigation = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-border">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <a href="#features" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
-                Trading Tools
+              <a href="#how-it-works" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
+                How It Works
               </a>
               <a href="#pricing" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
-                Pricing
+                Challenges
+              </a>
+              <a href="#instant-funding" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
+                Instant Funding
               </a>
               <a href="/business-plan" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
                 Business Plan
-              </a>
-              <a href="#education" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
-                Education
               </a>
               <a href="#about" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
                 About
@@ -109,7 +109,7 @@ const Navigation = () => {
                       Login
                     </Button>
                     <Button variant="hero" size="sm" className="w-full" onClick={() => navigate('/auth')}>
-                      Get Started
+                      Get Funded
                     </Button>
                   </>
                 )}

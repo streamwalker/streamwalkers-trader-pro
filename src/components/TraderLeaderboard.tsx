@@ -24,17 +24,20 @@ const TraderLeaderboard = () => {
     <section className="py-24 bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* AI Trader Score */}
+          {/* Funded Career Path */}
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              AI <span className="bg-gradient-primary bg-clip-text text-transparent">Trader Intelligence</span>
+              Your Path to a <span className="bg-gradient-primary bg-clip-text text-transparent">Funded Career</span>
             </h2>
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground mb-4">
               Our AI analyzes every trade, every pattern, every behavior — giving you a real-time Trader Score 
-              and personalized coaching to improve your performance.
+              and personalized coaching to accelerate your funded trading career.
+            </p>
+            <p className="text-sm text-primary font-medium mb-8">
+              Top 1% traders receive larger capital allocations and partnership opportunities.
             </p>
 
-            {/* Example Trader Score Card */}
+            {/* Trader Score Card */}
             <Card className="shadow-glow border-primary/30">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">

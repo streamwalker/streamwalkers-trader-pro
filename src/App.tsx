@@ -39,7 +39,7 @@ import About from "./pages/About";
 import TradingRules from "./pages/TradingRules";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
-import AuthPage from "./components/AuthPage";
+import { AuthPage } from "./components/AuthPage";
 
 const queryClient = new QueryClient();
 

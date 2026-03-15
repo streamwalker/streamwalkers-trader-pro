@@ -35,7 +35,7 @@ const Navigation = () => {
             <a href="/business-plan" className="text-foreground hover:text-primary transition-colors">
               Business Plan
             </a>
-            <a href="#about" className="text-foreground hover:text-primary transition-colors">
+            <a href="/about" className="text-foreground hover:text-primary transition-colors">
               About
             </a>
           </div>
@@ -89,7 +89,7 @@ const Navigation = () => {
               <a href="/business-plan" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
                 Business Plan
               </a>
-              <a href="#about" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
+              <a href="/about" className="block px-3 py-2 text-foreground hover:bg-muted rounded-md">
                 About
               </a>
               <div className="pt-4 pb-2 space-y-2">

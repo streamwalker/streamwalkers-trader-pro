@@ -1,7 +1,7 @@
 import { TrendingUp, Mail, Phone, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
-  console.log('Footer component loaded successfully');
   return (
     <footer className="bg-card border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -37,11 +37,11 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Trading</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Evaluation Process</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Trading Rules</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Funded Accounts</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Profit Splits</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Withdrawals</a></li>
+              <li><Link to="/trading-rules#evaluation" className="hover:text-primary transition-colors">Evaluation Process</Link></li>
+              <li><Link to="/trading-rules#rules" className="hover:text-primary transition-colors">Trading Rules</Link></li>
+              <li><Link to="/trading-rules#funded-accounts" className="hover:text-primary transition-colors">Funded Accounts</Link></li>
+              <li><Link to="/trading-rules#profit-splits" className="hover:text-primary transition-colors">Profit Splits</Link></li>
+              <li><Link to="/trading-rules#withdrawals" className="hover:text-primary transition-colors">Withdrawals</Link></li>
             </ul>
           </div>
 
@@ -49,11 +49,11 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Tools & Education</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Trading Tools</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">NinjaTrader Setup</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Tradovate Integration</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Video Tutorials</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Trading Community</a></li>
+              <li><Link to="/screener" className="hover:text-primary transition-colors">Trading Tools</Link></li>
+              <li><Link to="/resources" className="hover:text-primary transition-colors">NinjaTrader Setup</Link></li>
+              <li><Link to="/resources" className="hover:text-primary transition-colors">Tradovate Integration</Link></li>
+              <li><Link to="/resources" className="hover:text-primary transition-colors">Video Tutorials</Link></li>
+              <li><Link to="/support" className="hover:text-primary transition-colors">Trading Community</Link></li>
             </ul>
           </div>
 
@@ -61,11 +61,11 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Contact Support</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Live Chat</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">FAQ</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Status Page</a></li>
+              <li><Link to="/support" className="hover:text-primary transition-colors">Help Center</Link></li>
+              <li><Link to="/support" className="hover:text-primary transition-colors">Contact Support</Link></li>
+              <li><Link to="/support" className="hover:text-primary transition-colors">Live Chat</Link></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
+              <li><Link to="/support" className="hover:text-primary transition-colors">Status Page</Link></li>
             </ul>
           </div>
         </div>
@@ -77,9 +77,9 @@ const Footer = () => {
               © 2024 Equiforge ™️ Trader Pro. All rights reserved.
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-primary transition-colors">Risk Disclosure</a>
+              <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link to="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
+              <a href="/#risk-disclosure" className="hover:text-primary transition-colors">Risk Disclosure</a>
             </div>
           </div>
         </div>

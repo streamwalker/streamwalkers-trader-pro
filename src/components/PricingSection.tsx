@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, Star, Zap, ArrowRight } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check, Star, ArrowRight, Clock, Percent } from "lucide-react";
 import { CHALLENGE_TIERS } from "@/lib/stripe-products";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -67,6 +67,12 @@ const PricingSection = () => {
                 )}
 
                 <CardHeader className="text-center pb-4">
+                  {/* 90% Profit Split Badge */}
+                  <div className="inline-flex items-center gap-1 bg-profit/10 border border-profit/30 px-3 py-1 rounded-full mx-auto mb-3">
+                    <Percent className="w-3 h-3 text-profit" />
+                    <span className="text-xs font-bold text-profit">90% Profit Split</span>
+                  </div>
+
                   <CardTitle className="text-lg font-bold">{tier.name}</CardTitle>
                   
                   <div className="mt-3">
@@ -92,6 +98,12 @@ const PricingSection = () => {
                     </div>
                   </div>
 
+                  {/* Payout frequency */}
+                  <div className="flex items-center justify-center gap-2 bg-primary/5 border border-primary/10 rounded-md p-2">
+                    <Clock className="w-3.5 h-3.5 text-primary" />
+                    <span className="text-xs font-medium text-primary">Payout: Every 7 Days</span>
+                  </div>
+
                   <ul className="space-y-2">
                     {tier.features.map((feature, i) => (
                       <li key={i} className="flex items-start gap-2">
@@ -108,7 +120,7 @@ const PricingSection = () => {
                     onClick={() => handleCheckout(tier.price_id, tier.name)}
                     disabled={loading === tier.name}
                   >
-                    {loading === tier.name ? "Loading..." : `Get ${tier.name}`}
+                    {loading === tier.name ? "Loading..." : `Get Funded`}
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </CardContent>

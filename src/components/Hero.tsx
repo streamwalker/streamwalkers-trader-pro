@@ -1,9 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, TrendingUp, DollarSign, Users, Zap } from "lucide-react";
+import { ArrowRight, Clock, Globe, TrendingUp, DollarSign, Zap, CreditCard } from "lucide-react";
 import heroImage from "@/assets/trading-hero.jpg";
-import { Link } from "react-router-dom";
 
 const Hero = () => {
+  const triggers = [
+    { icon: Clock, label: "Payouts Every 7 Days" },
+    { icon: TrendingUp, label: "Scale to $1M" },
+    { icon: Globe, label: "120+ Countries" },
+    { icon: CreditCard, label: "No Monthly Fees" },
+  ];
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -35,14 +41,15 @@ const Hero = () => {
             Keep Up To <span className="bg-gradient-primary bg-clip-text text-transparent">90% of the Profits.</span>
           </h1>
 
-          {/* Subheading */}
+          {/* Subheading — Opportunity language, no tech */}
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-            AI-powered prop trading platform designed to identify profitable traders 
-            and fund them up to <span className="text-foreground font-semibold">$400,000</span> in trading capital.
+            Get funded in as little as 24 hours. Prove your skills, trade our capital, 
+            and withdraw your profits <span className="text-foreground font-semibold">every 7 days</span>. 
+            Accounts up to <span className="text-foreground font-semibold">$400,000</span>.
           </p>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 mb-12 max-w-2xl mx-auto">
+          <div className="grid grid-cols-3 gap-8 mb-8 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-2xl md:text-3xl font-bold text-profit">$400K</div>
               <div className="text-sm text-muted-foreground">Max Funding</div>
@@ -57,11 +64,24 @@ const Hero = () => {
             </div>
           </div>
 
+          {/* Psychology Trigger Badges */}
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {triggers.map((trigger) => {
+              const Icon = trigger.icon;
+              return (
+                <div key={trigger.label} className="inline-flex items-center gap-2 bg-muted/60 border border-border px-4 py-2 rounded-full">
+                  <Icon className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-medium">{trigger.label}</span>
+                </div>
+              );
+            })}
+          </div>
+
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="hero" size="lg" className="group text-base px-10 py-6" asChild>
               <a href="#pricing">
-                Start Challenge — From $79
+                Get Funded — From $79
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </a>
             </Button>

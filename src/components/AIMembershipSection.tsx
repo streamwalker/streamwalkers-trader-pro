@@ -38,21 +38,21 @@ const AIMembershipSection = () => {
               <div>
                 <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full mb-4">
                   <Brain className="w-4 h-4 text-primary" />
-                  <span className="text-xs font-medium text-primary">AI-Powered</span>
+                  <span className="text-xs font-medium text-primary">Core Engine</span>
                 </div>
                 <h2 className="text-3xl font-bold mb-3">
-                  TraderPro AI <span className="bg-gradient-primary bg-clip-text text-transparent">Membership</span>
+                  Trader <span className="bg-gradient-primary bg-clip-text text-transparent">Intelligence Engine</span>
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                  Supercharge your trading with AI-powered analysis, coaching, and market intelligence.
-                  Available as a standalone subscription or included with select challenge tiers.
+                  Not just another trading platform. Our AI analyzes thousands of traders to find the top 1% — 
+                  then allocates them real capital. This is <span className="font-semibold text-foreground">Moneyball for trading</span>.
                 </p>
                 <div className="flex items-baseline gap-2 mb-6">
                   <span className="text-4xl font-bold">$39</span>
                   <span className="text-muted-foreground">/month</span>
                 </div>
                 <Button variant="hero" size="lg" className="group" onClick={handleCheckout} disabled={loading}>
-                  {loading ? "Loading..." : "Subscribe Now"}
+                  {loading ? "Loading..." : "Unlock Intelligence"}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </div>

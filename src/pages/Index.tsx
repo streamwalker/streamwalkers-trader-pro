@@ -14,8 +14,8 @@ const Index = () => {
     <div className="bg-background">
       <Hero />
       <TrustSection />
-      <HowItWorks />
       <PricingSection />
+      <HowItWorks />
       <InstantFundingSection />
       <TraderLeaderboard />
       <ScalePlan />

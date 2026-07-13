@@ -8,6 +8,7 @@ import { Search, ChevronDown, MessageCircle, ExternalLink, ArrowLeft } from "luc
 import { Link } from "react-router-dom";
 
 const FAQ = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [openSections, setOpenSections] = useState<string[]>([]);
 

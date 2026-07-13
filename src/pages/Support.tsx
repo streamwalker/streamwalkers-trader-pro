@@ -9,6 +9,7 @@ import { MessageCircle, Phone, Mail, HelpCircle, FileText, Clock, CheckCircle2 }
 import { Link } from "react-router-dom";
 
 const Support = () => {
+  const { t } = useTranslation();
   const supportChannels = [
     {
       icon: MessageCircle,

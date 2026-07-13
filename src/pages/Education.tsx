@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { BookOpen, Video, Award, Clock, TrendingUp, Users } from "lucide-react";
 
 const Education = () => {
+  const { t } = useTranslation();
   const courses = [
     {
       id: 1,

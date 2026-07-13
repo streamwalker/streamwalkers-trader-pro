@@ -5,9 +5,11 @@ import { AI_MEMBERSHIP } from "@/lib/stripe-products";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const AIMembershipSection = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {
@@ -38,22 +40,26 @@ const AIMembershipSection = () => {
               <div>
                 <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full mb-4">
                   <Brain className="w-4 h-4 text-primary" />
-                  <span className="text-xs font-medium text-primary">Core Engine</span>
+                  <span className="text-xs font-medium text-primary">{t("ai.badge")}</span>
                 </div>
                 <h2 className="text-3xl font-bold mb-3">
-                  Trader <span className="bg-gradient-primary bg-clip-text text-transparent">Intelligence Engine</span>
+                  {t("ai.titlePrefix")}{" "}
+                  <span className="bg-gradient-primary bg-clip-text text-transparent">
+                    {t("ai.titleAccent")}
+                  </span>
                 </h2>
                 <p className="text-muted-foreground mb-6">
-                  Not just another trading platform. Our AI analyzes thousands of traders to find the top 1% — 
-                  then allocates them real capital. This is <span className="font-semibold text-foreground">Moneyball for trading</span>.
+                  {t("ai.descriptionPart1")}{" "}
+                  <span className="font-semibold text-foreground">{t("ai.descriptionHighlight")}</span>
+                  {t("ai.descriptionPart2")}
                 </p>
                 <div className="flex items-baseline gap-2 mb-6">
                   <span className="text-4xl font-bold">$39</span>
-                  <span className="text-muted-foreground">/month</span>
+                  <span className="text-muted-foreground">{t("ai.perMonth")}</span>
                 </div>
                 <Button variant="hero" size="lg" className="group" onClick={handleCheckout} disabled={loading}>
-                  {loading ? "Loading..." : "Unlock Intelligence"}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  {loading ? t("pricing.loading") : t("ai.cta")}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform rtl:rotate-180" />
                 </Button>
               </div>
               <div>

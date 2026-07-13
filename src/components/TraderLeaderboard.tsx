@@ -1,7 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Medal, Award, TrendingUp } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const TraderLeaderboard = () => {
+  const { t } = useTranslation();
+
   const leaders = [
     { rank: 1, name: "QuantumAlpha", profit: "$92,340", winRate: "74%", score: 97 },
     { rank: 2, name: "AstroTrader", profit: "$77,510", winRate: "69%", score: 94 },
@@ -24,25 +27,21 @@ const TraderLeaderboard = () => {
     <section className="py-24 bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Funded Career Path */}
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Your Path to a <span className="bg-gradient-primary bg-clip-text text-transparent">Funded Career</span>
+              {t("leaderboard.pathTitlePrefix")}{" "}
+              <span className="bg-gradient-primary bg-clip-text text-transparent">
+                {t("leaderboard.pathAccent")}
+              </span>
             </h2>
-            <p className="text-muted-foreground mb-4">
-              Our AI analyzes every trade, every pattern, every behavior — giving you a real-time Trader Score 
-              and personalized coaching to accelerate your funded trading career.
-            </p>
-            <p className="text-sm text-primary font-medium mb-8">
-              Top 1% traders receive larger capital allocations and partnership opportunities.
-            </p>
+            <p className="text-muted-foreground mb-4">{t("leaderboard.pathDesc")}</p>
+            <p className="text-sm text-primary font-medium mb-8">{t("leaderboard.pathNote")}</p>
 
-            {/* Trader Score Card */}
             <Card className="shadow-glow border-primary/30">
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-primary" />
-                  Your Trader Score
+                  {t("leaderboard.scoreTitle")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -52,10 +51,10 @@ const TraderLeaderboard = () => {
                 </div>
 
                 {[
-                  { label: "Risk Discipline", value: 91, color: "bg-profit" },
-                  { label: "Trend Capture", value: 74, color: "bg-primary" },
-                  { label: "Entry Timing", value: 85, color: "bg-profit" },
-                  { label: "Overtrading Risk", value: 45, color: "bg-warning" },
+                  { label: t("leaderboard.metric1"), value: 91, color: "bg-profit" },
+                  { label: t("leaderboard.metric2"), value: 74, color: "bg-primary" },
+                  { label: t("leaderboard.metric3"), value: 85, color: "bg-profit" },
+                  { label: t("leaderboard.metric4"), value: 45, color: "bg-warning" },
                 ].map((metric) => (
                   <div key={metric.label}>
                     <div className="flex justify-between text-sm mb-1">
@@ -63,46 +62,55 @@ const TraderLeaderboard = () => {
                       <span className="font-mono">{metric.value}%</span>
                     </div>
                     <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div className={`h-full ${metric.color} rounded-full`} style={{ width: `${metric.value}%` }} />
+                      <div
+                        className={`h-full ${metric.color} rounded-full`}
+                        style={{ width: `${metric.value}%` }}
+                      />
                     </div>
                   </div>
                 ))}
 
                 <div className="mt-4 p-3 bg-primary/5 border border-primary/20 rounded-lg">
-                  <div className="text-xs font-semibold text-primary mb-1">AI Coaching Suggestion</div>
-                  <p className="text-xs text-muted-foreground">
-                    Reduce position size on volatile sessions. Your risk discipline is strong — 
-                    focus on improving trend capture by holding winners longer.
-                  </p>
+                  <div className="text-xs font-semibold text-primary mb-1">
+                    {t("leaderboard.coachingLabel")}
+                  </div>
+                  <p className="text-xs text-muted-foreground">{t("leaderboard.coachingBody")}</p>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Leaderboard */}
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Trader <span className="bg-gradient-accent bg-clip-text text-transparent">Rankings</span>
+              {t("leaderboard.rankingsTitlePrefix")}{" "}
+              <span className="bg-gradient-accent bg-clip-text text-transparent">
+                {t("leaderboard.rankingsAccent")}
+              </span>
             </h2>
-            <p className="text-muted-foreground mb-8">
-              Compete with funded traders worldwide. Top performers earn larger capital allocations and partnership opportunities.
-            </p>
+            <p className="text-muted-foreground mb-8">{t("leaderboard.rankingsDesc")}</p>
 
             <Card className="shadow-card">
               <CardContent className="p-0">
                 <div className="divide-y divide-border">
                   {leaders.map((trader) => (
-                    <div key={trader.rank} className="flex items-center gap-4 px-6 py-4 hover:bg-muted/50 transition-colors">
+                    <div
+                      key={trader.rank}
+                      className="flex items-center gap-4 px-6 py-4 hover:bg-muted/50 transition-colors"
+                    >
                       <div className="flex items-center justify-center w-8">
                         {getRankIcon(trader.rank)}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-sm truncate">{trader.name}</div>
-                        <div className="text-xs text-muted-foreground">Win Rate: {trader.winRate}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {t("leaderboard.winRate")}: {trader.winRate}
+                        </div>
                       </div>
                       <div className="text-right">
                         <div className="font-bold text-profit text-sm">{trader.profit}</div>
-                        <div className="text-xs text-muted-foreground">Score: {trader.score}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {t("leaderboard.score")}: {trader.score}
+                        </div>
                       </div>
                     </div>
                   ))}

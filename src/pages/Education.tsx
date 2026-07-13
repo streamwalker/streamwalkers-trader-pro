@@ -87,9 +87,9 @@ const Education = () => {
     <div className="container mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Education Center</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("pages.education.title")}</h1>
           <p className="text-muted-foreground">
-            Enhance your trading skills with our comprehensive learning resources.
+            {t("pages.education.subtitle")}
           </p>
         </div>
         <Button asChild>

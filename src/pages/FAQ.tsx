@@ -256,9 +256,9 @@ const FAQ = () => {
               </Button>
             </Link>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Frequently Asked Questions</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("pages.faq.title")}</h1>
           <p className="text-muted-foreground">
-            Find detailed answers to common questions about trading, platform setup, and account management.
+            {t("pages.faq.subtitle")}
           </p>
         </div>
         <Button>

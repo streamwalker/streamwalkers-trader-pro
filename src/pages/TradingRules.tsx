@@ -208,7 +208,6 @@ const TradingRules = () => {
           </div>
         </section>
       </div>
-      <Footer />
     </div>
   );
 };

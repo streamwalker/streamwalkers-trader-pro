@@ -89,7 +89,6 @@ const TermsOfService = () => {
           </section>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

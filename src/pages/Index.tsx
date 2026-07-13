@@ -1,27 +1,36 @@
 import Hero from "@/components/Hero";
 import TrustSection from "@/components/TrustSection";
 import HowItWorks from "@/components/HowItWorks";
+import EducationSpotlight from "@/components/EducationSpotlight";
 import PricingSection from "@/components/PricingSection";
 import InstantFundingSection from "@/components/InstantFundingSection";
-import TraderLeaderboard from "@/components/TraderLeaderboard";
-import ScalePlan from "@/components/ScalePlan";
 import AIMembershipSection from "@/components/AIMembershipSection";
-import TradingTools from "@/components/TradingTools";
-import Footer from "@/components/Footer";
+import TraderLeaderboard from "@/components/TraderLeaderboard";
 
+/**
+ * Homepage narrative (education-led funnel):
+ * 1. Hero        — Learn → Prove → Trade promise
+ * 2. Trust       — social proof stats & payouts
+ * 3. HowItWorks  — the three-step path explained
+ * 4. Education   — free courses: the on-ramp for beginners
+ * 5. Pricing     — funding challenges (primary revenue)
+ * 6. Instant     — instant funding for experienced traders
+ * 7. AI          — AI membership upsell
+ * 8. Leaderboard — proof that traders succeed here
+ * 9. Disclosures — required risk language
+ */
 const Index = () => {
   return (
     <div className="bg-background">
       <Hero />
       <TrustSection />
-      <PricingSection />
       <HowItWorks />
+      <EducationSpotlight />
+      <PricingSection />
       <InstantFundingSection />
-      <TraderLeaderboard />
-      <ScalePlan />
       <AIMembershipSection />
-      <TradingTools />
-      
+      <TraderLeaderboard />
+
       {/* Risk Disclosure Section */}
       <section id="risk-disclosure" className="bg-muted/50 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -41,7 +50,7 @@ const Index = () => {
             <div>
               <h3 className="font-semibold text-sm text-foreground mb-3">AVAILABLE INSTRUMENTS:</h3>
               <p className="leading-relaxed">
-                Equiforge ™️ Trader Pro customers are allowed to only trade Futures products, listed on the following exchanges: CME, COMEX, NYMEX & CBOT. Trading of Spot Currencies, CFD's Stocks, Options, and Cryptocurrencies are not permitted or available in our programs vendors or platforms.
+                Streamwalkers Trader Pro customers are allowed to only trade Futures products, listed on the following exchanges: CME, COMEX, NYMEX & CBOT. Trading of Spot Currencies, CFD's Stocks, Options, and Cryptocurrencies are not permitted or available in our programs vendors or platforms.
               </p>
             </div>
             <div>
@@ -58,13 +67,12 @@ const Index = () => {
             </div>
             <div className="border-t border-border pt-8 text-center">
               <p className="text-xs text-muted-foreground">
-                © 2021-2031, Equiforge Corp. All rights reserved.
+                © 2021-2031, Streamwalkers Corporation. All rights reserved.
               </p>
             </div>
           </div>
         </div>
       </section>
-      <Footer />
     </div>
   );
 };

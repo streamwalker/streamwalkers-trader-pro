@@ -10,7 +10,7 @@ const TermsOfService = () => {
         <div className="prose prose-invert max-w-none space-y-8 text-muted-foreground">
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">1. Acceptance of Terms</h2>
-            <p>By accessing or using the Equiforge ™️ Trader Pro platform, website, and services (collectively, "Services"), you agree to be bound by these Terms of Service. If you do not agree, do not use our Services.</p>
+            <p>By accessing or using the Streamwalkers Trader Pro platform, website, and services (collectively, "Services"), you agree to be bound by these Terms of Service. If you do not agree, do not use our Services.</p>
           </section>
 
           <section className="space-y-4">
@@ -23,9 +23,9 @@ const TermsOfService = () => {
             <ul className="list-disc pl-6 space-y-1">
               <li>Challenge fees are non-refundable once you place your first trade in the evaluation.</li>
               <li>Evaluation accounts use simulated trading environments that mirror real market conditions, including commissions.</li>
-              <li>Passing the evaluation does not guarantee a funded account. Final approval is at Equiforge's discretion.</li>
+              <li>Passing the evaluation does not guarantee a funded account. Final approval is at Streamwalkers's discretion.</li>
               <li>Funded (Performance) accounts may be simulated or live accounts. All trades should be considered hypothetical unless otherwise stated.</li>
-              <li>Equiforge reserves the right to terminate any account that violates trading rules or engages in prohibited activities.</li>
+              <li>Streamwalkers reserves the right to terminate any account that violates trading rules or engages in prohibited activities.</li>
             </ul>
           </section>
 
@@ -36,7 +36,7 @@ const TermsOfService = () => {
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">5. Profit Splits & Payouts</h2>
-            <p>Profit splits are calculated based on the net profit in your funded account after applicable fees. Payouts are processed within 1–3 business days after approval. Equiforge reserves the right to audit any account before processing payouts. Fraudulent or rule-violating accounts forfeit all pending payouts.</p>
+            <p>Profit splits are calculated based on the net profit in your funded account after applicable fees. Payouts are processed within 1–3 business days after approval. Streamwalkers reserves the right to audit any account before processing payouts. Fraudulent or rule-violating accounts forfeit all pending payouts.</p>
           </section>
 
           <section className="space-y-4">
@@ -52,17 +52,17 @@ const TermsOfService = () => {
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">7. Intellectual Property</h2>
-            <p>All content, branding, software, and proprietary technology (including the Trader Intelligence Engine) are owned by Equiforge Corp. You may not copy, modify, distribute, or reverse-engineer any part of our Services without written permission.</p>
+            <p>All content, branding, software, and proprietary technology (including the Trader Intelligence Engine) are owned by Streamwalkers Corp. You may not copy, modify, distribute, or reverse-engineer any part of our Services without written permission.</p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">8. Disclaimers</h2>
-            <p>Our Services are provided "as is" without warranties of any kind. Trading involves substantial risk of loss. Past performance — whether real or simulated — does not guarantee future results. Equiforge is not a broker-dealer, investment advisor, or financial institution. We do not provide investment advice.</p>
+            <p>Our Services are provided "as is" without warranties of any kind. Trading involves substantial risk of loss. Past performance — whether real or simulated — does not guarantee future results. Streamwalkers is not a broker-dealer, investment advisor, or financial institution. We do not provide investment advice.</p>
           </section>
 
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">9. Limitation of Liability</h2>
-            <p>To the maximum extent permitted by law, Equiforge Corp. shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Services, including but not limited to loss of profits, data, or trading opportunities.</p>
+            <p>To the maximum extent permitted by law, Streamwalkers Corp. shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Services, including but not limited to loss of profits, data, or trading opportunities.</p>
           </section>
 
           <section className="space-y-4">
@@ -79,7 +79,7 @@ const TermsOfService = () => {
             <h2 className="text-xl font-semibold text-foreground">12. Contact</h2>
             <p className="text-foreground">
               Email: <a href="mailto:legal@equiforgetraderpro.com" className="text-primary hover:underline">legal@equiforgetraderpro.com</a><br />
-              Equiforge Corp., New York, NY
+              Streamwalkers Corp., New York, NY
             </p>
           </section>
         </div>

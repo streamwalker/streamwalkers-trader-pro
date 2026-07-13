@@ -97,7 +97,7 @@ const TradingRules = () => {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" /> Copy trading or signal mirroring from other accounts</li>
               <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" /> Exploiting platform latency or data-feed errors</li>
-              <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" /> Hedging between multiple Equiforge accounts</li>
+              <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" /> Hedging between multiple Streamwalkers accounts</li>
               <li className="flex items-start gap-2"><XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" /> Using third-party EAs or bots without approval</li>
             </ul>
           </div>

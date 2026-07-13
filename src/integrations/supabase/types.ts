@@ -286,6 +286,36 @@ export type Database = {
           },
         ]
       }
+      ar_personas: {
+        Row: {
+          created_at: string
+          edit_token_hash: string
+          owner: string | null
+          profile: Json
+          updated_at: string
+          username: string
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          edit_token_hash: string
+          owner?: string | null
+          profile: Json
+          updated_at?: string
+          username: string
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          edit_token_hash?: string
+          owner?: string | null
+          profile?: Json
+          updated_at?: string
+          username?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       beds: {
         Row: {
           assigned_at: string | null
@@ -339,6 +369,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      book_studio_shared: {
+        Row: {
+          state: Json
+          updated_at: string
+          workspace: string
+        }
+        Insert: {
+          state?: Json
+          updated_at?: string
+          workspace?: string
+        }
+        Update: {
+          state?: Json
+          updated_at?: string
+          workspace?: string
+        }
+        Relationships: []
       }
       coding_audit_logs: {
         Row: {
@@ -3542,6 +3590,24 @@ export type Database = {
       }
     }
     Views: {
+      ar_personas_public: {
+        Row: {
+          profile: Json | null
+          username: string | null
+          visibility: string | null
+        }
+        Insert: {
+          profile?: Json | null
+          username?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          profile?: Json | null
+          username?: string | null
+          visibility?: string | null
+        }
+        Relationships: []
+      }
       public_stream_locations: {
         Row: {
           id: string | null

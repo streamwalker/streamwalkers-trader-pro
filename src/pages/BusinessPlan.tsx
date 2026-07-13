@@ -12,7 +12,7 @@ const BusinessPlan = () => {
             Strategic Business Plan
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-profit bg-clip-text text-transparent">
-            Equiforge ™️ Trader Pro
+            Streamwalkers Trader Pro
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-4xl mx-auto">
             Build a proprietary funded trader platform generating <span className="text-profit font-semibold">$13M/month in net profit</span> within 18-24 months
@@ -31,7 +31,7 @@ const BusinessPlan = () => {
           </CardHeader>
           <CardContent>
             <p className="text-lg text-muted-foreground">
-              Build a proprietary funded trader platform using Equiforge ™️ Trader Pro that generates at least 
+              Build a proprietary funded trader platform using Streamwalkers Trader Pro that generates at least 
               <span className="text-profit font-semibold"> $10–13M/month in net profit</span> within 
               <span className="text-primary font-semibold"> 18–24 months</span> by onboarding, evaluating, and scaling profitable traders.
             </p>
@@ -304,7 +304,7 @@ const BusinessPlan = () => {
         <Card className="border-accent/20">
           <CardHeader>
             <CardTitle className="text-3xl flex items-center gap-3">
-              🧠 Key Advantages for Equiforge
+              🧠 Key Advantages for Streamwalkers
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -514,7 +514,7 @@ const BusinessPlan = () => {
         <Card className="border-profit/20 bg-gradient-to-br from-profit/5 to-primary/5">
           <CardHeader>
             <CardTitle className="text-3xl flex items-center gap-3">
-              🔧 Equiforge Token (EQT) - Tokenomics & Blockchain Incentives
+              🔧 Streamwalkers Token (EQT) - Tokenomics & Blockchain Incentives
             </CardTitle>
             <CardDescription>
               Build a decentralized reward system that incentivizes trader engagement, data contributions, and platform loyalty
@@ -688,7 +688,7 @@ const BusinessPlan = () => {
             <CardTitle className="text-3xl flex items-center gap-3">
               🎯 Token Earning Mechanisms
             </CardTitle>
-            <CardDescription>How traders and users earn Equiforge Tokens (EQT)</CardDescription>
+            <CardDescription>How traders and users earn Streamwalkers Tokens (EQT)</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">

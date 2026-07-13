@@ -78,7 +78,7 @@ const TermsOfService = () => {
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">12. Contact</h2>
             <p className="text-foreground">
-              Email: <a href="mailto:legal@equiforgetraderpro.com" className="text-primary hover:underline">legal@equiforgetraderpro.com</a><br />
+              Email: <a href="mailto:legal@streamwalkers.com" className="text-primary hover:underline">legal@streamwalkers.com</a><br />
               Streamwalkers Corp., New York, NY
             </p>
           </section>

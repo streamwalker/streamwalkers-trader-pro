@@ -6,8 +6,17 @@
     "loading": "読み込み中...",
     "startLearningFree": "無料で学習を始める"
   },
-  "theme": { "label": "テーマ", "light": "ライト", "dark": "ダーク", "system": "システム" },
-  "language": { "label": "言語" },
+  "theme": {
+    "label": "テーマ",
+    "light": "ライト",
+    "dark": "ダーク",
+    "system": "システム",
+    "current": "テーマ: {{value}}。テーマを変更。"
+  },
+  "language": {
+    "label": "言語",
+    "current": "言語: {{value}}。言語を変更。"
+  },
   "nav": {
     "howItWorks": "仕組み",
     "pricing": "料金",
@@ -170,15 +179,40 @@
     "compBody": "報酬対象として提示されるすべての取引は仮定的なものであり、実際の口座で再現される保証はありません。PA 口座はシミュレーション、実口座、またはコピー口座を含みます。掲載される体験談や支払いは将来の成果を保証するものではありません。",
     "copyright": "© 2021-2031, Streamwalkers Corporation. 無断転載を禁じます。"
   },
-  "notFound": { "code": "404", "message": "ページが見つかりません", "backHome": "ホームに戻る" },
-  "pages": {
-    "about": { "title": "私たちについて", "subtitle": "世界最高のトレーダーを見つけ、彼らにふさわしい資本を提供するために存在します。" },
-    "support": { "title": "サポートセンター", "subtitle": "あらゆる段階でお手伝いします。" },
-    "faq": { "title": "よくある質問", "subtitle": "トレーダーからよく寄せられる質問への回答。" },
-    "tradingRules": { "title": "トレードルールとガイドライン", "subtitle": "評価プロセス、資金口座、支払い構造について知っておくべきすべて。" },
-    "privacy": { "title": "プライバシーポリシー" },
-    "terms": { "title": "利用規約" },
-    "education": { "title": "教育センター", "subtitle": "初心者から資金提供トレーダーまで導く体系的なコース。" }
+  "notFound": {
+    "code": "404",
+    "message": "ページが見つかりません",
+    "backHome": "ホームに戻る"
   },
-  "legal": { "englishNotice": "本書類の法的拘束力を持つ版は英語版です。翻訳は便宜のために提供されています。" }
+  "pages": {
+    "about": {
+      "title": "私たちについて",
+      "subtitle": "世界最高のトレーダーを見つけ、彼らにふさわしい資本を提供するために存在します。"
+    },
+    "support": {
+      "title": "サポートセンター",
+      "subtitle": "あらゆる段階でお手伝いします。"
+    },
+    "faq": {
+      "title": "よくある質問",
+      "subtitle": "トレーダーからよく寄せられる質問への回答。"
+    },
+    "tradingRules": {
+      "title": "トレードルールとガイドライン",
+      "subtitle": "評価プロセス、資金口座、支払い構造について知っておくべきすべて。"
+    },
+    "privacy": {
+      "title": "プライバシーポリシー"
+    },
+    "terms": {
+      "title": "利用規約"
+    },
+    "education": {
+      "title": "教育センター",
+      "subtitle": "初心者から資金提供トレーダーまで導く体系的なコース。"
+    }
+  },
+  "legal": {
+    "englishNotice": "本書類の法的拘束力を持つ版は英語版です。翻訳は便宜のために提供されています。"
+  }
 }

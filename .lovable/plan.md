@@ -1,30 +1,37 @@
 ## Goal
-Confirm that the `legal.englishNotice` banner and the H1 titles on Privacy Policy, Terms of Service, Trading Rules, and About render in the selected language on every language switch — then fix anything that doesn't.
+Improve keyboard + screen-reader semantics on `ThemeToggle` and `LanguageSwitcher` without changing layout, tokens, or behavior.
 
-## Current state (from exploration)
-- All four pages already call `useTranslation()` and render titles via `t("pages.<page>.title")` and the banner via `t("legal.englishNotice")`.
-- All 10 locale files (`en, es, ja, de, vi, ko, fr, ar, hi, ru`) contain non-empty values for `legal.englishNotice`, `pages.privacy.title`, `pages.terms.title`, `pages.tradingRules.title`, `pages.tradingRules.subtitle`, `pages.about.title`, `pages.about.subtitle`.
-- `src/i18n/index.ts` re-renders on `languageChanged` and applies `<html lang>` / `dir` (RTL for `ar`).
+## Current gaps
+- Triggers are icon-only shadcn Buttons. They have `aria-label` but no `aria-haspopup`/dynamic value announcement of the current selection.
+- Menu items convey selection with a `●` glyph only — screen readers get no "selected" state and no color-independent cue beyond a bullet character.
+- Tap targets are `size="icon"` (36×36), below the 44×44 mobile guideline.
+- Dropdown content has no accessible label tying it to the trigger.
+- The trigger `aria-label` doesn't announce the current theme/language, so a screen-reader user hears only "Theme" / "Language".
 
-So the wiring looks correct. The remaining risk is (a) a stale cache after language switch, (b) a subtitle/body still hardcoded in English, or (c) a locale value that is silently identical to English.
+## Changes
 
-## Steps
+### `src/components/ThemeToggle.tsx`
+- Trigger: add `min-h-11 min-w-11`, `aria-haspopup="menu"`, and a dynamic `aria-label` like `Theme: Dark. Change theme.` using `t("theme.label")` + resolved theme name. Remove redundant `sr-only` duplicate.
+- Wrap items in an `aria-label`ed group via `DropdownMenuContent aria-label={t("theme.label")}`.
+- Replace each `DropdownMenuItem` with `DropdownMenuRadioGroup` + `DropdownMenuRadioItem` (shadcn/Radix already ships this and it emits `role="menuitemradio"` + `aria-checked`). Fall back to `aria-checked` on `DropdownMenuItem` with `role="menuitemradio"` if radio primitives aren't exported. Keep icons + labels; drop the `●` glyph.
+- Ensure `focus-visible` ring is present (inherits from shadcn Button — verify no override).
 
-1. **Automated parity check (script, no runtime cost).** Add a tiny node script (or run inline) that loads every `src/i18n/locales/*.json`, asserts every required legal key exists, is a string, and is not identical to the English version for non-English locales. Fix any gap it reports.
+### `src/components/LanguageSwitcher.tsx`
+- Trigger: same tap-target + `aria-haspopup="menu"`; dynamic `aria-label` announcing current language (e.g. `Language: English. Change language.`).
+- `DropdownMenuContent`: add `aria-label={t("language.label")}`.
+- Convert items to `DropdownMenuRadioGroup` / `DropdownMenuRadioItem` bound to `currentBase`, with `onValueChange={i18n.changeLanguage}`. Each item gets `lang={lng.code}` so assistive tech pronounces native names correctly, and `aria-label` combining English + native name when they differ.
+- Drop the `●` glyph in favor of the radio-item check indicator.
 
-2. **Runtime verification via Playwright.** For each locale in `[en, es, ja, ar, ru]` (covers Latin, CJK, RTL, Cyrillic):
-   - Set `localStorage.streamwalkers.language` before navigation.
-   - Visit `/privacy-policy`, `/terms-of-service`, `/trading-rules`, `/about`.
-   - Screenshot the header region and assert the H1 text and banner text match the expected locale string from the JSON.
-   - Confirm `<html lang>` and `dir` update (rtl for `ar`).
+### `src/i18n/locales/*.json`
+- Add two new keys under `theme` and `language`:
+  - `theme.current` → `"Theme: {{value}}. Change theme."`
+  - `language.current` → `"Language: {{value}}. Change language."`
+- Translate both across all 10 locales (en, es, ja, de, vi, ko, fr, ar, hi, ru).
 
-3. **Patch any regressions found.** Likely candidates if verification fails:
-   - Add `Suspense` fallback around routed pages if the JSON load races the first paint (currently synchronous imports, so unlikely).
-   - Force re-render on language change by keying `MarketingLayout` on `i18n.language` if screenshots show stale text.
-   - Replace any remaining hardcoded English strings in the four page bodies (subtitle, section headings) with `t()` keys and add missing entries to every locale file.
-
-4. **Report** the verification screenshots inline so you can confirm the switch visibly works before we consider this closed.
+### Verification
+- `tsgo` for typecheck.
+- Playwright: open `/`, tab to each trigger, assert `aria-label` announces current value, open menu with Enter, arrow through items, assert `aria-checked="true"` on the active item, press Enter to switch, re-open and confirm the checked item moved. Screenshot both open menus in light + dark.
 
 ## Out of scope
-- Translating the long-form legal body copy (spec keeps body in English; only titles + banner must translate).
-- Any change to the theme toggle or non-legal marketing pages.
+- Visual redesign, new icons, or moving the controls in the nav.
+- Changing dropdown-menu primitives beyond swapping `Item` → `RadioItem`.

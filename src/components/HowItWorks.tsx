@@ -1,24 +1,24 @@
-import { ClipboardCheck, TrendingUp, DollarSign } from "lucide-react";
+import { BookOpen, ClipboardCheck, DollarSign } from "lucide-react";
 
 const HowItWorks = () => {
   const steps = [
     {
-      icon: ClipboardCheck,
+      icon: BookOpen,
       step: "1",
-      title: "Pass the Evaluation",
-      description: "Choose your challenge tier. Trade within the rules and hit your profit target to prove your skills.",
+      title: "Learn the Craft",
+      description: "Start with free structured courses — from your first chart to a complete trading plan. No experience required.",
     },
     {
-      icon: TrendingUp,
+      icon: ClipboardCheck,
       step: "2",
-      title: "Get Funded",
-      description: "Receive your funded account with real market access. Trade futures on CME, COMEX, NYMEX & CBOT.",
+      title: "Prove Your Skill",
+      description: "When you're ready, take a funding challenge. Trade within the rules and hit your profit target to pass the evaluation.",
     },
     {
       icon: DollarSign,
       step: "3",
-      title: "Keep Your Profits",
-      description: "Withdraw up to 90% of your trading profits. Fast payouts, no hidden fees. Scale up to $1M.",
+      title: "Trade Funded. Keep Profits.",
+      description: "Trade our capital on CME, COMEX, NYMEX & CBOT. Withdraw up to 90% of profits with payouts every 7 days.",
     },
   ];
 

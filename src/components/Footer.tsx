@@ -1,4 +1,4 @@
-import { TrendingUp, Mail, Phone, MapPin } from "lucide-react";
+import { Waves, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -8,79 +8,76 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-8 h-8 text-primary" />
-              <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-                Equiforge ™️ Trader Pro
-              </span>
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-primary">
+                <Waves className="h-5 w-5 text-white" />
+              </div>
+              <div className="leading-none">
+                <span className="block font-display text-base font-bold tracking-tight">
+                  Streamwalkers
+                </span>
+                <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  Trader Pro
+                </span>
+              </div>
             </div>
-            <p className="text-muted-foreground">
-              Professional trading platform providing funded accounts and cutting-edge tools for serious traders.
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Learn to trade with structured courses, prove your skill in our evaluation,
+              and trade funded accounts up to $200K — keeping up to 90% of the profits.
             </p>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Mail className="w-4 h-4" />
-                support@equiforgetraderpro.com
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Phone className="w-4 h-4" />
-                +1 (555) 123-4567
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <MapPin className="w-4 h-4" />
-                New York, NY
-              </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Mail className="w-4 h-4" />
+              support@streamwalkers.com
             </div>
           </div>
 
-          {/* Trading */}
+          {/* Learn */}
           <div>
-            <h3 className="font-semibold mb-4">Trading</h3>
+            <h3 className="font-semibold mb-4 text-sm">Learn</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/education" className="hover:text-primary transition-colors">Education Center</Link></li>
+              <li><Link to="/education/courses" className="hover:text-primary transition-colors">Course Catalog</Link></li>
+              <li><Link to="/education/finance-reference" className="hover:text-primary transition-colors">Finance Reference</Link></li>
+              <li><Link to="/resources" className="hover:text-primary transition-colors">Platform Setup Guides</Link></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
+            </ul>
+          </div>
+
+          {/* Get Funded */}
+          <div>
+            <h3 className="font-semibold mb-4 text-sm">Get Funded</h3>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="/#pricing" className="hover:text-primary transition-colors">Funding Challenges</a></li>
               <li><Link to="/trading-rules#evaluation" className="hover:text-primary transition-colors">Evaluation Process</Link></li>
               <li><Link to="/trading-rules#rules" className="hover:text-primary transition-colors">Trading Rules</Link></li>
-              <li><Link to="/trading-rules#funded-accounts" className="hover:text-primary transition-colors">Funded Accounts</Link></li>
               <li><Link to="/trading-rules#profit-splits" className="hover:text-primary transition-colors">Profit Splits</Link></li>
               <li><Link to="/trading-rules#withdrawals" className="hover:text-primary transition-colors">Withdrawals</Link></li>
             </ul>
           </div>
 
-          {/* Tools & Education */}
+          {/* Company */}
           <div>
-            <h3 className="font-semibold mb-4">Tools & Education</h3>
+            <h3 className="font-semibold mb-4 text-sm">Company</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/screener" className="hover:text-primary transition-colors">Trading Tools</Link></li>
-              <li><Link to="/resources" className="hover:text-primary transition-colors">NinjaTrader Setup</Link></li>
-              <li><Link to="/resources" className="hover:text-primary transition-colors">Tradovate Integration</Link></li>
-              <li><Link to="/resources" className="hover:text-primary transition-colors">Video Tutorials</Link></li>
-              <li><Link to="/support" className="hover:text-primary transition-colors">Trading Community</Link></li>
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h3 className="font-semibold mb-4">Support</h3>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/support" className="hover:text-primary transition-colors">Help Center</Link></li>
-              <li><Link to="/support" className="hover:text-primary transition-colors">Contact Support</Link></li>
-              <li><Link to="/support" className="hover:text-primary transition-colors">Live Chat</Link></li>
-              <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
-              <li><Link to="/support" className="hover:text-primary transition-colors">Status Page</Link></li>
+              <li><Link to="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+              <li><Link to="/support" className="hover:text-primary transition-colors">Help & Support</Link></li>
+              <li><Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link></li>
+              <li><a href="/#risk-disclosure" className="hover:text-primary transition-colors">Risk Disclosure</a></li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Section */}
         <div className="border-t border-border mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="text-sm text-muted-foreground mb-4 md:mb-0">
-              © 2024 Equiforge ™️ Trader Pro. All rights reserved.
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} Streamwalkers Corporation. All rights reserved.
             </div>
-            <div className="flex items-center gap-6 text-sm text-muted-foreground">
-              <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link to="/terms-of-service" className="hover:text-primary transition-colors">Terms of Service</Link>
-              <a href="/#risk-disclosure" className="hover:text-primary transition-colors">Risk Disclosure</a>
-            </div>
+            <p className="text-xs text-muted-foreground max-w-xl text-center md:text-right">
+              Futures trading involves substantial risk of loss and is not suitable for every investor.
+              Evaluations are conducted in simulated environments.
+            </p>
           </div>
         </div>
       </div>

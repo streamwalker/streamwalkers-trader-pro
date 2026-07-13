@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
+import MarketingLayout from "./components/MarketingLayout";
 import { TutorialProvider } from "./components/tutorial/TutorialProvider";
 import { TutorialManager } from "./components/tutorial/TutorialManager";
 import Index from "./pages/Index";
@@ -43,6 +44,16 @@ import { AuthPage } from "./components/AuthPage";
 
 const queryClient = new QueryClient();
 
+/** Wraps a page in the public marketing shell (top nav + footer, light theme). */
+const M = ({ children }: { children: React.ReactNode }) => (
+  <MarketingLayout>{children}</MarketingLayout>
+);
+
+/** Wraps a page in the trading application shell (dark sidebar theme). */
+const A = ({ children }: { children: React.ReactNode }) => (
+  <Layout>{children}</Layout>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -51,45 +62,49 @@ const App = () => (
         <Sonner />
         <TutorialManager />
         <BrowserRouter>
-          <Layout>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/business-plan" element={<BusinessPlan />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/tools/order-flow" element={<OrderFlow />} />
-            <Route path="/tools/analysis" element={<MarketAnalysis />} />
-            <Route path="/tools/risk" element={<RiskManagement />} />
-            <Route path="/account/funding" element={<Funding />} />
-            <Route path="/account/performance" element={<Performance />} />
-            <Route path="/account/settings" element={<Settings />} />
-            <Route path="/education" element={<Education />} />
-            <Route path="/education/courses" element={<CourseCatalog />} />
-            <Route path="/education/course/:courseId" element={<CourseDetail />} />
-            <Route path="/education/course/:courseId/module/:moduleId" element={<CourseModule />} />
-            <Route path="/education/categories" element={<CourseCategories />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/tools/order-flow/alerts" element={<AlertConfiguration />} />
-            <Route path="/tools/pe-analyzer" element={<PEAnalyzer />} />
-            <Route path="/tools/market-oracle" element={<MarketOracle />} />
-            <Route path="/tools/quant-engine" element={<QuantEngine />} />
-            <Route path="/tools/quant-engine/guide" element={<QuantEngineGuide />} />
-            <Route path="/education/finance-reference" element={<FinanceReference />} />
-            <Route path="/screener" element={<Screener />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/payment-success" element={<PaymentSuccess />} />
-            <Route path="/payment-canceled" element={<PaymentCanceled />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/trading-rules" element={<TradingRules />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
+            {/* ---------- Public marketing site ---------- */}
+            <Route path="/" element={<M><Index /></M>} />
+            <Route path="/education" element={<M><Education /></M>} />
+            <Route path="/education/courses" element={<M><CourseCatalog /></M>} />
+            <Route path="/education/course/:courseId" element={<M><CourseDetail /></M>} />
+            <Route path="/education/course/:courseId/module/:moduleId" element={<M><CourseModule /></M>} />
+            <Route path="/education/categories" element={<M><CourseCategories /></M>} />
+            <Route path="/education/finance-reference" element={<M><FinanceReference /></M>} />
+            <Route path="/resources" element={<M><Resources /></M>} />
+            <Route path="/support" element={<M><Support /></M>} />
+            <Route path="/faq" element={<M><FAQ /></M>} />
+            <Route path="/about" element={<M><About /></M>} />
+            <Route path="/trading-rules" element={<M><TradingRules /></M>} />
+            <Route path="/privacy-policy" element={<M><PrivacyPolicy /></M>} />
+            <Route path="/terms-of-service" element={<M><TermsOfService /></M>} />
+            <Route path="/payment-success" element={<M><PaymentSuccess /></M>} />
+            <Route path="/payment-canceled" element={<M><PaymentCanceled /></M>} />
+
+            {/* ---------- Auth (standalone) ---------- */}
             <Route path="/auth" element={<AuthPage />} />
+
+            {/* ---------- Trading application ---------- */}
+            <Route path="/business-plan" element={<A><BusinessPlan /></A>} />
+            <Route path="/analytics" element={<A><Analytics /></A>} />
+            <Route path="/reports" element={<A><Reports /></A>} />
+            <Route path="/screener" element={<A><Screener /></A>} />
+            <Route path="/tools/order-flow" element={<A><OrderFlow /></A>} />
+            <Route path="/tools/order-flow/alerts" element={<A><AlertConfiguration /></A>} />
+            <Route path="/tools/analysis" element={<A><MarketAnalysis /></A>} />
+            <Route path="/tools/risk" element={<A><RiskManagement /></A>} />
+            <Route path="/tools/pe-analyzer" element={<A><PEAnalyzer /></A>} />
+            <Route path="/tools/market-oracle" element={<A><MarketOracle /></A>} />
+            <Route path="/tools/quant-engine" element={<A><QuantEngine /></A>} />
+            <Route path="/tools/quant-engine/guide" element={<A><QuantEngineGuide /></A>} />
+            <Route path="/account/funding" element={<A><Funding /></A>} />
+            <Route path="/account/performance" element={<A><Performance /></A>} />
+            <Route path="/account/settings" element={<A><Settings /></A>} />
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<M><NotFound /></M>} />
           </Routes>
-        </Layout>
-      </BrowserRouter>
+        </BrowserRouter>
       </TutorialProvider>
     </TooltipProvider>
   </QueryClientProvider>

@@ -42,7 +42,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 const mainNavItems = [
   { 
     title: "Dashboard", 
-    url: "/", 
+    url: "/analytics", 
     icon: Home,
     badge: null
   },

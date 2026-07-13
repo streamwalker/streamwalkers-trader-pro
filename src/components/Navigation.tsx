@@ -17,7 +17,7 @@ const Navigation = () => {
           <div className="flex items-center gap-2">
             <TrendingUp className="w-8 h-8 text-primary" />
             <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              Equiforge ™️ Trader Pro
+              Streamwalkers Trader Pro
             </span>
           </div>
 

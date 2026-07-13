@@ -10,7 +10,7 @@ const About = () => {
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             About{" "}
             <span className="bg-gradient-primary bg-clip-text text-transparent">
-              Equiforge ™️ Trader Pro
+              Streamwalkers Trader Pro
             </span>
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
@@ -23,7 +23,7 @@ const About = () => {
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Our Mission</h2>
             <p className="text-muted-foreground leading-relaxed">
-              The prop trading industry has a trust problem. Too many firms profit from trader failures rather than trader success. We built Equiforge to change that.
+              The prop trading industry has a trust problem. Too many firms profit from trader failures rather than trader success. We built Streamwalkers to change that.
             </p>
             <p className="text-muted-foreground leading-relaxed">
               Our proprietary Trader Intelligence Engine analyzes thousands of traders and millions of trades to identify consistent, disciplined performers. When we find them, we allocate real capital — up to $400,000 — and share up to 90% of the profits.
@@ -95,7 +95,7 @@ const About = () => {
           <h2 className="text-2xl font-bold mb-6">Regulatory & Compliance</h2>
           <div className="space-y-4 text-muted-foreground">
             <p>
-              Equiforge Corp. is a registered entity operating in compliance with applicable financial regulations. Our evaluation programs use simulated trading environments that mirror real market conditions.
+              Streamwalkers Corp. is a registered entity operating in compliance with applicable financial regulations. Our evaluation programs use simulated trading environments that mirror real market conditions.
             </p>
             <p>
               We do not solicit or accept deposits for investment purposes. Challenge fees are for access to our evaluation platform and trading tools. All performance data shown on this site represents hypothetical or simulated results unless explicitly stated otherwise.

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Hero from "@/components/Hero";
 import TrustSection from "@/components/TrustSection";
 import HowItWorks from "@/components/HowItWorks";
@@ -7,19 +8,17 @@ import InstantFundingSection from "@/components/InstantFundingSection";
 import AIMembershipSection from "@/components/AIMembershipSection";
 import TraderLeaderboard from "@/components/TraderLeaderboard";
 
-/**
- * Homepage narrative (education-led funnel):
- * 1. Hero        — Learn → Prove → Trade promise
- * 2. Trust       — social proof stats & payouts
- * 3. HowItWorks  — the three-step path explained
- * 4. Education   — free courses: the on-ramp for beginners
- * 5. Pricing     — funding challenges (primary revenue)
- * 6. Instant     — instant funding for experienced traders
- * 7. AI          — AI membership upsell
- * 8. Leaderboard — proof that traders succeed here
- * 9. Disclosures — required risk language
- */
 const Index = () => {
+  const { t } = useTranslation();
+
+  const disclosures: Array<{ label: string; body: string }> = [
+    { label: t("risk.riskLabel"), body: t("risk.riskBody") },
+    { label: t("risk.hypoLabel"), body: t("risk.hypoBody") },
+    { label: t("risk.instrumentsLabel"), body: t("risk.instrumentsBody") },
+    { label: t("risk.evalLabel"), body: t("risk.evalBody") },
+    { label: t("risk.compLabel"), body: t("risk.compBody") },
+  ];
+
   return (
     <div className="bg-background">
       <Hero />
@@ -31,44 +30,17 @@ const Index = () => {
       <AIMembershipSection />
       <TraderLeaderboard />
 
-      {/* Risk Disclosure Section */}
       <section id="risk-disclosure" className="bg-muted/50 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="space-y-8 text-xs text-muted-foreground">
-            <div>
-              <h3 className="font-semibold text-sm text-foreground mb-3">RISK DISCLOSURE:</h3>
-              <p className="leading-relaxed">
-                This is not an investment opportunity. You do not deposit any funds for investment. We do not ask for any funds for investment. At no time do you risk your own capital. There are no promises of rewards or returns.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-sm text-foreground mb-3">HYPOTHETICAL PERFORMANCE DISCLOSURE:</h3>
-              <p className="leading-relaxed">
-                Hypothetical performance results have many inherent limitations, some of which are described below. No representation is being made that any account will or is likely to achieve profits or losses similar to those shown. In fact, there are frequently sharp differences between hypothetical performance results and the actual results subsequently achieved by any particular trading program. One of the limitations of hypothetical performance results is that they are generally prepared with the benefit of hindsight. In addition, hypothetical trading does not involve financial risk, and no hypothetical trading record can completely account for the impact of financial risk of actual trading.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-sm text-foreground mb-3">AVAILABLE INSTRUMENTS:</h3>
-              <p className="leading-relaxed">
-                Streamwalkers Trader Pro customers are allowed to only trade Futures products, listed on the following exchanges: CME, COMEX, NYMEX & CBOT. Trading of Spot Currencies, CFD's Stocks, Options, and Cryptocurrencies are not permitted or available in our programs vendors or platforms.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-sm text-foreground mb-3">EVALUATION DISCLAIMER:</h3>
-              <p className="leading-relaxed">
-                The customer pass rate of the evaluation program was 43.13% between January 1, 2023 – Sept 1, 2023, who traded at least one evaluation and obtained a PA Account during this time period. The Evaluation and PA are meant to be as close to a realistic simulation of trading under actual market conditions, including commissions, to mimic real market conditions, and the evaluation is difficult to pass even for experienced traders.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-sm text-foreground mb-3">CUSTOMER COMPENSATION DISCLOSURE:</h3>
-              <p className="leading-relaxed">
-                All trades presented for compensation to customers should be considered hypothetical and should not be expected to be replicated in a live trading account. PA Accounts may represent simulated accounts or live or copied accounts. Testimonials and payouts appearing on this website may not be representative of other clients or customers and are not a guarantee of future performance or success.
-              </p>
-            </div>
+            {disclosures.map((d) => (
+              <div key={d.label}>
+                <h3 className="font-semibold text-sm text-foreground mb-3">{d.label}</h3>
+                <p className="leading-relaxed">{d.body}</p>
+              </div>
+            ))}
             <div className="border-t border-border pt-8 text-center">
-              <p className="text-xs text-muted-foreground">
-                © 2021-2031, Streamwalkers Corporation. All rights reserved.
-              </p>
+              <p className="text-xs text-muted-foreground">{t("risk.copyright")}</p>
             </div>
           </div>
         </div>

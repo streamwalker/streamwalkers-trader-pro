@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { Search, ChevronDown, MessageCircle, ExternalLink, ArrowLeft } from "luc
 import { Link } from "react-router-dom";
 
 const FAQ = () => {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState("");
   const [openSections, setOpenSections] = useState<string[]>([]);
 
@@ -256,9 +258,9 @@ const FAQ = () => {
               </Button>
             </Link>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Frequently Asked Questions</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("pages.faq.title")}</h1>
           <p className="text-muted-foreground">
-            Find detailed answers to common questions about trading, platform setup, and account management.
+            {t("pages.faq.subtitle")}
           </p>
         </div>
         <Button>

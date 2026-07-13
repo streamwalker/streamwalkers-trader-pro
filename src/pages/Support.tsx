@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { MessageCircle, Phone, Mail, HelpCircle, FileText, Clock, CheckCircle2 }
 import { Link } from "react-router-dom";
 
 const Support = () => {
+  const { t } = useTranslation();
   const supportChannels = [
     {
       icon: MessageCircle,
@@ -97,9 +99,9 @@ const Support = () => {
     <div className="container mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Help & Support</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("pages.support.title")}</h1>
           <p className="text-muted-foreground">
-            Get the help you need to succeed in your trading journey.
+            {t("pages.support.subtitle")}
           </p>
         </div>
         <div className="flex items-center gap-2">

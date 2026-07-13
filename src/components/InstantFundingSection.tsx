@@ -5,9 +5,11 @@ import { INSTANT_FUNDING } from "@/lib/stripe-products";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const InstantFundingSection = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState<string | null>(null);
 
   const handleCheckout = async (priceId: string, name: string) => {
@@ -37,14 +39,15 @@ const InstantFundingSection = () => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 bg-warning/10 border border-warning/30 px-4 py-2 rounded-full mb-6">
             <Zap className="w-4 h-4 text-warning" />
-            <span className="text-sm font-medium text-warning">Skip the Evaluation</span>
+            <span className="text-sm font-medium text-warning">{t("instant.badge")}</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            <span className="bg-gradient-accent bg-clip-text text-transparent">Instant Funding</span> Accounts
+            <span className="bg-gradient-accent bg-clip-text text-transparent">
+              {t("instant.titleAccent")}
+            </span>{" "}
+            {t("instant.titleSuffix")}
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Start trading immediately. No evaluation required. Get funded today.
-          </p>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{t("instant.subtitle")}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -57,30 +60,30 @@ const InstantFundingSection = () => {
                 <CardTitle className="text-xl">{tier.accountSize}</CardTitle>
                 <div className="mt-2">
                   <span className="text-3xl font-bold">{tier.fee}</span>
-                  <span className="text-sm text-muted-foreground ml-1">one-time</span>
+                  <span className="text-sm text-muted-foreground ml-1">{t("instant.oneTime")}</span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
-                    <Zap className="w-3 h-3 text-warning" /> No evaluation — trade immediately
+                    <Zap className="w-3 h-3 text-warning" /> {t("instant.perk1")}
                   </li>
                   <li className="flex items-center gap-2">
-                    <Zap className="w-3 h-3 text-warning" /> All trading tools included
+                    <Zap className="w-3 h-3 text-warning" /> {t("instant.perk2")}
                   </li>
                   <li className="flex items-center gap-2">
-                    <Zap className="w-3 h-3 text-warning" /> 80% profit split
+                    <Zap className="w-3 h-3 text-warning" /> {t("instant.perk3")}
                   </li>
                 </ul>
-                <Button 
-                  variant="premium" 
-                  className="w-full group" 
+                <Button
+                  variant="premium"
+                  className="w-full group"
                   size="lg"
                   onClick={() => handleCheckout(tier.price_id, tier.name)}
                   disabled={loading === tier.name}
                 >
-                  {loading === tier.name ? "Loading..." : "Get Instant Funding"}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  {loading === tier.name ? t("pricing.loading") : t("instant.cta")}
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform rtl:rotate-180" />
                 </Button>
               </CardContent>
             </Card>

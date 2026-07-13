@@ -1,4 +1,4 @@
-// Stripe product and price IDs for EquiForge Trader Pro
+// Stripe product and price IDs for Streamwalkers Trader Pro
 // All products created in Stripe — do not use price_data
 
 export const CHALLENGE_TIERS = {

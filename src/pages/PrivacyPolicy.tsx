@@ -75,7 +75,7 @@ const PrivacyPolicy = () => {
             <h2 className="text-xl font-semibold text-foreground">8. Contact Us</h2>
             <p>If you have questions about this Privacy Policy or wish to exercise your rights, contact us at:</p>
             <p className="text-foreground">
-              Email: <a href="mailto:privacy@equiforgetraderpro.com" className="text-primary hover:underline">privacy@equiforgetraderpro.com</a><br />
+              Email: <a href="mailto:privacy@streamwalkers.com" className="text-primary hover:underline">privacy@streamwalkers.com</a><br />
               Streamwalkers Corp., New York, NY
             </p>
           </section>

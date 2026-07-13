@@ -6,8 +6,17 @@
     "loading": "Chargement...",
     "startLearningFree": "Commencer gratuitement"
   },
-  "theme": { "label": "Thème", "light": "Clair", "dark": "Sombre", "system": "Système" },
-  "language": { "label": "Langue" },
+  "theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "current": "Thème : {{value}}. Changer de thème."
+  },
+  "language": {
+    "label": "Langue",
+    "current": "Langue : {{value}}. Changer de langue."
+  },
   "nav": {
     "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",
@@ -170,15 +179,40 @@
     "compBody": "Tous les trades présentés pour rémunération doivent être considérés comme hypothétiques et ne peuvent pas être garantis en compte réel. Les comptes PA peuvent être simulés, réels ou copiés. Les témoignages et paiements ne garantissent pas les résultats futurs.",
     "copyright": "© 2021-2031, Streamwalkers Corporation. Tous droits réservés."
   },
-  "notFound": { "code": "404", "message": "Page introuvable", "backHome": "Retour à l'accueil" },
-  "pages": {
-    "about": { "title": "À propos", "subtitle": "Nous existons pour identifier les meilleurs traders du monde et leur donner le capital qu'ils méritent." },
-    "support": { "title": "Centre d'assistance", "subtitle": "Nous vous accompagnons à chaque étape." },
-    "faq": { "title": "Questions fréquentes", "subtitle": "Réponses aux questions les plus posées par les traders." },
-    "tradingRules": { "title": "Règles et directives de trading", "subtitle": "Tout ce qu'il faut savoir sur l'évaluation, les comptes financés et les paiements." },
-    "privacy": { "title": "Politique de confidentialité" },
-    "terms": { "title": "Conditions d'utilisation" },
-    "education": { "title": "Centre de formation", "subtitle": "Des cours structurés qui vous mènent du débutant au trader financé." }
+  "notFound": {
+    "code": "404",
+    "message": "Page introuvable",
+    "backHome": "Retour à l'accueil"
   },
-  "legal": { "englishNotice": "La version juridiquement contraignante de ce document est la version anglaise. Les traductions sont fournies à titre indicatif." }
+  "pages": {
+    "about": {
+      "title": "À propos",
+      "subtitle": "Nous existons pour identifier les meilleurs traders du monde et leur donner le capital qu'ils méritent."
+    },
+    "support": {
+      "title": "Centre d'assistance",
+      "subtitle": "Nous vous accompagnons à chaque étape."
+    },
+    "faq": {
+      "title": "Questions fréquentes",
+      "subtitle": "Réponses aux questions les plus posées par les traders."
+    },
+    "tradingRules": {
+      "title": "Règles et directives de trading",
+      "subtitle": "Tout ce qu'il faut savoir sur l'évaluation, les comptes financés et les paiements."
+    },
+    "privacy": {
+      "title": "Politique de confidentialité"
+    },
+    "terms": {
+      "title": "Conditions d'utilisation"
+    },
+    "education": {
+      "title": "Centre de formation",
+      "subtitle": "Des cours structurés qui vous mènent du débutant au trader financé."
+    }
+  },
+  "legal": {
+    "englishNotice": "La version juridiquement contraignante de ce document est la version anglaise. Les traductions sont fournies à titre indicatif."
+  }
 }

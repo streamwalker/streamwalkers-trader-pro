@@ -6,8 +6,17 @@
     "loading": "Đang tải...",
     "startLearningFree": "Học miễn phí ngay"
   },
-  "theme": { "label": "Giao diện", "light": "Sáng", "dark": "Tối", "system": "Hệ thống" },
-  "language": { "label": "Ngôn ngữ" },
+  "theme": {
+    "label": "Giao diện",
+    "light": "Sáng",
+    "dark": "Tối",
+    "system": "Hệ thống",
+    "current": "Giao diện: {{value}}. Đổi giao diện."
+  },
+  "language": {
+    "label": "Ngôn ngữ",
+    "current": "Ngôn ngữ: {{value}}. Đổi ngôn ngữ."
+  },
   "nav": {
     "howItWorks": "Cách hoạt động",
     "pricing": "Giá",
@@ -170,15 +179,40 @@
     "compBody": "Mọi giao dịch được trình bày để chi trả cho khách hàng đều được coi là giả định và không đảm bảo tái lập trên tài khoản thật. Tài khoản PA có thể là mô phỏng, thật hoặc sao chép. Chứng thực và các khoản trả trên trang này không đảm bảo kết quả trong tương lai.",
     "copyright": "© 2021-2031, Streamwalkers Corporation. Bảo lưu mọi quyền."
   },
-  "notFound": { "code": "404", "message": "Không tìm thấy trang", "backHome": "Về Trang chủ" },
-  "pages": {
-    "about": { "title": "Giới thiệu", "subtitle": "Chúng tôi tồn tại để tìm ra những trader giỏi nhất thế giới và trao cho họ nguồn vốn xứng đáng." },
-    "support": { "title": "Trung tâm Hỗ trợ", "subtitle": "Chúng tôi luôn sẵn sàng hỗ trợ từng bước." },
-    "faq": { "title": "Câu hỏi Thường gặp", "subtitle": "Giải đáp những thắc mắc phổ biến nhất của trader." },
-    "tradingRules": { "title": "Quy tắc & Hướng dẫn Giao dịch", "subtitle": "Mọi điều bạn cần biết về đánh giá, tài khoản cấp vốn và cấu trúc thanh toán." },
-    "privacy": { "title": "Chính sách Bảo mật" },
-    "terms": { "title": "Điều khoản Dịch vụ" },
-    "education": { "title": "Trung tâm Đào tạo", "subtitle": "Khoá học bài bản đưa bạn từ người mới đến trader được cấp vốn." }
+  "notFound": {
+    "code": "404",
+    "message": "Không tìm thấy trang",
+    "backHome": "Về Trang chủ"
   },
-  "legal": { "englishNotice": "Bản có hiệu lực pháp lý của tài liệu này là bản tiếng Anh. Các bản dịch chỉ nhằm mục đích tiện lợi." }
+  "pages": {
+    "about": {
+      "title": "Giới thiệu",
+      "subtitle": "Chúng tôi tồn tại để tìm ra những trader giỏi nhất thế giới và trao cho họ nguồn vốn xứng đáng."
+    },
+    "support": {
+      "title": "Trung tâm Hỗ trợ",
+      "subtitle": "Chúng tôi luôn sẵn sàng hỗ trợ từng bước."
+    },
+    "faq": {
+      "title": "Câu hỏi Thường gặp",
+      "subtitle": "Giải đáp những thắc mắc phổ biến nhất của trader."
+    },
+    "tradingRules": {
+      "title": "Quy tắc & Hướng dẫn Giao dịch",
+      "subtitle": "Mọi điều bạn cần biết về đánh giá, tài khoản cấp vốn và cấu trúc thanh toán."
+    },
+    "privacy": {
+      "title": "Chính sách Bảo mật"
+    },
+    "terms": {
+      "title": "Điều khoản Dịch vụ"
+    },
+    "education": {
+      "title": "Trung tâm Đào tạo",
+      "subtitle": "Khoá học bài bản đưa bạn từ người mới đến trader được cấp vốn."
+    }
+  },
+  "legal": {
+    "englishNotice": "Bản có hiệu lực pháp lý của tài liệu này là bản tiếng Anh. Các bản dịch chỉ nhằm mục đích tiện lợi."
+  }
 }

@@ -6,8 +6,17 @@
     "loading": "Wird geladen...",
     "startLearningFree": "Kostenlos lernen"
   },
-  "theme": { "label": "Design", "light": "Hell", "dark": "Dunkel", "system": "System" },
-  "language": { "label": "Sprache" },
+  "theme": {
+    "label": "Design",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System",
+    "current": "Design: {{value}}. Design ändern."
+  },
+  "language": {
+    "label": "Sprache",
+    "current": "Sprache: {{value}}. Sprache ändern."
+  },
   "nav": {
     "howItWorks": "So funktioniert's",
     "pricing": "Preise",
@@ -170,15 +179,40 @@
     "compBody": "Alle zur Vergütung präsentierten Trades gelten als hypothetisch und werden nicht zwangsläufig in einem Live-Konto reproduziert. PA-Konten können simulierte, echte oder kopierte Konten sein. Erfahrungsberichte und Auszahlungen sind keine Garantie für zukünftige Ergebnisse.",
     "copyright": "© 2021-2031, Streamwalkers Corporation. Alle Rechte vorbehalten."
   },
-  "notFound": { "code": "404", "message": "Seite nicht gefunden", "backHome": "Zur Startseite" },
-  "pages": {
-    "about": { "title": "Über uns", "subtitle": "Wir existieren, um die besten Trader der Welt zu identifizieren und ihnen das Kapital zu geben, das sie verdienen." },
-    "support": { "title": "Support-Center", "subtitle": "Wir helfen Ihnen bei jedem Schritt." },
-    "faq": { "title": "Häufig gestellte Fragen", "subtitle": "Antworten auf die häufigsten Fragen der Trader." },
-    "tradingRules": { "title": "Trading-Regeln & Richtlinien", "subtitle": "Alles Wichtige über Evaluation, finanzierte Konten und Auszahlungen." },
-    "privacy": { "title": "Datenschutzerklärung" },
-    "terms": { "title": "Allgemeine Geschäftsbedingungen" },
-    "education": { "title": "Ausbildungszentrum", "subtitle": "Strukturierte Kurse vom Anfänger bis zum finanzierten Trader." }
+  "notFound": {
+    "code": "404",
+    "message": "Seite nicht gefunden",
+    "backHome": "Zur Startseite"
   },
-  "legal": { "englishNotice": "Die rechtlich verbindliche Version dieses Dokuments ist Englisch. Übersetzungen dienen nur der Vereinfachung." }
+  "pages": {
+    "about": {
+      "title": "Über uns",
+      "subtitle": "Wir existieren, um die besten Trader der Welt zu identifizieren und ihnen das Kapital zu geben, das sie verdienen."
+    },
+    "support": {
+      "title": "Support-Center",
+      "subtitle": "Wir helfen Ihnen bei jedem Schritt."
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "subtitle": "Antworten auf die häufigsten Fragen der Trader."
+    },
+    "tradingRules": {
+      "title": "Trading-Regeln & Richtlinien",
+      "subtitle": "Alles Wichtige über Evaluation, finanzierte Konten und Auszahlungen."
+    },
+    "privacy": {
+      "title": "Datenschutzerklärung"
+    },
+    "terms": {
+      "title": "Allgemeine Geschäftsbedingungen"
+    },
+    "education": {
+      "title": "Ausbildungszentrum",
+      "subtitle": "Strukturierte Kurse vom Anfänger bis zum finanzierten Trader."
+    }
+  },
+  "legal": {
+    "englishNotice": "Die rechtlich verbindliche Version dieses Dokuments ist Englisch. Übersetzungen dienen nur der Vereinfachung."
+  }
 }

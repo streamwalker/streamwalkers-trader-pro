@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SUPPORTED_LANGUAGES } from "@/i18n";
@@ -12,28 +13,43 @@ import { SUPPORTED_LANGUAGES } from "@/i18n";
 export function LanguageSwitcher() {
   const { i18n, t } = useTranslation();
   const currentBase = (i18n.language || "en").split("-")[0];
+  const currentLang =
+    SUPPORTED_LANGUAGES.find((l) => l.code === currentBase) ??
+    SUPPORTED_LANGUAGES[0];
+
+  const triggerLabel = t("language.current", {
+    value: currentLang.name,
+    defaultValue: `${t("language.label")}: ${currentLang.name}`,
+  });
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t("language.label")}>
-          <Globe className="h-4 w-4" />
-          <span className="sr-only">{t("language.label")}</span>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="min-h-11 min-w-11"
+          aria-haspopup="menu"
+          aria-label={triggerLabel}
+        >
+          <Globe className="h-4 w-4" aria-hidden="true" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[10rem]">
-        {SUPPORTED_LANGUAGES.map((lng) => (
-          <DropdownMenuItem
-            key={lng.code}
-            onClick={() => i18n.changeLanguage(lng.code)}
-            className="flex items-center justify-between gap-3"
-          >
-            <span>{lng.name}</span>
-            {currentBase === lng.code && (
-              <span className="text-xs text-primary">●</span>
-            )}
-          </DropdownMenuItem>
-        ))}
+      <DropdownMenuContent
+        align="end"
+        className="min-w-[10rem]"
+        aria-label={t("language.label")}
+      >
+        <DropdownMenuRadioGroup
+          value={currentBase}
+          onValueChange={(value) => i18n.changeLanguage(value)}
+        >
+          {SUPPORTED_LANGUAGES.map((lng) => (
+            <DropdownMenuRadioItem key={lng.code} value={lng.code} lang={lng.code}>
+              <span>{lng.name}</span>
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

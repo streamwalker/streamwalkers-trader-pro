@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { CheckCircle, XCircle, AlertTriangle, DollarSign, TrendingUp, Scale } from "lucide-react";
-import Footer from "@/components/Footer";
 
 const TradingRules = () => {
   const { hash } = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (hash) {
@@ -17,11 +18,15 @@ const TradingRules = () => {
     <div className="bg-background min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 space-y-16">
         <div className="text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Trading Rules & Guidelines</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t("pages.tradingRules.title")}</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to know about our evaluation process, funded accounts, and payout structure.
+            {t("pages.tradingRules.subtitle")}
+          </p>
+          <p className="text-xs text-muted-foreground italic mt-4 max-w-2xl mx-auto">
+            {t("legal.englishNotice")}
           </p>
         </div>
+
 
         {/* Evaluation Process */}
         <section id="evaluation" className="scroll-mt-24 space-y-6">

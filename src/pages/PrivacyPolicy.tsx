@@ -1,13 +1,18 @@
-import Footer from "@/components/Footer";
+import { useTranslation } from "react-i18next";
 
 const PrivacyPolicy = () => {
+  const { t } = useTranslation();
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
-        <p className="text-muted-foreground mb-12">Last updated: March 15, 2026</p>
+        <h1 className="text-4xl font-bold mb-2">{t("pages.privacy.title")}</h1>
+        <p className="text-muted-foreground mb-4">Last updated: March 15, 2026</p>
+        <p className="text-xs text-muted-foreground italic mb-12 border-l-2 border-primary/40 pl-3">
+          {t("legal.englishNotice")}
+        </p>
 
         <div className="prose prose-invert max-w-none space-y-8 text-muted-foreground">
+
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-foreground">1. Information We Collect</h2>
             <p>We collect information you provide directly when you create an account, purchase an evaluation, or contact support. This includes:</p>

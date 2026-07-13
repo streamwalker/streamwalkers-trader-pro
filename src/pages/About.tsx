@@ -1,22 +1,24 @@
+import { useTranslation } from "react-i18next";
 import { TrendingUp, Shield, Globe, Users, Target, Award } from "lucide-react";
-import Footer from "@/components/Footer";
 
 const About = () => {
+  const { t } = useTranslation();
   return (
     <div className="bg-background min-h-screen">
       {/* Hero */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            About{" "}
+            {t("pages.about.title")}{" "}
             <span className="bg-gradient-primary bg-clip-text text-transparent">
               Streamwalkers Trader Pro
             </span>
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            We exist to identify the world's best traders and give them the capital they deserve. No gimmicks. No hidden rules. Just pure performance-based funding.
+            {t("pages.about.subtitle")}
           </p>
         </div>
+
 
         {/* Mission */}
         <div className="grid md:grid-cols-2 gap-12 mb-20">
